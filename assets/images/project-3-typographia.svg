@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <!-- Paper Texture Tone -->
+    <linearGradient id="paperGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3EFE6" />
+      <stop offset="100%" stop-color="#EBE5D8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base (Gallery Environment) -->
+  <rect width="1200" height="800" fill="#E4DDD0"/>
+
+  <!-- Wall Shadow for Poster -->
+  <rect x="250" y="55" width="700" height="690" rx="2" fill="#000000" opacity="0.12"/>
+
+  <!-- Poster Canvas: Swiss International Typographic Style (A-Series Grid) -->
+  <g transform="translate(240, 50)">
+    <rect x="0" y="0" width="720" height="700" fill="url(#paperGrad)" stroke="#D4CBBA" stroke-width="1"/>
+
+    <!-- Left Swiss Margin Line -->
+    <line x1="60" y1="50" x2="60" y2="650" stroke="#121211" stroke-width="1.5"/>
+    <line x1="60" y1="50" x2="660" y2="50" stroke="#121211" stroke-width="1.5"/>
+
+    <!-- Index Numbers and Metadata -->
+    <text x="80" y="80" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" fill="#121211" letter-spacing="2">03 / EXHIBITION POSTER SERIES</text>
+    <text x="660" y="80" font-family="'JetBrains Mono', monospace" font-size="12" fill="#BD3A1B" text-anchor="end" letter-spacing="1">MUSEUM OF CONTEMPORARY FORM</text>
+
+    <!-- Massive Architectural Headline (Swiss Style Typography) -->
+    <text x="75" y="195" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="76" fill="#121211" letter-spacing="-3">TYPO</text>
+    <text x="75" y="275" font-family="'Newsreader', Georgia, serif" font-style="italic" font-weight="400" font-size="82" fill="#BD3A1B" letter-spacing="-2">Graphia.</text>
+
+    <!-- Asymmetric Graphic Geometry: Solid Black & Vermilion Blocks -->
+    <rect x="75" y="315" width="220" height="8" fill="#121211"/>
+    <circle cx="340" cy="319" r="4" fill="#BD3A1B"/>
+
+    <!-- Secondary Column Content (Asymmetric Swiss Grid Layout) -->
+    <g transform="translate(75, 360)">
+      <text x="0" y="20" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" fill="#121211" letter-spacing="0.5">THE ARCHITECTURE OF READABILITY</text>
+      <text x="0" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="12.5" fill="#525049" line-height="1.6">
+        <tspan x="0" dy="0">An exploration into typographic rhythm, optical kerning,</tspan>
+        <tspan x="0" dy="19">and the structural discipline of modern grid systems.</tspan>
+        <tspan x="0" dy="19">Curated as a physical &amp; digital specimen catalogue.</tspan>
+      </text>
+
+      <!-- Specimen Type Scale Block -->
+      <g transform="translate(0, 110)">
+        <rect x="0" y="0" width="380" height="110" fill="#E5DFCF" stroke="#D1C7B2" stroke-width="1"/>
+        <text x="20" y="30" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#757065" letter-spacing="1">TYPE SPECIMEN / AKZIDENZ &amp; GROTESK</text>
+        <text x="20" y="65" font-family="'Plus Jakarta Sans', sans-serif" font-size="28" font-weight="700" fill="#121211" letter-spacing="-0.5">Aa Bb Gg Rr 1234</text>
+        <text x="20" y="92" font-family="'JetBrains Mono', monospace" font-size="11" fill="#888173">KERN: OPTICAL · TRACKING: -0.02EM · LEADING: 1.25</text>
+      </g>
+    </g>
+
+    <!-- Right Side Graphic Accent: Brutalist Contrast Circle -->
+    <g transform="translate(490, 310)">
+      <circle cx="110" cy="110" r="100" fill="#121211"/>
+      <path d="M 110 10 A 100 100 0 0 1 210 110 L 110 110 Z" fill="#BD3A1B"/>
+      <text x="110" y="118" font-family="'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="700" fill="#F3EFE6" text-anchor="middle" letter-spacing="3">1957–2026</text>
+    </g>
+
+    <!-- Bottom Colophon / Credits -->
+    <line x1="60" y1="610" x2="660" y2="610" stroke="#121211" stroke-width="1"/>
+    <g transform="translate(60, 635)">
+      <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#525049" letter-spacing="1">DESIGN: SHISIR ACHARYA</text>
+      <text x="250" y="0" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#525049" letter-spacing="1">EDITION: 100 SIGNED PRINTS</text>
+      <text x="600" y="0" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#121211" font-weight="700" text-anchor="end" letter-spacing="1">PRINTED ON 350GSM COTTON</text>
+    </g>
+  </g>
+
+  <!-- Left / Right Architectural crop marks in gallery space -->
+  <g stroke="#918776" stroke-width="1" opacity="0.6">
+    <line x1="200" y1="50" x2="220" y2="50"/>
+    <line x1="240" y1="30" x2="240" y2="40"/>
+    <line x1="960" y1="750" x2="980" y2="750"/>
+    <line x1="960" y1="760" x2="960" y2="770"/>
+  </g>
+</svg>
