@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="luminaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121417" />
+      <stop offset="100%" stop-color="#0B0D0F" />
+    </linearGradient>
+    <linearGradient id="emeraldCurve" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#2DD4BF" stop-opacity="0.0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Canvas Base -->
+  <rect width="1200" height="800" fill="url(#luminaBg)"/>
+
+  <!-- Top Specifications -->
+  <text x="80" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6B7280" letter-spacing="2">LUMINA FINTECH / DATA VISUALIZATION / CASE STUDY</text>
+  <text x="1120" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#2DD4BF" letter-spacing="1" text-anchor="end">WEB APPLICATION v1.8</text>
+
+  <!-- App Window Container -->
+  <g transform="translate(100, 110)">
+    <rect x="0" y="0" width="1000" height="580" rx="10" fill="#181B20" stroke="#262C36" stroke-width="1.5"/>
+
+    <!-- App Top Bar -->
+    <rect x="0" y="0" width="1000" height="48" rx="10" fill="#14171C"/>
+    <rect x="0" y="38" width="1000" height="10" fill="#14171C"/>
+    <circle cx="28" cy="24" r="4.5" fill="#374151"/>
+    <circle cx="44" cy="24" r="4.5" fill="#374151"/>
+    <circle cx="60" cy="24" r="4.5" fill="#374151"/>
+    <text x="500" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#9CA3AF" font-weight="500" text-anchor="middle">lumina.markets / enterprise / risk-surface</text>
+
+    <!-- Top Metrics Row -->
+    <g transform="translate(40, 75)">
+      <!-- Metric 1 -->
+      <rect x="0" y="0" width="280" height="110" rx="8" fill="#1E2229" stroke="#2F3642" stroke-width="1"/>
+      <text x="24" y="32" font-family="'JetBrains Mono', monospace" font-size="11" fill="#9CA3AF">TOTAL PORTFOLIO ASSETS</text>
+      <text x="24" y="74" font-family="'Plus Jakarta Sans', sans-serif" font-size="32" font-weight="700" fill="#F9FAFB">$1,842,910<tspan font-size="18" font-weight="500" fill="#9CA3AF">.50</tspan></text>
+      <text x="24" y="96" font-family="'JetBrains Mono', monospace" font-size="11" fill="#2DD4BF">+14.28% this quarter</text>
+
+      <!-- Metric 2 -->
+      <rect x="320" y="0" width="280" height="110" rx="8" fill="#1E2229" stroke="#2F3642" stroke-width="1"/>
+      <text x="344" y="32" font-family="'JetBrains Mono', monospace" font-size="11" fill="#9CA3AF">DYNAMIC LIQUIDITY INDEX</text>
+      <text x="344" y="74" font-family="'Plus Jakarta Sans', sans-serif" font-size="32" font-weight="700" fill="#F9FAFB">98.4<tspan font-size="20" font-weight="400" fill="#6B7280">/100</tspan></text>
+      <text x="344" y="96" font-family="'JetBrains Mono', monospace" font-size="11" fill="#9CA3AF">Optimal threshold locked</text>
+
+      <!-- Metric 3 -->
+      <rect x="640" y="0" width="280" height="110" rx="8" fill="#1E2229" stroke="#2F3642" stroke-width="1"/>
+      <text x="664" y="32" font-family="'JetBrains Mono', monospace" font-size="11" fill="#9CA3AF">ALGORITHMIC REBALANCING</text>
+      <text x="664" y="74" font-family="'Plus Jakarta Sans', sans-serif" font-size="32" font-weight="700" fill="#F9FAFB">0.038<tspan font-size="18" font-weight="500" fill="#9CA3AF">s</tspan></text>
+      <text x="664" y="96" font-family="'JetBrains Mono', monospace" font-size="11" fill="#2DD4BF">Realtime WebSocket Sync</text>
+    </g>
+
+    <!-- Main Chart Section -->
+    <g transform="translate(40, 215)">
+      <rect x="0" y="0" width="920" height="325" rx="8" fill="#1E2229" stroke="#2F3642" stroke-width="1"/>
+      
+      <!-- Chart Header -->
+      <text x="24" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="600" fill="#F3F4F6">Asset Trajectory &amp; Multi-Currency Exposure</text>
+      <text x="896" y="35" font-family="'JetBrains Mono', monospace" font-size="11" fill="#9CA3AF" text-anchor="end">RANGE: 12M · GRANULARITY: 1D</text>
+
+      <!-- Grid lines -->
+      <line x1="24" y1="80" x2="896" y2="80" stroke="#28303C" stroke-dasharray="3 3"/>
+      <line x1="24" y1="140" x2="896" y2="140" stroke="#28303C" stroke-dasharray="3 3"/>
+      <line x1="24" y1="200" x2="896" y2="200" stroke="#28303C" stroke-dasharray="3 3"/>
+      <line x1="24" y1="260" x2="896" y2="260" stroke="#28303C" stroke-dasharray="3 3"/>
+
+      <!-- Smooth Area and Line Chart -->
+      <path d="M 40 240 C 140 220, 200 170, 300 180 C 400 190, 480 120, 580 135 C 680 150, 760 90, 880 75 L 880 280 L 40 280 Z" fill="url(#emeraldCurve)"/>
+      <path d="M 40 240 C 140 220, 200 170, 300 180 C 400 190, 480 120, 580 135 C 680 150, 760 90, 880 75" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- Interactive Tooltip Node -->
+      <circle cx="580" cy="135" r="5" fill="#2DD4BF"/>
+      <circle cx="580" cy="135" r="10" fill="#2DD4BF" opacity="0.25"/>
+      <g transform="translate(520, 70)">
+        <rect x="0" y="0" width="120" height="45" rx="5" fill="#14171C" stroke="#2DD4BF" stroke-width="1"/>
+        <text x="60" y="20" font-family="'JetBrains Mono', monospace" font-size="10" fill="#9CA3AF" text-anchor="middle">OCT 14 PEAK</text>
+        <text x="60" y="36" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="700" fill="#F9FAFB" text-anchor="middle">$1.48M AUD</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Stamp -->
+  <text x="600" y="745" font-family="'JetBrains Mono', monospace" font-size="11" fill="#6B7280" text-anchor="middle" letter-spacing="2">INTERFACE DESIGN &amp; ACCESSIBLE VISUAL SYSTEMS / SHISIR ACHARYA</text>
+</svg>

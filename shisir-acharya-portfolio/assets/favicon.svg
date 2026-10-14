@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Minimalist Architectural Brand Mark for Shisir Acharya -->
+  <!-- Represents the intersection of Spatial Interface (Square), Kinetic Pacing (Diagonal Angle), and Typographic Precision (Focal Axis) -->
+  <rect width="64" height="64" fill="#121211" rx="2" />
+  
+  <!-- Architectural Form -->
+  <path d="M 16 16 L 36 16 L 48 32 L 28 32 Z" fill="#F7F5F0" />
+  <path d="M 28 32 L 48 32 L 36 48 L 16 48 Z" fill="#DCD6C9" opacity="0.85" />
+  
+  <!-- Cinnabar vermilion focal point -->
+  <circle cx="44" cy="20" r="4" fill="#BD3A1B" />
+</svg>

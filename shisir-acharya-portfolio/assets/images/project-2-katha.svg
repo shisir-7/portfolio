@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="cinematicGlow" cx="45%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#3D271D" />
+      <stop offset="45%" stop-color="#1F1612" />
+      <stop offset="100%" stop-color="#0D0A08" />
+    </radialGradient>
+    <linearGradient id="filmstrip" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#28221E" />
+      <stop offset="50%" stop-color="#362E28" />
+      <stop offset="100%" stop-color="#28221E" />
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.08 0" />
+      <feBlend mode="overlay" in2="SourceGraphic" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="800" fill="#0D0A08"/>
+  <rect width="1200" height="800" fill="url(#cinematicGlow)"/>
+
+  <!-- Editorial Top Data -->
+  <text x="80" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#8A7D75" letter-spacing="2">KATHA / 24.00 FPS / COLOR SCIENCE: KODAK 2383 PRINT EMULATION</text>
+  <text x="1120" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#D97706" letter-spacing="2" text-anchor="end">REEL 02 / SEQUENCE 04</text>
+
+  <!-- Widescreen Cinematic Viewport Frame (2.39:1 Anamorphic) -->
+  <g transform="translate(100, 110)">
+    <!-- Matte / Border -->
+    <rect x="0" y="0" width="1000" height="430" rx="4" fill="#050403" stroke="#2B231D" stroke-width="1.5"/>
+    
+    <!-- Cinematic Visual Representation: Himalayan Dusk Silhouette & Atmospheric Warmth -->
+    <path d="M 0 430 L 0 320 Q 200 240, 420 300 T 800 220 Q 950 180, 1000 230 L 1000 430 Z" fill="#1C140F" opacity="0.9"/>
+    <path d="M 0 430 L 0 360 Q 250 280, 520 350 T 1000 290 L 1000 430 Z" fill="#120D09"/>
+
+    <!-- Distant Mountain Ridges and Sun Bloom -->
+    <circle cx="580" cy="220" r="140" fill="#D97706" opacity="0.15" filter="blur(30px)"/>
+    <path d="M 120 430 L 320 230 L 460 340 L 680 180 L 890 350 L 1000 260 L 1000 430 Z" fill="#291D16" opacity="0.5"/>
+
+    <!-- Subtle Viewfinder Reticle / Crosshair -->
+    <g stroke="#F5EDE4" stroke-width="0.75" opacity="0.35">
+      <!-- 4 Center tick marks -->
+      <line x1="480" y1="215" x2="495" y2="215"/>
+      <line x1="505" y1="215" x2="520" y2="215"/>
+      <line x1="500" y1="195" x2="500" y2="210"/>
+      <line x1="500" y1="220" x2="500" y2="235"/>
+      
+      <!-- Corner Guides -->
+      <path d="M 40 50 L 70 50 M 40 50 L 40 80" fill="none"/>
+      <path d="M 960 50 L 930 50 M 960 50 L 960 80" fill="none"/>
+      <path d="M 40 380 L 70 380 M 40 380 L 40 350" fill="none"/>
+      <path d="M 960 380 L 930 380 M 960 380 L 960 350" fill="none"/>
+    </g>
+
+    <!-- Timecode & Overlay Details -->
+    <rect x="35" y="30" width="130" height="24" rx="3" fill="#000000" opacity="0.6"/>
+    <circle cx="48" cy="42" r="3.5" fill="#EF4444"/>
+    <text x="60" y="46" font-family="'JetBrains Mono', monospace" font-size="11" fill="#F5EDE4" font-weight="600" letter-spacing="1">REC 00:14:28:19</text>
+
+    <!-- ISO / Shutter / Aperture Specs -->
+    <text x="965" y="46" font-family="'JetBrains Mono', monospace" font-size="11" fill="#C4B5A5" text-anchor="end" letter-spacing="1">ISO 800 · T2.0 · 180° SHUTTER</text>
+
+    <text x="50" y="395" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="20" fill="#E8DEC8" opacity="0.85">“A quiet chronicle of rhythm, light, and memory.”</text>
+  </g>
+
+  <!-- Video Timeline & Audio Stem Waveforms (The Pacing Console) -->
+  <g transform="translate(100, 565)">
+    <rect x="0" y="0" width="1000" height="155" rx="8" fill="#14100D" stroke="#2B231D" stroke-width="1"/>
+    
+    <!-- Timeline Ruler -->
+    <rect x="0" y="0" width="1000" height="24" rx="8" fill="#1C1713"/>
+    <rect x="0" y="20" width="1000" height="4" fill="#1C1713"/>
+    <g stroke="#42372F" stroke-width="1">
+      <line x1="100" y1="5" x2="100" y2="19"/>
+      <line x1="200" y1="10" x2="200" y2="19"/>
+      <line x1="300" y1="5" x2="300" y2="19"/>
+      <line x1="400" y1="10" x2="400" y2="19"/>
+      <line x1="500" y1="5" x2="500" y2="19"/>
+      <line x1="600" y1="10" x2="600" y2="19"/>
+      <line x1="700" y1="5" x2="700" y2="19"/>
+      <line x1="800" y1="10" x2="800" y2="19"/>
+      <line x1="900" y1="5" x2="900" y2="19"/>
+    </g>
+    <text x="300" y="15" font-family="'JetBrains Mono', monospace" font-size="9" fill="#7A6C62">00:03:00</text>
+    <text x="500" y="15" font-family="'JetBrains Mono', monospace" font-size="9" fill="#7A6C62">00:05:00</text>
+    <text x="700" y="15" font-family="'JetBrains Mono', monospace" font-size="9" fill="#7A6C62">00:07:00</text>
+
+    <!-- Playhead Needle -->
+    <line x1="460" y1="0" x2="460" y2="155" stroke="#D97706" stroke-width="1.5"/>
+    <polygon points="454,0 466,0 460,8" fill="#D97706"/>
+
+    <!-- Track V1: Video Cuts -->
+    <text x="20" y="55" font-family="'JetBrains Mono', monospace" font-size="10" fill="#918175">V1 / A-ROLL</text>
+    <rect x="100" y="38" width="170" height="26" rx="3" fill="#3D291D" stroke="#5E402E" stroke-width="1"/>
+    <text x="110" y="54" font-family="'JetBrains Mono', monospace" font-size="10" fill="#E8DEC8">Shot_01_Dawn</text>
+
+    <rect x="275" y="38" width="180" height="26" rx="3" fill="#473224" stroke="#6E4C36" stroke-width="1"/>
+    <text x="285" y="54" font-family="'JetBrains Mono', monospace" font-size="10" fill="#E8DEC8">Shot_02_Portrait</text>
+
+    <rect x="460" y="38" width="220" height="26" rx="3" fill="#523B2A" stroke="#7A543C" stroke-width="1"/>
+    <text x="470" y="54" font-family="'JetBrains Mono', monospace" font-size="10" fill="#E8DEC8">Shot_03_Landscape</text>
+
+    <rect x="685" y="38" width="230" height="26" rx="3" fill="#3D291D" stroke="#5E402E" stroke-width="1"/>
+    <text x="695" y="54" font-family="'JetBrains Mono', monospace" font-size="10" fill="#E8DEC8">Shot_04_Heritage</text>
+
+    <!-- Track A1 & A2: Ambient Audio Waveforms -->
+    <text x="20" y="105" font-family="'JetBrains Mono', monospace" font-size="10" fill="#918175">A1 / FOLEY</text>
+    <rect x="100" y="80" width="815" height="28" rx="3" fill="#1C1814"/>
+    <!-- Simulated Audio Waveform -->
+    <path d="M 110 94 Q 130 82, 150 94 T 190 94 T 230 84 T 270 94 T 310 80 T 350 94 T 410 86 T 460 94 T 520 82 T 580 94 T 640 84 T 700 94 T 780 82 T 860 94 L 900 94" fill="none" stroke="#846E58" stroke-width="1.5"/>
+
+    <text x="20" y="140" font-family="'JetBrains Mono', monospace" font-size="10" fill="#918175">A2 / SCORE</text>
+    <rect x="100" y="118" width="815" height="26" rx="3" fill="#1C1814"/>
+    <path d="M 110 131 C 180 122, 240 138, 320 131 C 400 120, 480 142, 560 131 C 640 124, 740 136, 850 131" fill="none" stroke="#D97706" stroke-width="2"/>
+  </g>
+
+  <!-- Bottom Stamp -->
+  <text x="600" y="750" font-family="'JetBrains Mono', monospace" font-size="11" fill="#706155" text-anchor="middle" letter-spacing="2">PACING, RHYTHM &amp; NARRATIVE EDITORIAL / SHISIR ACHARYA</text>
+</svg>
