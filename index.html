@@ -27,21 +27,10 @@
   <meta property="twitter:description" content="Multidisciplinary creative exploring the intersection of digital interfaces, visual communication, and video storytelling." />
   <meta property="twitter:image" content="assets/images/og-cover.png" />
 
-  <!-- Google Fonts: Editorial Swiss Pairing + Font Switcher Options -->
+  <!-- Google Fonts: Editorial Swiss Pairing (Newsreader + Plus Jakarta Sans + JetBrains Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Google Translate Element API -->
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement(
-        { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false },
-        'google-translate-element'
-      );
-    }
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="styles/typography.css" />
@@ -92,47 +81,6 @@
           <a href="#about" class="site-nav__link">About</a>
           <a href="#process" class="site-nav__link">Process</a>
           <a href="#contact" class="site-nav__link">Contact</a>
-        </div>
-
-        <!-- Font Switcher Trigger + Panel -->
-        <div class="font-switcher" id="font-switcher">
-          <button class="font-switcher__btn" id="font-switcher-btn" aria-label="Change typeface" aria-expanded="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-          </button>
-          <div class="font-switcher__panel" id="font-switcher-panel" role="listbox" aria-label="Choose typeface">
-            <span class="font-switcher__label">Typeface</span>
-            <button class="font-option active" data-font-sans="'Plus Jakarta Sans', sans-serif" data-font-serif="'Newsreader', serif" data-font-name="jakarta">
-              <span class="font-option__preview" style="font-family:'Plus Jakarta Sans',sans-serif">Aa</span>
-              <span class="font-option__name">Jakarta</span>
-            </button>
-            <button class="font-option" data-font-sans="'DM Sans', sans-serif" data-font-serif="'Playfair Display', serif" data-font-name="dm">
-              <span class="font-option__preview" style="font-family:'DM Sans',sans-serif">Aa</span>
-              <span class="font-option__name">DM Sans</span>
-            </button>
-            <button class="font-option" data-font-sans="'Lora', serif" data-font-serif="'Lora', serif" data-font-name="lora">
-              <span class="font-option__preview" style="font-family:'Lora',serif">Aa</span>
-              <span class="font-option__name">Lora</span>
-            </button>
-            <button class="font-option" data-font-sans="'Space Grotesk', sans-serif" data-font-serif="'Newsreader', serif" data-font-name="space">
-              <span class="font-option__preview" style="font-family:'Space Grotesk',sans-serif">Aa</span>
-              <span class="font-option__name">Space</span>
-            </button>
-            <button class="font-option" data-font-sans="'JetBrains Mono', monospace" data-font-serif="'JetBrains Mono', monospace" data-font-name="mono">
-              <span class="font-option__preview" style="font-family:'JetBrains Mono',monospace">Aa</span>
-              <span class="font-option__name">Mono</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Language Translate Trigger -->
-        <div class="translate-control" id="translate-control">
-          <button class="translate-btn" id="translate-btn" aria-label="Translate page" aria-expanded="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </button>
-          <div class="translate-panel" id="translate-panel">
-            <span class="font-switcher__label">Language</span>
-            <div id="google-translate-element"></div>
-          </div>
         </div>
 
         <!-- Editorial Theme Switch (Light / Dark) -->
@@ -249,7 +197,7 @@
             <button class="filter-btn" data-filter="video" role="tab" aria-selected="false">Video Editing</button>
             <button class="filter-btn" data-filter="graphic" role="tab" aria-selected="false">Graphic Design</button>
           </div>
-          <div class="work-counter" id="work-counter">SHOWING 7 OF 7 WORKS</div>
+          <div class="work-counter" id="work-counter">SHOWING 6 OF 6 WORKS</div>
         </div>
 
         <!-- Projects Grid (Injected via projects-data.js) -->
