@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initClipboard();
   initCustomCursor();
   initScrollSpy();
+  initFontSwitcher();
+  initTranslator();
 });
 
 /* --------------------------------------------------------------------------
@@ -447,4 +449,96 @@ function initScrollSpy() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
+}
+
+/* --------------------------------------------------------------------------
+   10. Font Switcher — Curated Typeface Selector
+   -------------------------------------------------------------------------- */
+function initFontSwitcher() {
+  const switcher = document.getElementById('font-switcher');
+  const btn = document.getElementById('font-switcher-btn');
+  const panel = document.getElementById('font-switcher-panel');
+  const options = document.querySelectorAll('.font-option');
+
+  if (!switcher || !btn || !panel) return;
+
+  // Restore saved font preference
+  const savedFont = localStorage.getItem('sa-font-name');
+  if (savedFont) {
+    const savedOption = document.querySelector(`.font-option[data-font-name="${savedFont}"]`);
+    if (savedOption) {
+      applyFont(savedOption);
+    }
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen);
+    // Close translate panel if open
+    const translatePanel = document.getElementById('translate-panel');
+    if (translatePanel) translatePanel.classList.remove('open');
+    const translateBtn = document.getElementById('translate-btn');
+    if (translateBtn) translateBtn.setAttribute('aria-expanded', 'false');
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      options.forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
+      applyFont(option);
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Close panel when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!switcher.contains(e.target)) {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  function applyFont(option) {
+    const fontSans = option.getAttribute('data-font-sans');
+    const fontSerif = option.getAttribute('data-font-serif');
+    const fontName = option.getAttribute('data-font-name');
+    document.documentElement.style.setProperty('--font-sans', fontSans);
+    document.documentElement.style.setProperty('--font-serif', fontSerif);
+    localStorage.setItem('sa-font-name', fontName);
+    // Mark active state
+    document.querySelectorAll('.font-option').forEach(o => o.classList.remove('active'));
+    option.classList.add('active');
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Language Translator — Google Translate Widget Toggle
+   -------------------------------------------------------------------------- */
+function initTranslator() {
+  const translateBtn = document.getElementById('translate-btn');
+  const translatePanel = document.getElementById('translate-panel');
+  const translateControl = document.getElementById('translate-control');
+
+  if (!translateBtn || !translatePanel) return;
+
+  translateBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = translatePanel.classList.toggle('open');
+    translateBtn.setAttribute('aria-expanded', isOpen);
+    // Close font panel if open
+    const fontPanel = document.getElementById('font-switcher-panel');
+    if (fontPanel) fontPanel.classList.remove('open');
+    const fontBtn = document.getElementById('font-switcher-btn');
+    if (fontBtn) fontBtn.setAttribute('aria-expanded', 'false');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!translateControl.contains(e.target)) {
+      translatePanel.classList.remove('open');
+      translateBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 }

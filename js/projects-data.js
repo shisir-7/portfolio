@@ -202,5 +202,39 @@ window.PORTFOLIO_PROJECTS = [
       ],
       tools: ["Adobe InDesign", "Photoshop", "Editorial Curation", "Print Finishing", "Grid Systems"]
     }
+  },
+  {
+    id: "lipi-engine",
+    number: "07",
+    title: "Lipi — Multi-Language & Typography Engine",
+    discipline: "UI/UX Design",
+    category: "ui-ux",
+    role: "UI/UX Designer & Frontend Developer",
+    year: "2026",
+    badge: "Live Feature",
+    headline: "A zero-dependency, real-time language translation and typeface-switching engine embedded directly into this portfolio.",
+    summary: "Lipi is a live adaptive system built into this very site. It combines Google Translate's 100+ language engine with a curated typeface switcher, letting visitors read and experience the portfolio in their preferred language and font style — with zero server cost and no API keys.",
+    image: "assets/images/project-7-lipi.svg",
+    imageAlt: "Lipi multi-language typography engine showing language specimens in English, Japanese, Arabic, Spanish, French, and Nepali alongside font option swatches",
+    demoUrl: "#work",
+    caseStudy: {
+      challenge: "Portfolios are typically single-language and locked to one typeface. For a multidisciplinary designer working with global and local clients, inaccessible language and fixed typography signals a lack of inclusion — a contradiction with the very values of good UX.",
+      targetAudience: "International clients, local Nepali audiences, multilingual collaborators, and typography enthusiasts who want to experience the portfolio in their preferred language or reading style.",
+      approach: "Chose the Google Translate embed widget for its zero-cost, zero-API-key access to 100+ languages. Built a CSS variable–driven font switcher using five curated typefaces loaded from Google Fonts, each persisted via localStorage. Both systems work entirely client-side with vanilla JavaScript.",
+      interfaceDecisions: [
+        "Font switching operates via CSS custom property overrides on :root, instantly reflecting across all page typography without a reload.",
+        "Google Translate widget is initialized with autoDisplay: false, preventing the intrusive toolbar while preserving the language selector.",
+        "Both controls are surfaced as minimal icon buttons in the navigation bar — accessible but visually unobtrusive, consistent with the editorial aesthetic.",
+        "User font preference is persisted to localStorage, so returning visitors see their chosen typeface immediately on load."
+      ],
+      deliverables: [
+        "Live Font Switcher (5 typefaces: Jakarta, DM Sans, Lora, Space Grotesk, Mono)",
+        "Live Language Translator (Google Translate — 100+ languages)",
+        "localStorage Persistence for User Preferences",
+        "Accessible ARIA-labelled Controls with Keyboard Support",
+        "Project SVG Type Specimen (multi-language + font swatches)"
+      ],
+      tools: ["Vanilla JavaScript", "CSS Custom Properties", "Google Translate API", "Google Fonts", "localStorage", "ARIA Accessibility"]
+    }
   }
 ];

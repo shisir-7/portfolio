@@ -1,128 +1,93 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <linearGradient id="lipiBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#151513" />
-      <stop offset="100%" stop-color="#0E0E0D" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Noto+Naskh+Arabic&family=Noto+Sans+Devanagari&display=swap');
+      text { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    </style>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7F5F0"/>
+      <stop offset="100%" stop-color="#EDE9E1"/>
     </linearGradient>
-    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
-      <feDropShadow dx="0" dy="20" stdDeviation="28" flood-color="#000000" flood-opacity="0.45"/>
-    </filter>
   </defs>
 
-  <!-- Background Base -->
-  <rect width="1200" height="800" fill="url(#lipiBg)"/>
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bg-grad)"/>
 
-  <!-- Subtle Typographic Grid -->
-  <g stroke="#262623" stroke-width="1" stroke-dasharray="2 4" opacity="0.6">
-    <line x1="100" y1="0" x2="100" y2="800"/>
-    <line x1="320" y1="0" x2="320" y2="800"/>
-    <line x1="880" y1="0" x2="880" y2="800"/>
-    <line x1="1100" y1="0" x2="1100" y2="800"/>
-    <line x1="0" y1="120" x2="1200" y2="120"/>
-    <line x1="0" y1="680" x2="1200" y2="680"/>
-  </g>
+  <!-- Grid lines (editorial structure) -->
+  <line x1="0" y1="64" x2="800" y2="64" stroke="#DCD6C9" stroke-width="1"/>
+  <line x1="0" y1="340" x2="800" y2="340" stroke="#DCD6C9" stroke-width="1"/>
+  <line x1="480" y1="64" x2="480" y2="500" stroke="#DCD6C9" stroke-width="1"/>
 
-  <!-- Metadata corner stamps -->
-  <text x="100" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#71716A" letter-spacing="2">SYS.LIPI / BILINGUAL LOCALIZATION &amp; TYPOGRAPHY ENGINE</text>
-  <text x="1100" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#BD3A1B" letter-spacing="1" text-anchor="end">LOCALE: EN ⇄ NP (नेपाली)</text>
+  <!-- Top bar -->
+  <rect x="0" y="0" width="800" height="64" fill="#121211"/>
+  <text x="32" y="39" font-family="'JetBrains Mono',monospace" font-size="11" fill="#DCD6C9" letter-spacing="3">PROJECT 07 — LIPI</text>
+  <rect x="600" y="18" width="168" height="28" rx="4" fill="#BD3A1B"/>
+  <text x="684" y="36" font-family="'JetBrains Mono',monospace" font-size="10" fill="#F7F5F0" letter-spacing="2" text-anchor="middle">LIVE FEATURE</text>
 
-  <!-- Main System UI Showcase Window -->
-  <g filter="url(#softShadow)" transform="translate(100, 110)">
-    <rect x="0" y="0" width="1000" height="570" rx="8" fill="#141413" stroke="#2C2C28" stroke-width="1.5"/>
+  <!-- Main label -->
+  <text x="32" y="112" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="42" fill="#121211" letter-spacing="-1">Lipi</text>
+  <text x="32" y="138" font-family="'Plus Jakarta Sans',sans-serif" font-weight="300" font-size="14" fill="#6B6560" letter-spacing="0.5">Multi-Language · Multi-Font · Live Portfolio Engine</text>
 
-    <!-- Window Top Header -->
-    <rect x="0" y="0" width="1000" height="46" rx="8" fill="#1C1C1A"/>
-    <rect x="0" y="36" width="1000" height="10" fill="#1C1C1A"/>
-    <circle cx="28" cy="23" r="4.5" fill="#3D3D38"/>
-    <circle cx="44" cy="23" r="4.5" fill="#3D3D38"/>
-    <circle cx="60" cy="23" r="4.5" fill="#3D3D38"/>
-    <text x="500" y="27" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#888680" font-weight="500" text-anchor="middle">lipi-engine.shisir.design / adaptive-locale-matrix</text>
+  <!-- Language specimens grid (left panel) -->
+  <!-- English -->
+  <text x="32" y="186" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#BD3A1B" letter-spacing="2">EN</text>
+  <text x="60" y="186" font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="700" fill="#121211">Hello, World.</text>
 
-    <!-- Two-Panel Specimen Split -->
-    <!-- Left: Latin Script & Font Engine Matrix -->
-    <g transform="translate(40, 75)">
-      <rect x="0" y="0" width="440" height="450" rx="6" fill="#1B1B19" stroke="#2B2B27" stroke-width="1"/>
-      
-      <!-- Panel Header -->
-      <text x="24" y="35" font-family="'JetBrains Mono', monospace" font-size="11" fill="#BD3A1B" letter-spacing="1.5">01 / LATIN SPECIMEN</text>
-      <text x="416" y="35" font-family="'JetBrains Mono', monospace" font-size="11" fill="#71716A" text-anchor="end">Plus Jakarta Sans</text>
-      
-      <line x1="24" y1="52" x2="416" y2="52" stroke="#292925" stroke-width="1"/>
+  <!-- Japanese (rendered as text, Unicode) -->
+  <text x="32" y="220" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#BD3A1B" letter-spacing="2">JA</text>
+  <text x="60" y="222" font-size="22" font-weight="400" fill="#3A3732">こんにちは世界</text>
 
-      <!-- Large Type Sample -->
-      <text x="24" y="115" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="44" fill="#F7F5F0" letter-spacing="-1.5">Structure.</text>
-      <text x="24" y="150" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="24" fill="#C9C4B7">The cadence of thought</text>
+  <!-- Arabic (RTL displayed as LTR label) -->
+  <text x="32" y="256" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#BD3A1B" letter-spacing="2">AR</text>
+  <text x="60" y="258" font-size="22" fill="#3A3732">مرحباً بالعالم</text>
 
-      <text x="24" y="190" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#8E8B82" line-height="1.5">
-        <tspan x="24" dy="0">Real-time typographic switching dynamically</tspan>
-        <tspan x="24" dy="19">re-calculates line heights, tracking, and optical</tspan>
-        <tspan x="24" dy="19">rhythm without triggering visual reflow.</tspan>
-      </text>
+  <!-- Nepali (Devanagari) -->
+  <text x="32" y="292" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#BD3A1B" letter-spacing="2">NE</text>
+  <text x="60" y="294" font-size="20" fill="#3A3732">नमस्ते संसार</text>
 
-      <!-- Font Switcher Control Pill Representation -->
-      <g transform="translate(24, 260)">
-        <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#6B6861" letter-spacing="1">LIVE FONT MODES</text>
-        
-        <rect x="0" y="15" width="120" height="34" rx="4" fill="#BD3A1B"/>
-        <text x="60" y="37" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Editorial Serif</text>
+  <!-- Spanish -->
+  <text x="32" y="324" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#BD3A1B" letter-spacing="2">ES</text>
+  <text x="60" y="324" font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="600" fill="#3A3732">Hola, Mundo.</text>
 
-        <rect x="130" y="15" width="120" height="34" rx="4" fill="#242421" stroke="#363632"/>
-        <text x="190" y="37" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#A8A59D" text-anchor="middle">Swiss Sans</text>
+  <!-- Divider dot row -->
+  <circle cx="32" cy="356" r="3" fill="#BD3A1B"/>
+  <circle cx="46" cy="356" r="2" fill="#DCD6C9"/>
+  <circle cx="57" cy="356" r="2" fill="#DCD6C9"/>
+  <text x="70" y="360" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1.5">100+ LANGUAGES SUPPORTED</text>
 
-        <rect x="260" y="15" width="120" height="34" rx="4" fill="#242421" stroke="#363632"/>
-        <text x="320" y="37" font-family="'JetBrains Mono', monospace" font-size="11" fill="#A8A59D" text-anchor="middle">Technical Mono</text>
-      </g>
+  <!-- Right panel: Font swatches -->
+  <text x="504" y="100" font-family="'JetBrains Mono',monospace" font-size="9" fill="#BD3A1B" letter-spacing="2">TYPEFACE SYSTEM</text>
 
-      <!-- Micro Specs -->
-      <g transform="translate(24, 370)">
-        <rect x="0" y="0" width="392" height="55" rx="4" fill="#141413" stroke="#242421"/>
-        <text x="16" y="24" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#78756E">BASELINE GRID: 4px / 8px</text>
-        <text x="16" y="42" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#BD3A1B">LATENCY: 0.8ms ZERO-FLICKER PERSISTENCE</text>
-      </g>
-    </g>
+  <!-- Swatch 1: Jakarta -->
+  <text x="504" y="138" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="28" fill="#121211">Jakarta</text>
+  <rect x="504" y="144" width="48" height="2" fill="#BD3A1B"/>
+  <text x="504" y="157" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1">PLUS JAKARTA SANS</text>
 
-    <!-- Right: Devanagari Script & Locale Architecture -->
-    <g transform="translate(520, 75)">
-      <rect x="0" y="0" width="440" height="450" rx="6" fill="#1B1B19" stroke="#2B2B27" stroke-width="1"/>
-      
-      <!-- Panel Header -->
-      <text x="24" y="35" font-family="'JetBrains Mono', monospace" font-size="11" fill="#BD3A1B" letter-spacing="1.5">02 / DEVANAGARI SPECIMEN</text>
-      <text x="416" y="35" font-family="'JetBrains Mono', monospace" font-size="11" fill="#71716A" text-anchor="end">नेपाली लिपि संरचना</text>
-      
-      <line x1="24" y1="52" x2="416" y2="52" stroke="#292925" stroke-width="1"/>
+  <!-- Swatch 2: DM Sans -->
+  <text x="504" y="192" font-family="'DM Sans',sans-serif" font-weight="700" font-size="26" fill="#3A3732">DM Sans</text>
+  <text x="504" y="208" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1">DM SANS</text>
 
-      <!-- Large Devanagari Sample -->
-      <text x="24" y="120" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="46" fill="#F7F5F0">रचनात्मकता।</text>
-      <text x="24" y="155" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="22" fill="#C9C4B7">विचार र भावनाको सङ्गम</text>
+  <!-- Swatch 3: Lora -->
+  <text x="504" y="242" font-family="Georgia,serif" font-style="italic" font-size="26" fill="#3A3732">Lora Serif</text>
+  <text x="504" y="258" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1">LORA SERIF</text>
 
-      <text x="24" y="190" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13.5" fill="#8E8B82" line-height="1.6">
-        <tspan x="24" dy="0">नेपाली भाषा र देवनागरी लिपिलाई अन्तर्राष्ट्रिय</tspan>
-        <tspan x="24" dy="21">डिजाइन मापदण्डसँग संयोजन गर्दै सहज, सुपाठ्य र</tspan>
-        <tspan x="24" dy="21">आकर्षक प्रयोगकर्ता अनुभव निर्माण गरिएको छ।</tspan>
-      </text>
+  <!-- Swatch 4: Space Grotesk -->
+  <text x="504" y="291" font-family="system-ui,sans-serif" font-weight="600" font-size="24" fill="#3A3732">Space Grot.</text>
+  <text x="504" y="307" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1">SPACE GROTESK</text>
 
-      <!-- Locale Switcher Pill Representation -->
-      <g transform="translate(24, 260)">
-        <text x="0" y="0" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#6B6861" letter-spacing="1">BILINGUAL LOCALE SWITCH</text>
-        
-        <rect x="0" y="15" width="180" height="34" rx="4" fill="#242421" stroke="#363632"/>
-        <circle cx="20" cy="32" r="4" fill="#71716A"/>
-        <text x="35" y="36" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#A8A59D">English (EN)</text>
+  <!-- Swatch 5: Mono -->
+  <text x="504" y="337" font-family="'Courier New',monospace" font-size="23" fill="#3A3732">0123 Mono</text>
+  <text x="504" y="352" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9B9490" letter-spacing="1">JETBRAINS MONO</text>
 
-        <rect x="195" y="15" width="185" height="34" rx="4" fill="#291C18" stroke="#BD3A1B"/>
-        <circle cx="215" cy="32" r="4" fill="#BD3A1B"/>
-        <text x="230" y="36" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="700" fill="#F7F5F0">नेपाली (NP)</text>
-      </g>
+  <!-- Bottom stat bar -->
+  <rect x="0" y="420" width="800" height="80" fill="#121211"/>
 
-      <!-- Cultural Origin & Shirorekha Alignment -->
-      <g transform="translate(24, 370)">
-        <rect x="0" y="0" width="392" height="55" rx="4" fill="#141413" stroke="#242421"/>
-        <text x="16" y="24" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#78756E">ORIGIN: KAPILVASTU, NEPAL (UTC+5:45)</text>
-        <text x="16" y="42" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#BD3A1B">MATRA &amp; SHIROREKHA OPTICAL BALANCING</text>
-      </g>
-    </g>
-  </g>
+  <text x="32" y="455" font-family="'JetBrains Mono',monospace" font-size="9" fill="#6B6560" letter-spacing="2">STACK</text>
+  <text x="32" y="472" font-family="'JetBrains Mono',monospace" font-size="11" fill="#F7F5F0" letter-spacing="0.5">Vanilla JS · CSS Custom Properties · localStorage</text>
 
-  <!-- Bottom Stamp -->
-  <text x="600" y="745" font-family="'JetBrains Mono', monospace" font-size="11" fill="#5E5C56" text-anchor="middle" letter-spacing="2">INTEGRATED DIRECTLY INTO SHISIR ACHARYA PORTFOLIO / 2026</text>
+  <text x="500" y="455" font-family="'JetBrains Mono',monospace" font-size="9" fill="#6B6560" letter-spacing="2">COST</text>
+  <text x="500" y="472" font-family="'JetBrains Mono',monospace" font-size="11" fill="#BD3A1B" letter-spacing="0.5">Zero API Keys. Zero Cost.</text>
+
+  <!-- Accent detail line -->
+  <rect x="0" y="416" width="800" height="4" fill="#BD3A1B"/>
 </svg>
