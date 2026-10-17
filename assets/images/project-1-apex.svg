@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181816" />
+      <stop offset="100%" stop-color="#0E0E0D" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#222220" />
+      <stop offset="100%" stop-color="#1A1A18" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="24" stdDeviation="32" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="800" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g stroke="#262624" stroke-width="1" stroke-dasharray="2 4" opacity="0.4">
+    <line x1="80" y1="0" x2="80" y2="800" />
+    <line x1="280" y1="0" x2="280" y2="800" />
+    <line x1="920" y1="0" x2="920" y2="800" />
+    <line x1="1120" y1="0" x2="1120" y2="800" />
+    <line x1="0" y1="120" x2="1200" y2="120" />
+    <line x1="0" y1="680" x2="1200" y2="680" />
+  </g>
+
+  <!-- Metadata corner stamps -->
+  <text x="80" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#71716A" letter-spacing="2">SYS.APEX / UI-UX SPECIFICATION</text>
+  <text x="1120" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#BD3A1B" letter-spacing="1" text-anchor="end">DESIGN SYSTEM v2.4</text>
+
+  <!-- Main Application Window (Mockup) -->
+  <g filter="url(#softShadow)">
+    <rect x="140" y="110" width="920" height="580" rx="12" fill="#141413" stroke="#2C2C28" stroke-width="1.5"/>
+    
+    <!-- Window Bar -->
+    <rect x="140" y="110" width="920" height="44" rx="12" fill="#1B1B19"/>
+    <rect x="140" y="142" width="920" height="12" fill="#1B1B19"/>
+    <circle cx="170" cy="132" r="5" fill="#3E3E3A"/>
+    <circle cx="188" cy="132" r="5" fill="#3E3E3A"/>
+    <circle cx="206" cy="132" r="5" fill="#3E3E3A"/>
+    
+    <text x="600" y="136" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#888680" font-weight="500" text-anchor="middle" letter-spacing="0.5">apex-workspace.app / canvas-runtime</text>
+
+    <!-- Sidebar Layout -->
+    <rect x="140" y="154" width="200" height="536" fill="#161614" stroke="#242421" stroke-width="1"/>
+    
+    <!-- Sidebar Items -->
+    <text x="170" y="195" font-family="'JetBrains Mono', monospace" font-size="11" fill="#666560" letter-spacing="1.5">PERSPECTIVES</text>
+    <rect x="160" y="210" width="160" height="32" rx="6" fill="#242420"/>
+    <circle cx="176" cy="226" r="4" fill="#BD3A1B"/>
+    <text x="192" y="230" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#F0EDE6" font-weight="500">Fluid Workspace</text>
+    
+    <text x="192" y="270" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#8E8C85">Neural Index</text>
+    <text x="192" y="306" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#8E8C85">Spatial Canvas</text>
+    <text x="192" y="342" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#8E8C85">Component Specs</text>
+    
+    <line x1="160" y1="375" x2="320" y2="375" stroke="#262623" stroke-width="1"/>
+    <text x="170" y="405" font-family="'JetBrains Mono', monospace" font-size="11" fill="#666560" letter-spacing="1.5">TOKENS</text>
+    <rect x="170" y="425" width="16" height="16" rx="3" fill="#BD3A1B"/>
+    <text x="196" y="438" font-family="'JetBrains Mono', monospace" font-size="12" fill="#A8A59D">#BD3A1B Accent</text>
+    <rect x="170" y="455" width="16" height="16" rx="3" fill="#2C2C28"/>
+    <text x="196" y="468" font-family="'JetBrains Mono', monospace" font-size="12" fill="#A8A59D">#141413 Obsidian</text>
+
+    <!-- Main Workspace Canvas -->
+    <!-- Breadcrumb -->
+    <text x="375" y="195" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#787670">Core Engine / Architecture / <tspan fill="#F7F5F0" font-weight="600">Adaptive Viewport</tspan></text>
+    
+    <!-- Card 1: Primary Visual Metric -->
+    <rect x="375" y="220" width="310" height="210" rx="8" fill="url(#cardGrad)" stroke="#2B2B28" stroke-width="1"/>
+    <text x="400" y="255" font-family="'JetBrains Mono', monospace" font-size="11" fill="#928F87" letter-spacing="1">CANVAS LATENCY</text>
+    <text x="400" y="305" font-family="'Plus Jakarta Sans', sans-serif" font-size="44" font-weight="700" fill="#F7F5F0" letter-spacing="-1">4.2<tspan font-size="20" font-weight="400" fill="#BD3A1B">ms</tspan></text>
+    <text x="400" y="335" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#828078">60 FPS native compositing thread</text>
+    <!-- Wave Sparkline -->
+    <path d="M 400 395 C 440 370, 470 410, 510 380 C 550 350, 580 390, 620 365 L 655 385" fill="none" stroke="#BD3A1B" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Card 2: Interactive Component Node -->
+    <rect x="710" y="220" width="320" height="210" rx="8" fill="url(#cardGrad)" stroke="#2B2B28" stroke-width="1"/>
+    <text x="735" y="255" font-family="'JetBrains Mono', monospace" font-size="11" fill="#928F87" letter-spacing="1">GRID GEOMETRY</text>
+    <!-- Mini Isometric Grid Preview -->
+    <g transform="translate(735, 275)" opacity="0.85">
+      <rect x="0" y="0" width="80" height="50" rx="4" fill="#262624" stroke="#3D3D38"/>
+      <rect x="90" y="0" width="80" height="50" rx="4" fill="#BD3A1B" opacity="0.8"/>
+      <rect x="180" y="0" width="80" height="50" rx="4" fill="#262624" stroke="#3D3D38"/>
+      <rect x="0" y="60" width="125" height="45" rx="4" fill="#262624" stroke="#3D3D38"/>
+      <rect x="135" y="60" width="125" height="45" rx="4" fill="#262624" stroke="#3D3D38"/>
+    </g>
+    <text x="735" y="405" font-family="'JetBrains Mono', monospace" font-size="11" fill="#75736E">Auto-layout 12-col column lock</text>
+
+    <!-- Lower Section: Design Tokens Row -->
+    <rect x="375" y="455" width="655" height="195" rx="8" fill="url(#cardGrad)" stroke="#2B2B28" stroke-width="1"/>
+    <text x="405" y="490" font-family="'JetBrains Mono', monospace" font-size="11" fill="#928F87" letter-spacing="1">SYSTEM TYPOGRAPHY &amp; COMPONENT HIERARCHY</text>
+    
+    <text x="405" y="535" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="600" fill="#F7F5F0">Display Medium 28pt</text>
+    <text x="405" y="565" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="400" fill="#9C9991">Subtle contrast ratios engineered for prolonged cognitive focus.</text>
+    
+    <g transform="translate(405, 595)">
+      <rect x="0" y="0" width="110" height="28" rx="4" fill="#22221F" stroke="#363632"/>
+      <text x="55" y="18" font-family="'JetBrains Mono', monospace" font-size="11" fill="#D4D1C8" text-anchor="middle">Button.Primary</text>
+
+      <rect x="125" y="0" width="100" height="28" rx="4" fill="transparent" stroke="#3E3E38"/>
+      <text x="175" y="18" font-family="'JetBrains Mono', monospace" font-size="11" fill="#88867E" text-anchor="middle">Ghost State</text>
+
+      <rect x="240" y="0" width="80" height="28" rx="14" fill="#BD3A1B" opacity="0.2"/>
+      <text x="280" y="18" font-family="'JetBrains Mono', monospace" font-size="11" fill="#BD3A1B" text-anchor="middle">Active</text>
+    </g>
+  </g>
+
+  <!-- Bottom Stamp -->
+  <text x="600" y="745" font-family="'JetBrains Mono', monospace" font-size="11" fill="#5E5C56" text-anchor="middle" letter-spacing="2">SHISIR ACHARYA / INTERACTION ARCHITECTURE / 2026</text>
+</svg>

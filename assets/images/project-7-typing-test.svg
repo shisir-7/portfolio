@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" fill="none">
+  <defs>
+    <pattern id="grain" width="140" height="140" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="12" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="84" cy="42" r="1" fill="#fff" opacity=".1"/>
+      <circle cx="44" cy="108" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="126" cy="128" r="1" fill="#fff" opacity=".08"/>
+    </pattern>
+    <filter id="shadow" x="115" y="105" width="1370" height="875" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="24"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .28 0"/>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1050" fill="#171715"/>
+  <rect width="1600" height="1050" fill="url(#grain)"/>
+  <path d="M0 824H1600" stroke="#fff" stroke-opacity=".08"/>
+  <text x="112" y="113" fill="#B8B3A8" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="4">FOCUS / PRACTICE / IMPROVE</text>
+  <text x="1484" y="113" fill="#8E897F" font-family="Arial, sans-serif" font-size="17" letter-spacing="2" text-anchor="end">TYPING LAB  —  01</text>
+
+  <g filter="url(#shadow)">
+    <rect x="142" y="154" width="1316" height="670" rx="20" fill="#F7F5F0"/>
+    <path d="M162 154H1438C1449.05 154 1458 162.954 1458 174V228H142V174C142 162.954 150.954 154 162 154Z" fill="#EEECE6"/>
+    <circle cx="179" cy="191" r="6" fill="#BD3A1B"/>
+    <circle cx="201" cy="191" r="6" fill="#D7C7AA"/>
+    <circle cx="223" cy="191" r="6" fill="#C4BFB3"/>
+    <text x="800" y="198" fill="#767168" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3" text-anchor="middle">TYPING SPEED TEST</text>
+    <rect x="1284" y="176" width="132" height="32" rx="16" fill="#E6E1D7"/>
+    <circle cx="1304" cy="192" r="4" fill="#BD3A1B"/>
+    <text x="1318" y="197" fill="#625D54" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.3">LOCAL SESSION</text>
+
+    <text x="206" y="294" fill="#8D887E" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="2.4">YOUR LATEST RESULT</text>
+    <text x="202" y="419" fill="#171715" font-family="Arial, sans-serif" font-size="112" font-weight="700" letter-spacing="-7">84</text>
+    <text x="344" y="414" fill="#767168" font-family="Arial, sans-serif" font-size="23" font-weight="700" letter-spacing="2">WPM</text>
+    <path d="M203 448H450" stroke="#DCD6C9" stroke-width="2"/>
+    <text x="205" y="491" fill="#BD3A1B" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="2">+12% THIS WEEK</text>
+
+    <rect x="1001" y="272" width="215" height="122" rx="14" fill="#EEECE6"/>
+    <text x="1027" y="306" fill="#8D887E" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2">ACCURACY</text>
+    <text x="1025" y="367" fill="#171715" font-family="Arial, sans-serif" font-size="51" font-weight="700" letter-spacing="-2">98<tspan font-size="27" fill="#767168">%</tspan></text>
+    <rect x="1234" y="272" width="181" height="122" rx="14" fill="#EEECE6"/>
+    <text x="1260" y="306" fill="#8D887E" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2">CONSISTENCY</text>
+    <text x="1258" y="367" fill="#171715" font-family="Arial, sans-serif" font-size="51" font-weight="700" letter-spacing="-2">92<tspan font-size="27" fill="#767168">%</tspan></text>
+
+    <text x="206" y="558" fill="#8D887E" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2">LIVE TYPING TEST</text>
+    <rect x="204" y="580" width="1211" height="93" rx="12" fill="#EEECE6"/>
+    <text x="237" y="637" fill="#807B72" font-family="Courier New, monospace" font-size="25">measure your progress one keystroke at a time</text>
+    <rect x="731" y="602" width="4" height="43" rx="2" fill="#C29B00"/>
+
+    <text x="206" y="719" fill="#9A958A" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.7">WPM PROGRESS</text>
+    <path d="M363 724C416 718 442 697 484 704C530 712 551 683 597 689C643 695 664 660 711 670C757 680 781 640 826 650C874 660 899 628 943 638C990 649 1016 606 1063 620C1109 635 1131 589 1178 603C1227 617 1252 576 1293 585C1336 595 1360 565 1415 548" stroke="#BD3A1B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M363 724C416 718 442 697 484 704C530 712 551 683 597 689C643 695 664 660 711 670C757 680 781 640 826 650C874 660 899 628 943 638C990 649 1016 606 1063 620C1109 635 1131 589 1178 603C1227 617 1252 576 1293 585C1336 595 1360 565 1415 548V747H363V724Z" fill="#BD3A1B" fill-opacity=".08"/>
+    <circle cx="1415" cy="548" r="7" fill="#BD3A1B"/>
+  </g>
+
+  <g transform="translate(348 858)">
+    <rect width="904" height="116" rx="18" fill="#242421" stroke="#fff" stroke-opacity=".12"/>
+    <g fill="#393934" stroke="#5A5952" stroke-width="1">
+      <rect x="20" y="18" width="48" height="34" rx="6"/><rect x="77" y="18" width="48" height="34" rx="6"/><rect x="134" y="18" width="48" height="34" rx="6"/><rect x="191" y="18" width="48" height="34" rx="6"/><rect x="248" y="18" width="48" height="34" rx="6"/><rect x="305" y="18" width="48" height="34" rx="6"/><rect x="362" y="18" width="48" height="34" rx="6"/><rect x="419" y="18" width="48" height="34" rx="6"/><rect x="476" y="18" width="48" height="34" rx="6"/><rect x="533" y="18" width="48" height="34" rx="6"/><rect x="590" y="18" width="48" height="34" rx="6"/><rect x="647" y="18" width="48" height="34" rx="6"/><rect x="704" y="18" width="48" height="34" rx="6"/><rect x="761" y="18" width="48" height="34" rx="6"/><rect x="818" y="18" width="65" height="34" rx="6"/>
+      <rect x="37" y="62" width="61" height="34" rx="6"/><rect x="107" y="62" width="48" height="34" rx="6"/><rect x="164" y="62" width="48" height="34" rx="6"/><rect x="221" y="62" width="48" height="34" rx="6"/><rect x="278" y="62" width="48" height="34" rx="6"/><rect x="335" y="62" width="48" height="34" rx="6"/><rect x="392" y="62" width="48" height="34" rx="6"/><rect x="449" y="62" width="48" height="34" rx="6"/><rect x="506" y="62" width="48" height="34" rx="6"/><rect x="563" y="62" width="48" height="34" rx="6"/><rect x="620" y="62" width="48" height="34" rx="6"/><rect x="677" y="62" width="48" height="34" rx="6"/><rect x="734" y="62" width="48" height="34" rx="6"/><rect x="791" y="62" width="76" height="34" rx="6"/>
+    </g>
+    <rect x="412" y="70" width="176" height="18" rx="7" fill="#4B4A43"/>
+    <text x="44" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">Q</text><text x="101" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">W</text><text x="158" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">E</text><text x="215" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">R</text><text x="272" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">T</text><text x="329" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">Y</text><text x="386" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">U</text><text x="443" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">I</text><text x="500" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">O</text><text x="557" y="41" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="13">P</text>
+  </g>
+
+  <text x="800" y="1011" fill="#8E897F" font-family="Arial, sans-serif" font-size="14" letter-spacing="2.2" text-anchor="middle">BUILD YOUR RHYTHM  ·  TRACK YOUR PROGRESS</text>
+</svg>

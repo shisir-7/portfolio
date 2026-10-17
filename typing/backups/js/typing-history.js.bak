@@ -1,0 +1,306 @@
+/**
+ * Typing Test — History & Personal Progress
+ * Local-only persistence via localStorage (no account, no backend, no sync).
+ * All reads are defensive: corrupted or foreign data never breaks the app.
+ *
+ * Result records are stored in a single JSON array under STORAGE_KEY,
+ * capped at MAX_ENTRIES (oldest evicted first).
+ */
+
+window.TypingHistory = (function () {
+  'use strict';
+
+  const STORAGE_KEY = 'sa-typing-history-v1';
+  const SETTINGS_KEY = 'sa-typing-settings-v1';
+  const PREFS_KEY = 'sa-typing-prefs-v1';
+  const MAX_ENTRIES = 500;
+
+  let cache = null;
+  let storageOk = true;
+
+  function storageAvailable() {
+    try {
+      const k = '__sa_typing_probe__';
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      return true;
+    } catch (e) {
+      storageOk = false;
+      return false;
+    }
+  }
+
+  function sanitizeResult(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const wpm = Number(raw.wpm);
+    if (!isFinite(wpm) || wpm < 0 || wpm > 300) return null;
+    const rawWpm = Number(raw.rawWpm);
+    if (isFinite(rawWpm) && (rawWpm < 0 || rawWpm > 300)) return null;
+    const acc = Number(raw.accuracy);
+    if (!isFinite(acc) || acc < 0 || acc > 100) return null;
+
+    let validation = null;
+    if (raw.validation && typeof raw.validation === 'object') {
+      const v = raw.validation;
+      validation = {
+        isAfk: !!v.isAfk,
+        isLowAccuracy: !!v.isLowAccuracy,
+        isExtremeInaccuracy: !!v.isExtremeInaccuracy,
+        isInvalid: !!v.isInvalid,
+        reason: typeof v.reason === 'string' ? v.reason : null,
+        idleMs: Number(v.idleMs) || 0,
+        maxGapMs: Number(v.maxGapMs) || 0,
+        gaps: Array.isArray(v.gaps) ? v.gaps.slice(0, 8) : []
+      };
+    }
+
+    const base = {
+      id: typeof raw.id === 'string' ? raw.id : ('r_' + Math.random().toString(36).slice(2) + '_' + (raw.finishedAt || Date.now())),
+      finishedAt: Number(raw.finishedAt) || Date.now(),
+      mode: raw.mode === 'words' ? 'words' : 'time',
+      limit: Math.max(1, Math.min(600, Number(raw.limit) || 30)),
+      wpm: Math.round(wpm * 10) / 10,
+      rawWpm: Math.round((Number(raw.rawWpm) || 0) * 10) / 10,
+      accuracy: Math.round(acc * 100) / 100,
+      errorRate: Math.round((Number(raw.errorRate) || 0) * 100) / 100,
+      consistency: Math.max(0, Math.min(100, Number(raw.consistency) || 0)),
+      correct: Math.max(0, Number(raw.correct) || 0),
+      incorrect: Math.max(0, Number(raw.incorrect) || 0),
+      extra: Math.max(0, Number(raw.extra) || 0),
+      missed: Math.max(0, Number(raw.missed) || 0),
+      durationMs: Math.max(0, Number(raw.durationMs) || 0),
+      correctedErrors: Math.max(0, Number(raw.correctedErrors) || 0),
+      uncorrectedErrors: Math.max(0, Number(raw.uncorrectedErrors) || 0),
+      meta: {
+        content: (raw.meta && String(raw.meta.content)) || 'common',
+        language: (raw.meta && String(raw.meta.language)) || 'en',
+        difficulty: (raw.meta && String(raw.meta.difficulty)) || 'intermediate',
+        practice: !!(raw.meta && raw.meta.practice),
+        daily: !!(raw.meta && raw.meta.daily)
+      }
+    };
+    if (validation) base.validation = validation;
+    return base;
+  }
+
+  function load() {
+    if (cache) return cache;
+    if (!storageAvailable()) { cache = []; return cache; }
+    let parsed = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      parsed = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      parsed = [];
+      try { localStorage.setItem(STORAGE_KEY + '.corrupt', String(Date.now())); } catch (e2) { /* ignore */ }
+    }
+    if (!Array.isArray(parsed)) parsed = [];
+    cache = parsed.map(sanitizeResult).filter(Boolean);
+    return cache;
+  }
+
+  function persist() {
+    if (!storageOk) return false;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cache || []));
+      return true;
+    } catch (e) {
+      try {
+        cache = cache.slice(Math.floor(cache.length / 4));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
+        return true;
+      } catch (e2) {
+        storageOk = false;
+        return false;
+      }
+    }
+  }
+
+  function add(result) {
+    const clean = sanitizeResult(result);
+    if (!clean) return null;
+    if (clean.validation && clean.validation.isInvalid) return clean;
+    const list = load();
+    if (clean.meta.practice) return clean;
+    list.push(clean);
+    if (list.length > MAX_ENTRIES) list.splice(0, list.length - MAX_ENTRIES);
+    cache = list;
+    persist();
+    return clean;
+  }
+
+  function all() {
+    return load().slice().sort((a, b) => b.finishedAt - a.finishedAt);
+  }
+
+  function remove(id) {
+    const list = load();
+    const idx = list.findIndex((r) => r.id === id);
+    if (idx === -1) return false;
+    list.splice(idx, 1);
+    cache = list;
+    persist();
+    return true;
+  }
+
+  function clear() {
+    cache = [];
+    if (storageOk) {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    }
+  }
+
+  function filter(opts) {
+    opts = opts || {};
+    return all().filter((r) => {
+      if (r.validation && r.validation.isInvalid) return false;
+      if (opts.mode && opts.mode !== 'all' && r.mode !== opts.mode) return false;
+      if (opts.limit && opts.limit !== 'all' && String(r.limit) !== String(opts.limit)) return false;
+      if (opts.content && opts.content !== 'all' && r.meta.content !== opts.content) return false;
+      return true;
+    });
+  }
+
+  function stats(records) {
+    const list = (records || all()).filter((r) => !r.meta.practice && !(r.validation && r.validation.isInvalid));
+    if (!list.length) {
+      return {
+        count: 0, bestWpm: 0, bestAccuracy: 0, avgWpm: 0, avgAccuracy: 0,
+        avgConsistency: 0, improvement: 0, firstWpm: 0, lastWpm: 0
+      };
+    }
+    const n = list.length;
+    const sum = (fn) => list.reduce((a, r) => a + fn(r), 0);
+    const bestWpm = Math.max(...list.map((r) => r.wpm));
+    const bestAccuracy = Math.max(...list.map((r) => r.accuracy));
+    const sorted = list.slice().sort((a, b) => a.finishedAt - b.finishedAt);
+    const chunk = Math.max(1, Math.floor(sorted.length / 3));
+    const early = sorted.slice(0, chunk);
+    const late = sorted.slice(-chunk);
+    const avg = (arr) => arr.reduce((a, r) => a + r.wpm, 0) / arr.length;
+    return {
+      count: n,
+      bestWpm,
+      bestAccuracy: Math.round(bestAccuracy * 100) / 100,
+      avgWpm: Math.round((sum((r) => r.wpm) / n) * 10) / 10,
+      avgAccuracy: Math.round((sum((r) => r.accuracy) / n) * 100) / 100,
+      avgConsistency: Math.round(sum((r) => r.consistency) / n * 10) / 10,
+      improvement: Math.round((avg(late) - avg(early)) * 10) / 10,
+      firstWpm: early.length ? Math.round(avg(early) * 10) / 10 : 0,
+      lastWpm: late.length ? Math.round(avg(late) * 10) / 10 : 0,
+      totalTests: n
+    };
+  }
+
+  function groupByPeriod(records, period) {
+    const list = (records || all()).filter((r) => !r.meta.practice && !(r.validation && r.validation.isInvalid));
+    const groups = {};
+    list.forEach((r) => {
+      const d = new Date(r.finishedAt);
+      let key;
+      if (period === 'month') {
+        key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      } else if (period === 'week') {
+        const day = (d.getDay() + 6) % 7;
+        const monday = new Date(d);
+        monday.setDate(d.getDate() - day);
+        key = monday.getFullYear() + '-' + String(monday.getMonth() + 1).padStart(2, '0') + '-' + String(monday.getDate()).padStart(2, '0');
+      } else {
+        key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+      if (!groups[key]) groups[key] = { key, wpm: [], accuracy: [], count: 0 };
+      groups[key].wpm.push(r.wpm);
+      groups[key].accuracy.push(r.accuracy);
+      groups[key].count++;
+    });
+    return Object.keys(groups).sort().map((k) => {
+      const g = groups[k];
+      const mean = (arr) => Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10;
+      return { key: k, avgWpm: mean(g.wpm), avgAccuracy: Math.round((g.accuracy.reduce((a, b) => a + b, 0) / g.accuracy.length) * 100) / 100, count: g.count };
+    });
+  }
+
+  function exportJSON() {
+    return JSON.stringify(all(), null, 2);
+  }
+
+  function exportCSV() {
+    const rows = all();
+    const header = ['date', 'mode', 'limit', 'wpm', 'rawWpm', 'accuracy', 'errorRate', 'consistency', 'correct', 'incorrect', 'extra', 'missed', 'durationMs', 'content', 'language', 'difficulty'];
+    const lines = [header.join(',')];
+    rows.forEach((r) => {
+      lines.push([
+        new Date(r.finishedAt).toISOString(),
+        r.mode,
+        r.limit,
+        r.wpm,
+        r.rawWpm,
+        r.accuracy,
+        r.errorRate,
+        r.consistency,
+        r.correct,
+        r.incorrect,
+        r.extra,
+        r.missed,
+        r.durationMs,
+        r.meta.content,
+        r.meta.language,
+        r.meta.difficulty
+      ].join(','));
+    });
+    return lines.join('\n');
+  }
+
+  function download(filename, content, mime) {
+    const blob = new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  function loadSettings(defaults) {
+    if (!storageAvailable()) return Object.assign({}, defaults);
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return Object.assign({}, defaults, parsed && typeof parsed === 'object' ? parsed : {});
+    } catch (e) {
+      return Object.assign({}, defaults);
+    }
+  }
+
+  function saveSettings(settings) {
+    if (!storageOk) return false;
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); return true; }
+    catch (e) { return false; }
+  }
+
+  function loadPrefs(defaults) {
+    if (!storageAvailable()) return Object.assign({}, defaults);
+    try {
+      const raw = localStorage.getItem(PREFS_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return Object.assign({}, defaults, parsed && typeof parsed === 'object' ? parsed : {});
+    } catch (e) {
+      return Object.assign({}, defaults);
+    }
+  }
+
+  function savePrefs(prefs) {
+    if (!storageOk) return false;
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); return true; }
+    catch (e) { return false; }
+  }
+
+  return {
+    storageAvailable,
+    add, all, remove, clear, filter, stats, groupByPeriod,
+    exportJSON, exportCSV, download,
+    loadSettings, saveSettings, loadPrefs, savePrefs
+  };
+})();

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+  <title>Typing Speed Test — Shisir Acharya</title>
+  <meta name="description" content="A Monkeytype-inspired typing speed test: WPM, accuracy, consistency, error analysis, personal progress graphs and test history — stored only in your browser." />
+  <meta name="author" content="Shisir Acharya" />
+  <meta name="theme-color" content="#F7F5F0" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Fonts & base styles (shared with the portfolio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles/typography.css" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/typing.css" />
+
+  <!-- Pre-theme: avoid a flash of the wrong theme -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('sa-theme');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        document.documentElement.setAttribute('data-theme', t || 'light');
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+</head>
+<body class="typing-page">
+
+  <div class="custom-cursor" id="custom-cursor" aria-hidden="true"></div>
+  <div class="custom-cursor-follower" id="custom-cursor-follower" aria-hidden="true"></div>
+
+  <div class="tt-scrim" id="tt-scrim" aria-hidden="true"></div>
+
+  <!-- ============ Header ============ -->
+  <header class="site-header focus-dim" role="banner">
+    <div class="container site-header__inner">
+      <a href="index.html" class="site-brand" aria-label="Return to Shisir Acharya homepage">
+        <svg class="site-brand__logo" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect width="32" height="32" fill="#121211" rx="2"/>
+          <path d="M 8 8 L 18 8 L 24 16 L 14 16 Z" fill="#F7F5F0"/>
+          <path d="M 14 16 L 24 16 L 18 24 L 8 24 Z" fill="#DCD6C9" opacity="0.85"/>
+          <circle cx="22" cy="10" r="2.2" fill="#BD3A1B"/>
+        </svg>
+        <div class="site-brand__text">
+          <span class="site-brand__name">Shisir Acharya</span>
+          <span class="site-brand__desc">Typing Speed Test</span>
+        </div>
+      </a>
+
+      <div class="tt-header-actions">
+        <a href="index.html" class="back-home" id="back-home">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Portfolio
+        </a>
+        <button class="tt-icon-btn" id="btn-focus" title="Focus mode (dim everything except the typing area)" aria-label="Toggle focus mode">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+        </button>
+        <button class="tt-icon-btn" id="btn-fullscreen" title="Full-screen typing mode" aria-label="Toggle fullscreen">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+        <button class="tt-icon-btn" id="btn-history" title="Test history &amp; progress" aria-label="Open history">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><polyline points="12 7 12 12 15 15"/></svg>
+        </button>
+        <button class="tt-icon-btn" id="btn-settings" title="Settings" aria-label="Open settings">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle visual theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="tt-icon-btn" id="btn-help" title="How to use this test" aria-label="Open help">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ Main ============ -->
+  <main class="site-main">
+    <div class="container">
+
+      <header class="section-header focus-dim" style="margin-bottom: var(--space-md);">
+        <div class="section-header__meta">
+          <span class="section-header__index">TOOL / 01</span>
+          <span class="section-header__category">Typing Speed Test</span>
+        </div>
+      </header>
+
+      <!-- ======= TEST VIEW ======= -->
+      <div class="tt-view visible" id="view-test" aria-label="Typing test">
+        <div class="typing-shell">
+
+          <div class="mode-bar focus-dim" id="mode-bar" aria-label="Test settings"></div>
+
+          <span class="daily-badge" id="daily-badge">Daily challenge — the same passage for everyone today</span>
+
+          <div class="live-stats focus-dim" id="live-stats" aria-expanded="false" aria-label="Live statistics">
+            <span class="live-stat live-stat--timer" title="Time remaining / elapsed"><span class="live-stat__value stat-timer" id="stat-timer">00:30</span><span class="live-stat__label">time</span></span>
+            <span class="live-stat live-stat--detail" title="WPM is the primary score"><span class="live-stat__value" id="stat-wpm">0</span><span class="live-stat__label">wpm</span></span>
+            <span class="live-stat live-stat--detail is-unfocused" title="Hidden — click the dot to reveal"><span class="live-stat__value" id="stat-raw">0</span><span class="live-stat__label">raw</span></span>
+            <span class="live-stat live-stat--detail is-unfocused" title="Hidden — click the dot to reveal"><span class="live-stat__value" id="stat-acc">100%</span><span class="live-stat__label">acc</span></span>
+            <button class="live-stats__dot" id="live-stats-toggle" title="Show raw &amp; accuracy" aria-label="Toggle raw &amp; accuracy"></button>
+            <span class="target-compare" id="target-compare"></span>
+            <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="test-actions">
+              <button class="tt-icon-btn" id="btn-pause" title="Pause / resume (Esc)" aria-label="Pause or resume">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              </button>
+              <button class="tt-icon-btn" id="btn-restart" title="Restart test (Tab + Enter)" aria-label="Restart test">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              </button>
+              <button class="tt-icon-btn" id="btn-new-text" title="New passage (same settings)" aria-label="Generate new passage">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="typing-stage">
+            <div class="typing-viewport" id="typing-viewport">
+              <div id="typing-text-wrap">
+                <div class="typing-text" id="typing-text" aria-hidden="true"></div>
+                <div class="extra-chars" id="extra-chars" aria-hidden="true"></div>
+              </div>
+              <textarea
+                id="typing-input"
+                class="typing-input-hidden"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                aria-label="Typing input. Start typing to begin the test."
+                rows="1"></textarea>
+            </div>
+
+
+
+            <div class="stage-overlay" id="countdown-overlay" aria-live="assertive">
+              <div class="countdown-number" id="countdown-label">3</div>
+            </div>
+
+            <div class="stage-overlay" id="pause-overlay">
+              <div class="pause-card">
+                <h3>Paused</h3>
+                <p>The timer is frozen. Click resume or press any key to continue.</p>
+                <button class="btn btn--primary" id="pause-resume">Resume</button>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- ======= RESULTS VIEW ======= -->
+      <div class="tt-view" id="view-results" aria-label="Test results">
+        <div class="typing-shell typing-shell--results">
+          <div id="result-validity" class="result-validity" role="status" aria-live="polite"></div>
+          <div class="result-mode-line" id="result-mode">—</div>
+
+          <!-- Large unified background graph — the main visual -->
+          <div class="result-graph-stage" id="result-graph-stage" aria-label="Performance graph">
+            <div class="result-unified-wrap" id="result-unified-wrap">
+              <div class="result-unified-header">
+                <span class="result-unified-title">Performance</span>
+                <span class="result-unified-hint">speed · accuracy · consistency — hover to inspect</span>
+              </div>
+              <div class="chart-wrap chart-wrap--unified"><canvas id="chart-unified" height="320"></canvas></div>
+              <div class="result-unified-legend" id="result-unified-legend">
+                <span class="legend-dot legend-dot--wpm"></span> WPM
+                <span class="legend-dot legend-dot--acc"></span> Accuracy
+                <span class="legend-dot legend-dot--cons"></span> Consistency
+                <span class="legend-sep"></span>
+                <span class="legend-note">Right axis = % · all curves from your keystrokes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key statistics — now below the graph, larger & well-aligned -->
+          <div class="result-hero result-hero--premium result-hero--below" id="result-hero">
+            <div class="result-big result-big--large result-big--animated">
+              <div class="result-big__item" style="--i:0"><div class="result-big__value result-big__value--accent" id="result-wpm">0</div><div class="result-big__label">WPM</div><div class="result-big__sub" id="result-wpm-sub"></div></div>
+              <div class="result-big__item" style="--i:1"><div class="result-big__value" id="result-acc">0%</div><div class="result-big__label">Accuracy</div><div class="result-big__sub" id="result-acc-sub"></div></div>
+              <div class="result-big__item" style="--i:2"><div class="result-big__value" id="result-raw">0</div><div class="result-big__label">Raw WPM</div><div class="result-big__sub" id="result-raw-sub"></div></div>
+              <div class="result-big__item" style="--i:3"><div class="result-big__value" id="result-consistency">0%</div><div class="result-big__label">Consistency</div><div class="result-big__sub" id="result-consistency-sub"></div></div>
+            </div>
+            <div class="result-breakdown" id="result-breakdown"></div>
+            <div class="result-compare" id="result-compare"></div>
+            <div class="result-stats-inline" id="result-stats-inline"></div>
+          </div>
+
+          <div class="result-actions">
+            <button class="btn btn--primary" id="results-retry">Restart</button>
+            <button class="btn btn--outline" id="results-new-test">New Passage</button>
+            <button class="btn btn--outline" id="results-practice">Practice Again</button>
+            <button class="btn btn--outline" id="results-share">Copy Share Text</button>
+            <button class="btn btn--outline" id="results-view-history">History</button>
+          </div>
+
+          <!-- Personal best -->
+          <div class="personal-best" id="personal-best" hidden>
+            <div class="personal-best__header">
+              <span class="personal-best__title">Personal best</span>
+              <span class="personal-best__meta" id="personal-best-meta"></span>
+            </div>
+            <div class="personal-best__stats">
+              <span class="personal-best__stat"><span class="personal-best__value" id="pb-wpm">—</span> <span class="personal-best__label">best WPM</span></span>
+              <span class="personal-best__stat"><span class="personal-best__value" id="pb-acc">—</span> <span class="personal-best__label">best accuracy</span></span>
+            </div>
+          </div>
+
+          <!-- Detailed breakdown — open, borderless -->
+          <div class="stat-grid stat-grid--open">
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-correct">0</div><div class="stat-card__label">correct chars</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-incorrect">0</div><div class="stat-card__label">incorrect chars</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-extra">0</div><div class="stat-card__label">extra chars</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-missed">0</div><div class="stat-card__label">missed chars</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-errorrate">0%</div><div class="stat-card__label">error rate</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-duration">00:00</div><div class="stat-card__label">duration</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-corrected">0</div><div class="stat-card__label">errors corrected</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-uncorrected">0</div><div class="stat-card__label">errors left</div></div>
+            <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-chars">0</div><div class="stat-card__label">total chars</div></div>
+          </div>
+          <div id="breakdown-hidden" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+            <canvas id="chart-breakdown" width="1" height="1"></canvas>
+            <canvas id="chart-wpm" width="1" height="1"></canvas>
+            <canvas id="chart-accuracy" width="1" height="1"></canvas>
+            <canvas id="chart-errors" width="1" height="1"></canvas>
+          </div>
+
+          <h3 class="result-section-title">Error analysis</h3>
+          <div class="chart-grid" style="grid-template-columns: 1fr; gap: 1.5rem;">
+            <div>
+              <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: 0.5rem;">Passage review — colour-coded final state of every character.</p>
+              <div class="review-text" id="review-text"></div>
+            </div>
+            <div class="chart-grid">
+              <div class="chart-card">
+                <h4>Frequently mistyped characters</h4>
+                <div id="frequent-errors"></div>
+              </div>
+              <div class="chart-card">
+                <h4>Key error heatmap</h4>
+                <div class="virtual-keyboard" id="virtual-keyboard" aria-label="Virtual keyboard showing mistyped keys"></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="result-section-title">Practice suggestions</h3>
+          <ul class="suggestion-list" id="result-suggestions"></ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ============ Settings panel ============ -->
+  <aside class="side-panel" id="settings-panel" aria-label="Typing test settings" aria-hidden="true">
+    <div class="side-panel__header">
+      <h2>Settings</h2>
+      <button class="tt-icon-btn" id="settings-close" aria-label="Close settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="side-panel__body">
+      <div class="settings-group">
+        <div class="settings-group__title">Test behaviour</div>
+        <div class="setting-row">
+          <div>Keystroke sounds<span class="setting-desc">Soft clicks; lower tone for errors.</span></div>
+          <label class="switch"><input type="checkbox" id="set-sound" /><span class="switch__track"></span></label>
+        </div>
+        <div class="setting-row">
+          <div>Countdown before start<span class="setting-desc">3–2–1 delay after the first keystroke.</span></div>
+          <label class="switch"><input type="checkbox" id="set-countdown" /><span class="switch__track"></span></label>
+        </div>
+        <div class="setting-row">
+          <div>WPM target<span class="setting-desc">Live comparison against your goal.</span></div>
+          <input class="number-input" type="number" id="set-target" min="0" max="400" placeholder="e.g. 60" style="width: 100px;" />
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group__title">Practice mode</div>
+        <div class="setting-row">
+          <div>Mode<span class="setting-desc">Complexity of words and sentences.</span></div>
+          <div class="segmented" role="radiogroup" aria-label="Complexity level">
+            <button type="button" class="segmented__option is-active" data-complexity="easy" id="set-complexity-easy">Easy — simple words</button>
+            <button type="button" class="segmented__option" data-complexity="complex" id="set-complexity-complex">Complex words</button>
+          </div>
+        </div>
+        <p class="setting-note">Complex adds longer vocabulary, punctuation and varied sentences. Replaces difficulty — same toggle drives both.</p>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group__title">Typing area</div>
+        <div class="setting-row">
+          <div>Caret style<span class="setting-desc">Current-character indicator.</span></div>
+          <select class="select-input" id="set-caret">
+            <option value="block">block</option>
+            <option value="line">line</option>
+            <option value="underline">underline</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>Font size<span class="setting-desc">Typing passage size.</span></div>
+          <input class="range-input" type="range" id="set-fontsize" min="1.1" max="2.6" step="0.1" />
+        </div>
+        <div class="setting-row">
+          <div>Area width<span class="setting-desc">Max width of the typing stage.</span></div>
+          <input class="range-input" type="range" id="set-width" min="560" max="1100" step="20" />
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group__title">Content &amp; language</div>
+        <div class="setting-row">
+          <div>Language<span class="setting-desc">Language of word lists.</span></div>
+          <select class="select-input" id="set-language">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>Text content<span class="setting-desc">What you type: words, sentences, code, etc.</span></div>
+          <select class="select-input" id="set-content">
+            <option value="common">Common words</option>
+            <option value="random">Random words</option>
+            <option value="sentences">Sentences</option>
+            <option value="punctuation">Punctuation</option>
+            <option value="numbers">Numbers</option>
+            <option value="mixed">Mixed</option>
+            <option value="code">Code</option>
+            <option value="custom">Custom text</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>Challenges<span class="setting-desc">Optional extra difficulty.</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label class="switch" title="Uppercase words"><input type="checkbox" id="set-uppercase" /><span class="switch__track"></span><span style="margin-left:6px;font-size:.72rem;color:var(--text-secondary)">Aa</span></label>
+            <label class="switch" title="Punctuation"><input type="checkbox" id="set-punct" /><span class="switch__track"></span><span style="margin-left:6px;font-size:.72rem;color:var(--text-secondary)">.,-</span></label>
+            <button class="btn btn--outline" id="set-practice-toggle" style="padding:4px 10px;font-size:.72rem">Practice mode</button>
+            <button class="btn btn--outline" id="set-daily-toggle" style="padding:4px 10px;font-size:.72rem">Daily challenge</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-group__title">Defaults</div>
+        <div class="setting-row">
+          <div>Reset to defaults<span class="setting-desc">Restores time, mode, language, difficulty and display. Needs confirmation.</span></div>
+          <button class="btn btn--outline" id="settings-reset-defaults" type="button">Reset to defaults</button>
+        </div>
+      </div>
+
+      <div class="settings-group" id="settings-content">
+        <div class="settings-group__title">Custom text</div>
+        <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: 0.5rem;">
+          Paste your own passage. Works in any mode; in time mode the test finishes early once you complete it.
+        </p>
+        <textarea class="custom-textarea" id="set-custom-text" placeholder="Paste your custom passage here…" aria-label="Custom passage"></textarea>
+        <button class="btn btn--primary" id="set-custom-apply" style="width: 100%; margin-top: 0.75rem;">Use This Text</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ History panel ============ -->
+  <aside class="side-panel" id="history-panel" style="width: min(560px, 96vw);" aria-label="Test history" aria-hidden="true">
+    <div class="side-panel__header">
+      <h2>Test History</h2>
+      <button class="tt-icon-btn" id="history-close" aria-label="Close history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="side-panel__body">
+      <p style="font-size: var(--text-sm); color: var(--text-muted); margin-bottom: 1rem;">
+        Saved only in this browser. No account, no sync, nothing leaves your device.
+      </p>
+
+      <div class="history-summary">
+        <div class="stat-card"><div class="stat-card__value" id="hist-count">0</div><div class="stat-card__label">tests</div></div>
+        <div class="stat-card"><div class="stat-card__value" id="hist-best-wpm">—</div><div class="stat-card__label">best wpm</div></div>
+        <div class="stat-card"><div class="stat-card__value" id="hist-best-acc">—</div><div class="stat-card__label">best accuracy</div></div>
+        <div class="stat-card"><div class="stat-card__value" id="hist-avg-wpm">—</div><div class="stat-card__label">avg wpm</div></div>
+        <div class="stat-card"><div class="stat-card__value" id="hist-avg-acc">—</div><div class="stat-card__label">avg accuracy</div></div>
+        <div class="stat-card"><div class="stat-card__value" id="hist-improvement">—</div><div class="stat-card__label">improvement</div></div>
+      </div>
+
+      <div class="history-filters">
+        <select id="hist-mode" aria-label="Filter by mode">
+          <option value="all">all modes</option>
+          <option value="time">time</option>
+          <option value="words">words</option>
+        </select>
+        <select id="hist-limit" aria-label="Filter by duration">
+          <option value="all">all durations</option>
+          <option value="15">15s</option>
+          <option value="30">30s</option>
+          <option value="60">60s</option>
+          <option value="120">120s</option>
+          <option value="10">10 words</option>
+          <option value="25">25 words</option>
+          <option value="50">50 words</option>
+          <option value="100">100 words</option>
+        </select>
+        <select id="hist-content" aria-label="Filter by content">
+          <option value="all">all content</option>
+          <option value="common">common</option>
+          <option value="random">random</option>
+          <option value="sentences">sentences</option>
+          <option value="punctuation">punctuation</option>
+          <option value="numbers">numbers</option>
+          <option value="mixed">mixed</option>
+          <option value="code">code</option>
+          <option value="custom">custom</option>
+        </select>
+        <select id="hist-period" aria-label="Progress chart grouping">
+          <option value="day">daily</option>
+          <option value="week">weekly</option>
+          <option value="month">monthly</option>
+        </select>
+        <button class="chip" id="hist-clear-filters">clear filters</button>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card"><h4>WPM per test</h4><div class="chart-wrap"><canvas id="chart-progress"></canvas></div></div>
+        <div class="chart-card"><h4>Average WPM over time</h4><div class="chart-wrap"><canvas id="chart-period"></canvas></div></div>
+      </div>
+
+      <div class="history-toolbar">
+        <button class="btn btn--outline" id="hist-export-json">Export JSON</button>
+        <button class="btn btn--outline" id="hist-export-csv">Export CSV</button>
+        <button class="btn btn--outline" id="hist-clear">Clear All</button>
+      </div>
+
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </aside>
+
+  <!-- Personal best celebration -->
+  <div class="record-toast" id="record-toast" role="status" aria-live="polite" hidden>
+    <div class="record-toast__confetti" id="record-confetti" aria-hidden="true"></div>
+    <div class="record-toast__body">
+      <div class="record-toast__badge">New personal best</div>
+      <div class="record-toast__value"><span id="record-wpm">—</span> <span class="record-toast__unit">WPM</span></div>
+      <p class="record-toast__msg" id="record-msg">You beat your previous record — incredible!</p>
+    </div>
+    <button class="record-toast__close" id="record-close" type="button" aria-label="Dismiss">✕</button>
+  </div>
+
+      <!-- ============ Restart confirmation ============ -->
+  <div class="modal-overlay-center" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="confirm-card">
+      <h3 id="confirm-title">Restart test?</h3>
+      <p>The current run is still active and will be discarded.</p>
+      <div class="confirm-card__actions">
+        <button class="btn btn--primary" id="confirm-yes">Yes, restart</button>
+        <button class="btn btn--outline" id="confirm-no">Keep typing</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Help ============ -->
+  <div class="modal-overlay-center" id="help-overlay" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="help-card">
+      <h2 id="help-title">Typing Speed Test</h2>
+      <p class="font-serif italic help-sub">Fast, accurate, and private — every number is computed from your actual keystrokes.</p>
+      <ol>
+        <li>Choose a mode above: <strong>time</strong> (15–120s or custom) or <strong>words</strong> (10–100 or custom).</li>
+        <li>Pick content — words, sentences, punctuation, numbers, code, your own text — plus language, difficulty and challenges.</li>
+        <li>Click the passage area and <strong>start typing</strong>. The timer begins on your first keystroke.</li>
+        <li>Backspace works: fixing an error counts as a corrected error.</li>
+      </ol>
+      <ul>
+        <li><span class="kbd">Tab</span> then <span class="kbd">Enter</span> — restart the test</li>
+        <li><span class="kbd">Esc</span> — pause / resume</li>
+        <li><span class="kbd">F2</span> — restart (same as the restart button)</li>
+        <li>Pasting into the test area is disabled — the test has to be typed.</li>
+      </ul>
+      <p style="color: var(--text-secondary); font-size: var(--text-sm);">
+        Net WPM = (correct characters ÷ 5) ÷ minutes. Raw WPM includes every inserted character.
+        Accuracy counts each character insertion, corrected or not. History lives only in this browser.
+      </p>
+      <button class="btn btn--primary" id="help-close" style="width: 100%; margin-top: 1rem;">Start Typing</button>
+    </div>
+  </div>
+
+  <footer class="site-footer site-footer--typing focus-dim" role="contentinfo">
+    <div class="container">
+      <div class="footer-typing">
+        <div class="footer-typing__name"><a href="index.html">Shisir Acharya</a> · Kapilvastu, Nepal</div>
+        <div class="footer-typing__note">Results are computed locally; nothing is uploaded</div>
+        <div class="footer-typing__copy">© 2026 All rights reserved</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/typing-data.js"></script>
+  <script src="js/typing-engine.js"></script>
+  <script src="js/typing-charts.js"></script>
+  <script src="js/typing-history.js"></script>
+  <script src="js/typing-app.js"></script>
+</body>
+</html>
