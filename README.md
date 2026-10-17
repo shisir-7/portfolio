@@ -28,15 +28,12 @@ shisir-acharya-portfolio/
 ├── js/
 │   ├── projects-data.js       # Structured project dataset with case studies, demoUrl & repoUrl
 │   └── app.js                 # Theme switcher, live clock, modal engine, clipboard, inquiry composer
-<<<<<<< HEAD
 ├── typing/                    # Standalone typing speed test (can be deployed independently)
 │   ├── index.html
 │   ├── styles/                # Typing styles plus bundled base styles
 │   ├── js/                    # Typing app modules
 │   ├── assets/                # Typing app favicon
 │   └── backups/               # Archived typing-file backups
-=======
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 └── assets/
     ├── favicon.svg            # Distinctive architectural brand logo
     └── images/
@@ -49,25 +46,18 @@ shisir-acharya-portfolio/
         ├── project-3-typographia.svg # TypoGraphia Swiss poster preview
         ├── project-4-lumina.svg    # Lumina FinTech web app preview
         ├── project-5-chronicle.svg # Chronicle motion reel preview
-<<<<<<< HEAD
         ├── project-6-forma.svg     # Forma architectural monograph preview
         └── project-7-typing-test.svg # Typing speed test dashboard preview
-=======
-        └── project-6-forma.svg     # Forma architectural monograph preview
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 ```
 
 ---
 
-<<<<<<< HEAD
 ## ✦ Typing Speed Test Project
 
 The typing speed test appears as an interactive web application in the **Selected Work** project gallery and opens `typing/index.html`. Its implementation is self-contained in `typing/`; it can also be served or deployed independently. Settings, theme, and test history are stored locally in the browser.
 
 ---
 
-=======
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 ## ✦ Features Included
 
 1. **Refined Navigation & Wordmark**:
@@ -85,12 +75,8 @@ The typing speed test appears as an interactive web application in the **Selecte
 
 3. **Selected Work & Deep Case Studies**:
    - Filter tabs: `All Works`, `UI/UX Design`, `Video Editing`, `Graphic Design`.
-<<<<<<< HEAD
    - Live project search with relevant recommendations and direct links to interactive projects.
    - 6 curated case studies and one interactive web application, with custom SVG previews.
-=======
-   - 6 curated demonstration projects with custom SVG vector mockups.
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
    - Interactive slide-in Case Study Drawer providing:
      - Design Challenge
      - Target Audience

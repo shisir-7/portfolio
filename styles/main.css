@@ -87,7 +87,6 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   background-color: var(--bg-primary);
-<<<<<<< HEAD
   color-scheme: light;
 }
 
@@ -95,9 +94,6 @@ html {
    aligned with the active editorial theme */
 [data-theme="dark"] {
   color-scheme: dark;
-=======
-  color-scheme: light dark;
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 }
 
 body {
@@ -322,23 +318,14 @@ ul, ol {
   position: fixed;
   top: 0;
   left: 0;
-<<<<<<< HEAD
   width: 32px;
   height: 32px;
-=======
-  width: 36px;
-  height: 36px;
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
   border: 1px solid var(--accent);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
-<<<<<<< HEAD
   transition: transform 0.28s ease-out, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
-=======
-  transition: transform 0.12s ease-out, width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
->>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
   display: none;
 }
 
