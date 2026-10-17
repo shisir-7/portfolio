@@ -117,6 +117,7 @@ function initProjects() {
   const grid = document.getElementById('projects-grid');
   const filterBtns = document.querySelectorAll('.filter-btn');
   const counterEl = document.getElementById('work-counter');
+<<<<<<< HEAD
   const searchForm = document.getElementById('project-search-form');
   const searchInput = document.getElementById('project-search-input');
   const suggestions = document.getElementById('project-search-suggestions');
@@ -221,6 +222,18 @@ function initProjects() {
 
       return `
       <${cardElement} class="project-card" ${cardAttributes}>
+=======
+
+  if (!grid || !window.PORTFOLIO_PROJECTS) return;
+
+  function renderProjects(category = 'all') {
+    const filtered = category === 'all' 
+      ? window.PORTFOLIO_PROJECTS 
+      : window.PORTFOLIO_PROJECTS.filter(p => p.category === category);
+
+    grid.innerHTML = filtered.map(project => `
+      <article class="project-card" data-project-id="${project.id}" tabindex="0" role="button" aria-label="View case study for ${project.title}">
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
         <div class="project-card__media">
           <img class="project-card__image" src="${project.image}" alt="${project.imageAlt}" loading="lazy" />
           <span class="project-card__badge">${project.discipline}</span>
@@ -235,11 +248,16 @@ function initProjects() {
           <div class="project-card__footer">
             <span class="tech-tag">${project.badge}</span>
             <span class="project-card__action">
+<<<<<<< HEAD
               ${actionLabel}
+=======
+              Case Study
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </span>
           </div>
         </div>
+<<<<<<< HEAD
       </${cardElement}>
     `;
     }).join('');
@@ -247,6 +265,10 @@ function initProjects() {
     if (filtered.length === 0) {
       grid.innerHTML = '<p class="project-search__no-projects">No projects match this search. Try another keyword.</p>';
     }
+=======
+      </article>
+    `).join('');
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 
     if (counterEl) {
       counterEl.textContent = `SHOWING ${filtered.length} OF ${window.PORTFOLIO_PROJECTS.length} WORKS`;
@@ -255,8 +277,11 @@ function initProjects() {
     // Attach click and enter key handlers to cards
     const cards = grid.querySelectorAll('.project-card');
     cards.forEach(card => {
+<<<<<<< HEAD
       if (card.tagName === 'A') return;
 
+=======
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
       const openModal = () => {
         const id = card.getAttribute('data-project-id');
         window.openCaseStudy(id);
@@ -271,6 +296,7 @@ function initProjects() {
     });
   }
 
+<<<<<<< HEAD
   if (searchForm && searchInput) {
     searchForm.addEventListener('submit', event => {
       event.preventDefault();
@@ -316,13 +342,20 @@ function initProjects() {
     });
   }
 
+=======
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
   // Filter tab events
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+<<<<<<< HEAD
       activeCategory = btn.getAttribute('data-filter');
       renderProjects();
+=======
+      const cat = btn.getAttribute('data-filter');
+      renderProjects(cat);
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     });
   });
 
@@ -530,7 +563,10 @@ function initCustomCursor() {
   let mouseY = window.innerHeight / 2;
   let followerX = mouseX;
   let followerY = mouseY;
+<<<<<<< HEAD
   const followStrength = 0.015;
+=======
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
@@ -541,8 +577,13 @@ function initCustomCursor() {
   });
 
   function animateFollower() {
+<<<<<<< HEAD
     followerX += (mouseX - followerX) * followStrength;
     followerY += (mouseY - followerY) * followStrength;
+=======
+    followerX += (mouseX - followerX) * 0.15;
+    followerY += (mouseY - followerY) * 0.15;
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
 
     follower.style.left = `${followerX}px`;
     follower.style.top = `${followerY}px`;

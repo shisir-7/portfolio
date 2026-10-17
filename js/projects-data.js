@@ -9,6 +9,7 @@
 
 window.PORTFOLIO_PROJECTS = [
   {
+<<<<<<< HEAD
     id: "typing-speed-test",
     number: "01",
     title: "Typing Speed Test — Practice & Performance",
@@ -38,6 +39,10 @@ window.PORTFOLIO_PROJECTS = [
   {
     id: "apex-os",
     number: "02",
+=======
+    id: "apex-os",
+    number: "01",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "Apex OS — Adaptive Workspace Interface",
     discipline: "UI/UX Design",
     category: "ui-ux",
@@ -70,7 +75,11 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "katha-documentary",
+<<<<<<< HEAD
     number: "03",
+=======
+    number: "02",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "Katha — Documentary Narrative & Pacing",
     discipline: "Video Editing",
     category: "video",
@@ -103,7 +112,11 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "typographia-series",
+<<<<<<< HEAD
     number: "04",
+=======
+    number: "03",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "TypoGraphia — Exhibition Identity & Print Series",
     discipline: "Graphic Design",
     category: "graphic",
@@ -135,7 +148,11 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "lumina-markets",
+<<<<<<< HEAD
     number: "05",
+=======
+    number: "04",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "Lumina — Financial Analytics & Clarity",
     discipline: "UI/UX Design",
     category: "ui-ux",
@@ -168,7 +185,11 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "chronicle-reel",
+<<<<<<< HEAD
     number: "06",
+=======
+    number: "05",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "Chronicle — Brand Manifesto & Motion Reel",
     discipline: "Video Editing",
     category: "video",
@@ -200,7 +221,11 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "forma-monograph",
+<<<<<<< HEAD
     number: "07",
+=======
+    number: "06",
+>>>>>>> 9c38cb30a1fd9370816253411ac91705f503cf8e
     title: "Forma — Architectural Monograph & Brand System",
     discipline: "Graphic Design",
     category: "graphic",
