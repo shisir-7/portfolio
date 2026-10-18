@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#EFECE4"/>
+  <path d="M0 0h1200v80H0z" fill="#121211"/>
+  <text x="58" y="51" fill="#F7F5F0" font-family="monospace" font-size="19" letter-spacing="4">NEPAL · LETTER GRADING</text>
+  <rect x="58" y="125" width="1084" height="488" fill="#fff"/>
+  <text x="96" y="201" fill="#121211" font-family="Georgia,serif" font-size="47">Make your marks</text>
+  <text x="96" y="254" fill="#BD3A1B" font-family="Georgia,serif" font-size="47" font-style="italic">add up.</text>
+  <text x="96" y="315" fill="#524F48" font-family="Arial,sans-serif" font-size="16">SEE / +2 GPA CALCULATOR</text>
+  <path d="M96 350h1008" stroke="#DCD6C9"/>
+  <text x="96" y="397" fill="#777267" font-family="monospace" font-size="13">SUBJECT</text>
+  <text x="430" y="397" fill="#777267" font-family="monospace" font-size="13">MARKS</text>
+  <text x="678" y="397" fill="#777267" font-family="monospace" font-size="13">GRADE</text>
+  <text x="887" y="397" fill="#777267" font-family="monospace" font-size="13">CREDITS</text>
+  <path d="M96 418h1008M96 474h1008M96 530h1008" stroke="#E8E4DA"/>
+  <text x="96" y="455" fill="#121211" font-family="Arial,sans-serif" font-size="19">English</text>
+  <text x="430" y="455" fill="#121211" font-family="monospace" font-size="17">91 / 100</text>
+  <rect x="678" y="431" width="60" height="30" fill="#E9F2EC"/>
+  <text x="690" y="452" fill="#286149" font-family="monospace" font-size="16">A+</text>
+  <text x="887" y="455" fill="#121211" font-family="monospace" font-size="17">4</text>
+  <text x="96" y="511" fill="#121211" font-family="Arial,sans-serif" font-size="19">Physics</text>
+  <text x="430" y="511" fill="#121211" font-family="monospace" font-size="17">84 / 100</text>
+  <rect x="678" y="487" width="60" height="30" fill="#E9F2EC"/>
+  <text x="697" y="508" fill="#286149" font-family="monospace" font-size="16">A</text>
+  <text x="887" y="511" fill="#121211" font-family="monospace" font-size="17">5</text>
+  <rect x="884" y="548" width="220" height="48" fill="#121211"/>
+  <text x="901" y="578" fill="#F7F5F0" font-family="monospace" font-size="12" letter-spacing="1">WEIGHTED GPA  3.72</text>
+</svg>
