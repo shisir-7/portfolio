@@ -28,6 +28,13 @@ shisir-acharya-portfolio/
 ├── js/
 │   ├── projects-data.js       # Structured project dataset with case studies, demoUrl & repoUrl
 │   └── app.js                 # Theme switcher, live clock, modal engine, clipboard, inquiry composer
+├── gpa calculator/            # Standalone, bilingual NEB GPA calculator
+│   ├── index.html
+│   ├── css/styles.css
+│   ├── js/                    # Source-aware catalogue, estimates, and accessible interactions
+│   ├── images/thumbnail.svg
+│   ├── tests/                 # Grade-band, component, catalogue, and weighted-GPA tests
+│   └── AUDIT.md               # Source list, catalogue counts, and known limitations
 ├── typing/                    # Standalone typing speed test (can be deployed independently)
 │   ├── index.html
 │   ├── styles/                # Typing styles plus bundled base styles
@@ -55,6 +62,12 @@ shisir-acharya-portfolio/
 ## ✦ Typing Speed Test Project
 
 The typing speed test appears as an interactive web application in the **Selected Work** project gallery and opens `typing/index.html`. Its implementation is self-contained in `typing/`; it can also be served or deployed independently. Settings, theme, and test history are stored locally in the browser.
+
+## ✦ NEB GPA Calculator
+
+The NEB GPA calculator is a standalone app in `gpa calculator/`, linked from the **Selected Work** project gallery. It supports SEE and Grades XI–XII with a searchable historical subject catalogue, editable/custom subjects, bilingual UI, and both exact-mark and transcript-letter-grade entry. It calculates an equal-weight mean of subject grade points because the simplified interface omits credit-hour fields; treat it as an estimate, not an official or credit-weighted NEB GPA. Marks remain in the current browser session; custom subject configurations are stored locally. See [`gpa calculator/AUDIT.md`](gpa%20calculator/AUDIT.md) for sources, catalogue counts, and unresolved policy gaps.
+
+Run its unit tests with `node --test "gpa calculator/tests/calculator.test.mjs"`.
 
 ---
 

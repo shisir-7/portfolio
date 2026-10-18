@@ -882,7 +882,8 @@ window.TypingApp = (function () {
           else span.className = base + 'is-incorrect';
         }
       } else if (i === typed.length && state !== 'finished') {
-        span.className = base + 'is-current';
+       span.className = base + 'is-current';
+if (i === typed.length) span.classList.add('caret-here');
       } else {
         const missed = i < text.length && i >= typed.length && state === 'finished' ? ' is-missed' : '';
         span.className = (base.trim() || 'tt-char') + missed;
@@ -2247,13 +2248,17 @@ window.TypingApp = (function () {
       var c = spans[i].classList;
       if (!(c.contains('is-correct') || c.contains('is-incorrect') || c.contains('is-missed'))) { el = spans[i]; break; }
     }
-    if (lastEl && lastEl !== el) lastEl.classList.remove('caret-here');
-    if (el && !el.classList.contains('caret-here')) el.classList.add('caret-here');
-    lastEl = el;
+    if (lastEl && lastEl !== el) {
+  lastEl.classList.remove('caret-here');
+}
+if (el && !el.classList.contains('caret-here')) {
+  el.classList.add('caret-here');
+}
+lastEl = el;
   }
   ['input', 'keydown', 'keyup', 'click', 'focusin'].forEach(function (ev) {
     document.addEventListener(ev, function () { requestAnimationFrame(placeCaret); }, true);
   });
-  setInterval(placeCaret, 400);
+  setInterval(placeCaret, 1000);
   placeCaret();
 })();

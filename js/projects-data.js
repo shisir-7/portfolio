@@ -36,8 +36,35 @@ window.PORTFOLIO_PROJECTS = [
     projectUrl: "typing/index.html"
   },
   {
-    id: "apex-os",
+    id: "neb-gpa-calculator",
     number: "02",
+    title: "NEB GPA Calculator — SEE & +2",
+    discipline: "Web Application",
+    category: "ui-ux",
+    role: "Product Designer & Developer",
+    year: "2026",
+    badge: "Interactive Tool",
+    headline: "Nepal-focused GPA calculator for SEE & NEB +2 with accurate grade mapping.",
+    summary: "Calculate NEB GPA for SEE (Class 10) and +2 with stream-based subject presets, theory/practical split, credit-hour weighting, and instant letter-grade mapping. Supports bilingual (EN/NE) entry and elective selection.",
+    image: "gpa-calculator/images/thumbnail.svg",
+    imageAlt: "NEB GPA calculator preview showing subject marks, letter grades, and an indicative GPA",
+    searchDescription: "Estimate Nepal NEB GPA for SEE and NEB +2 with credit-hour weighting.",
+    searchKeywords: [
+      "NEB GPA",
+      "Nepal GPA calculator",
+      "SEE GPA",
+      "NEB +2 GPA",
+      "class 10 GPA",
+      "class 12 GPA",
+      "letter grading NEP",
+      "NEB grade calculator",
+      "credit hour GPA Nepal"
+    ],
+    projectUrl: "gpa-calculator/index.html"
+  },
+  {
+    id: "apex-os",
+    number: "03",
     title: "Apex OS — Adaptive Workspace Interface",
     discipline: "UI/UX Design",
     category: "ui-ux",
@@ -70,7 +97,7 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "katha-documentary",
-    number: "03",
+    number: "04",
     title: "Katha — Documentary Narrative & Pacing",
     discipline: "Video Editing",
     category: "video",
@@ -103,7 +130,7 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "typographia-series",
-    number: "04",
+    number: "05",
     title: "TypoGraphia — Exhibition Identity & Print Series",
     discipline: "Graphic Design",
     category: "graphic",
@@ -135,7 +162,7 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "lumina-markets",
-    number: "05",
+    number: "06",
     title: "Lumina — Financial Analytics & Clarity",
     discipline: "UI/UX Design",
     category: "ui-ux",
@@ -168,7 +195,7 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "chronicle-reel",
-    number: "06",
+    number: "07",
     title: "Chronicle — Brand Manifesto & Motion Reel",
     discipline: "Video Editing",
     category: "video",
@@ -200,7 +227,7 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "forma-monograph",
-    number: "07",
+    number: "08",
     title: "Forma — Architectural Monograph & Brand System",
     discipline: "Graphic Design",
     category: "graphic",
@@ -229,5 +256,5 @@ window.PORTFOLIO_PROJECTS = [
       ],
       tools: ["Adobe InDesign", "Photoshop", "Editorial Curation", "Print Finishing", "Grid Systems"]
     }
-  }
+  },
 ];

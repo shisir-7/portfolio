@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-language="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F7F5F0" />
+  <meta name="description" content="A simple NEB GPA estimate calculator with marks and transcript-grade entry." />
+  <title>NEB GPA Calculator</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/typography.css" />
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script type="module" src="js/ui.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="../index.html" aria-label="Return to portfolio">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" focusable="false">
+            <path d="M8 15.5c5.4-1.7 10.8-.9 16 2.4v17c-5.2-3.3-10.6-4.1-16-2.4v-17Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2.2" />
+            <path d="M40 15.5c-5.4-1.7-10.8-.9-16 2.4v17c5.2-3.3 10.6-4.1 16-2.4v-17Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2.2" />
+            <path d="M13 21h5m-5 5h5m12-5h5m-5 5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" opacity=".78" />
+            <path d="M19 12.5h3.5v3H19zm6.5-3H29v6h-3.5zm6.5-3H35v9h-3z" fill="currentColor" opacity=".92" />
+          </svg>
+        </span>
+        <span class="brand-name" data-i18n="appName">NEB GPA Calculator</span>
+      </a>
+      <div class="header-actions">
+        <button class="quiet-button" id="reset-calculator" type="button" data-i18n="reset">Reset</button>
+        <button class="theme-toggle-btn" id="theme-toggle" type="button" aria-label="Toggle visual theme"></button>
+        <button class="quiet-button language-toggle" id="language-toggle" type="button" aria-label="Switch language">नेपाली</button>
+      </div>
+    </header>
+
+    <section class="setup-card" aria-label="Student details">
+      <label class="field-label" for="student-name">
+        <span data-i18n="studentName">Student name</span>
+        <input id="student-name" type="text" maxlength="80" autocomplete="name" placeholder="Optional" />
+      </label>
+      <div class="field-label">
+        <span id="class-level-label" data-i18n="classLabel">Class / Level</span>
+        <div class="custom-dropdown" id="class-level-dropdown" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Class / Level">
+          <button type="button" class="dropdown-trigger" data-value="" aria-label="Select class level">
+            <span class="dropdown-text" data-i18n="chooseLevel">Choose level</span>
+            <span class="dropdown-arrow" aria-hidden="true">▼</span>
+          </button>
+          <div class="dropdown-menu" role="listbox" hidden>
+            <div class="dropdown-option" role="option" data-value="" data-i18n="chooseLevel">Choose level</div>
+            <div class="dropdown-option" role="option" data-value="SEE" data-i18n="class10">Class 10 · SEE</div>
+            <div class="dropdown-option" role="option" data-value="12" data-i18n="plus2">+2 (NEB)</div>
+          </div>
+        </div>
+      </div>
+      <div class="field-label" id="stream-field">
+        <span id="stream-label" data-i18n="streamLabel">Stream</span>
+        <div class="custom-dropdown" id="stream-dropdown" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Stream">
+          <button type="button" class="dropdown-trigger" data-value="science" aria-label="Select stream">
+            <span class="dropdown-text" data-i18n="science">Science</span>
+            <span class="dropdown-arrow" aria-hidden="true">▼</span>
+          </button>
+          <div class="dropdown-menu" role="listbox" hidden>
+            <div class="dropdown-option" role="option" data-value="science" data-i18n="science">Science</div>
+            <div class="dropdown-option" role="option" data-value="management" data-i18n="management">Management</div>
+            <div class="dropdown-option" role="option" data-value="humanities" data-i18n="humanities">Humanities</div>
+            <div class="dropdown-option" role="option" data-value="law" data-i18n="law">Law</div>
+            <div class="dropdown-option" role="option" data-value="technical" data-i18n="technical">Technical / Vocational</div>
+            <div class="dropdown-option" role="option" data-value="other" data-i18n="other">Other</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="elective-picker-section" id="elective-picker-section" hidden aria-label="Elective subjects">
+      <div class="elective-picker-header">
+        <span data-i18n="chooseElectives">Choose your electives</span>
+      </div>
+      <div class="elective-options" id="elective-options" role="group" aria-label="Elective subjects"></div>
+    </section>
+
+    <nav class="mode-tabs" aria-label="Result entry mode">
+      <button class="mode-tab is-active" id="marks-mode" type="button" aria-pressed="true" data-i18n="marksMode">Enter Exact Marks</button>
+      <button class="mode-tab" id="grades-mode" type="button" aria-pressed="false" data-i18n="gradesMode">Enter Letter Grades</button>
+    </nav>
+
+    <section class="subjects-section" id="subjects-section" aria-label="Subjects">
+      <div class="subject-list" id="subjects"></div>
+      <button class="add-subject" id="add-subject" type="button"><span aria-hidden="true">+</span><span data-i18n="addSubject">Add subject</span></button>
+    </section>
+
+    <section class="result-card" aria-live="polite" aria-atomic="true">
+      <div>
+        <span class="result-label" data-i18n="overallGpa">Overall GPA</span>
+        <strong class="result-gpa" id="live-gpa">—</strong>
+      </div>
+      <div class="overall-grade">
+        <span class="result-label" data-i18n="overallGrade">Overall grade</span>
+        <strong id="live-grade">—</strong>
+      </div>
+      <button id="download-pdf" style="display: none;">Download Result</button>
+    </section>
+    <p class="result-status" id="result-status" role="status" data-i18n="chooseLevel">Choose level</p>
+    <div id="subject-summary-breakdown" class="subject-summary-breakdown"></div>
+
+    <dialog class="subject-dialog" id="subject-dialog" aria-labelledby="dialog-title">
+      <form class="dialog-header" method="dialog">
+        <h2 id="dialog-title" data-i18n="addSubject">Add subject</h2>
+        <button class="dialog-close" value="close" aria-label="Close">×</button>
+      </form>
+      <label class="field-label search-field" for="catalogue-search">
+        <span data-i18n="searchSubjects">Search subjects</span>
+        <input id="catalogue-search" type="search" autocomplete="off" />
+      </label>
+      <div class="catalogue-results" id="catalogue-results"></div>
+      <button class="custom-toggle" id="show-custom-form" type="button" data-i18n="customSubject">Create custom subject</button>
+      <form class="custom-form" id="custom-subject-form" hidden>
+        <label class="field-label"><span data-i18n="subjectName">Subject name</span><input name="customName" maxlength="80" required /></label>
+        <label class="field-label"><span data-i18n="theoryMaximum">Theory maximum</span><input name="customTheoryMax" type="number" min="0.01" max="1000" step="any" /></label>
+        <label class="field-label"><span data-i18n="practicalMaximum">Practical maximum</span><input name="customPracticalMax" type="number" min="0.01" max="1000" step="any" /></label>
+        <p class="inline-error" id="custom-error" role="alert" hidden></p>
+        <button class="custom-save" type="submit" data-i18n="saveSubject">Save subject</button>
+      </form>
+    </dialog>
+  </main>
+</body>
+</html>
