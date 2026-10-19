@@ -322,7 +322,7 @@ window.TypingCharts = (function () {
     }
 
     // ---- initial draw + animation ------------------------------------
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (opts.animate === false || prefersReduced) {
       drawFrame(1, null);
@@ -339,7 +339,10 @@ window.TypingCharts = (function () {
       const e = 1 - Math.pow(1 - t, 3);
       drawFrame(e, null);
       if (t < 1) requestAnimationFrame(frame);
-      else attachLineHover(canvas, drawFrame);
+      else {
+        drawFrame(1, null);
+        attachLineHover(canvas, drawFrame);
+      }
     }
     requestAnimationFrame(frame);
   }
@@ -475,7 +478,10 @@ window.TypingCharts = (function () {
         const t = Math.min(1, (now - t0) / dur);
         drawFrame(1 - Math.pow(1 - t, 3), null);
         if (t < 1) requestAnimationFrame(frame);
-        else attachBarHover(canvas, drawFrame);
+        else {
+          drawFrame(1, null);
+          attachBarHover(canvas, drawFrame);
+        }
       }
       requestAnimationFrame(frame);
     }
@@ -591,7 +597,10 @@ window.TypingCharts = (function () {
         const t = Math.min(1, (now - t0) / dur);
         drawFrame(1 - Math.pow(1 - t, 3), null);
         if (t < 1) requestAnimationFrame(frame);
-        else attachDoughnutHover(canvas, drawFrame);
+        else {
+          drawFrame(1, null);
+          attachDoughnutHover(canvas, drawFrame);
+        }
       }
       requestAnimationFrame(frame);
     }
@@ -847,7 +856,11 @@ window.TypingCharts = (function () {
       const e = 1 - Math.pow(1 - t, 3);
       drawFrame(e, null);
       if (t < 1) requestAnimationFrame(frame);
-      else attachUnifiedHover(canvas, drawFrame);
+      else {
+        // Ensure the final frame is rendered before attaching hover
+        drawFrame(1, null);
+        attachUnifiedHover(canvas, drawFrame);
+      }
     }
     requestAnimationFrame(frame);
   }
@@ -932,12 +945,16 @@ window.TypingCharts = (function () {
   }
 
   /* ── auto-render + theme-rebind ────────────────────────────────────── */
-  const registry = new WeakMap();
+  const registry = new Map();
   let resizeBound = false;
 
   function autoRender(canvas, renderFn) {
+    if (!canvas) return;
     registry.set(canvas, renderFn);
     renderFn();
+    requestAnimationFrame(() => {
+      try { renderFn(); } catch (_) {}
+    });
     if (!resizeBound) {
       resizeBound = true;
       let raf = null;
@@ -951,13 +968,16 @@ window.TypingCharts = (function () {
         });
       });
 
-      // re-draw on theme flip (reads from --accent etc. at draw time anyway,
-      // but autoRender caches the fn so calling it is enough)
       const obs = new MutationObserver((m) => {
-        if (m.some((x) => x.attributeName === 'data-theme'))
+        if (m.some((x) => x.attributeName === 'data-theme' || x.attributeName === 'class' || x.attributeName === 'style')) {
           registry.forEach((fn, cv) => { if (cv.isConnected) { try { fn(); } catch (_) {} } });
+        }
       });
-      obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      obs.observe(document.documentElement, { attributes: true });
+      const resView = document.getElementById('view-results');
+      if (resView) obs.observe(resView, { attributes: true, attributeFilter: ['class', 'style'] });
+      const histView = document.getElementById('history-panel');
+      if (histView) obs.observe(histView, { attributes: true, attributeFilter: ['class', 'style'] });
     }
   }
 

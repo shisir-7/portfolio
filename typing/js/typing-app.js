@@ -65,6 +65,9 @@ window.TypingApp = (function () {
   let pendingRestart = null;
   let charSpans = [];              // per-char <span> cache for the typing text
   let charWordIndex = [];          // word index per char (for word-level review)
+  let wordSpans = [];              // cache of .tt-word elements
+  let lineTops = [];               // cache of line vertical offsets
+  let currentWordIdx = -1;
   let lastTypedLen = 0;
   let lastSecondShown = -1;
   let liveStatsVisible = false;
@@ -94,6 +97,7 @@ window.TypingApp = (function () {
     bindShortcuts();
     bindHistoryUI();
     applyPrefsToUI();
+    ensureCaret();
     newTest({ silent: true });
 
     if (!prefs.helpSeen) showHelp();
@@ -774,16 +778,77 @@ window.TypingApp = (function () {
      Typing area rendering
      ====================================================================== */
 
+  function ensureCaret() {
+    const wrap = $('typing-text');
+    let c = $('caret');
+    // Keep the caret inside .typing-text: that element carries the
+    // translateY line-scroll, so the caret travels with the text.
+    if (!c || !wrap || c.parentNode !== wrap) {
+      if (c && c.parentNode) c.parentNode.removeChild(c);
+      c = document.createElement('div');
+      c.id = 'caret';
+      c.className = 'tt-caret';
+      c.innerHTML = '<div class="tt-caret__bar"></div>';
+      if (wrap) wrap.appendChild(c);
+    } else if (!c.querySelector('.tt-caret__bar')) {
+      c.innerHTML = '<div class="tt-caret__bar"></div>';
+    }
+    return c;
+  }
+
+  function syncCaret() {
+    const caret = $('caret') || ensureCaret();
+    const wrap = $('typing-text');
+    if (!wrap || currentView !== 'test') { caret.style.display = 'none'; return; }
+
+    const activeChar = wrap.querySelector('.tt-char.is-current') || wrap.querySelector('.tt-char');
+    if (!activeChar) {
+      caret.style.display = 'none';
+      return;
+    }
+
+    caret.style.display = 'block';
+    const x = activeChar.offsetLeft;
+    const y = activeChar.offsetTop;
+    const h = activeChar.offsetHeight || 28;
+
+    caret.style.height = Math.max(14, h - 4) + 'px';
+    // Outer element: vertical only (timed with the text's line scroll).
+    caret.style.transform = `translate3d(0, ${y + 2}px, 0)`;
+    // Inner bar: horizontal only (fast glide between characters).
+    const bar = caret.querySelector('.tt-caret__bar');
+    if (bar) bar.style.transform = `translate3d(${x - 1}px, 0, 0)`;
+  }
+
   function renderText() {
     const text = engine.getText();
     const wrap = $('typing-text');
     const viewport = document.querySelector('.typing-viewport');
     if (viewport) viewport.scrollTop = 0;
-    wrap.innerHTML = '';
+    wrap.style.transform = 'translateY(0)';
+
+    // Clear the old passage but keep the floating caret node alive.
+    Array.prototype.slice.call(wrap.childNodes).forEach((n) => {
+      if (!n.classList || !n.classList.contains('tt-caret')) wrap.removeChild(n);
+    });
+    const caret = ensureCaret();
+    // Teleport both axes instantly on reset (no glide across the old text).
+    caret.style.transition = 'none';
+    const bar = caret.querySelector('.tt-caret__bar');
+    if (bar) bar.style.transition = 'none';
+    caret.style.display = 'block';
+
     charSpans = [];
     charWordIndex = [];
+    wordSpans = [];
+    lineTops = [];
+    currentWordIdx = -1;
 
-    if (!text) { setEmptyTextMessage(); return; }
+    if (!text) {
+      setEmptyTextMessage();
+      ensureCaret();
+      return;
+    }
 
     const frag = document.createDocumentFragment();
     const isCode = settings.content === 'code';
@@ -805,14 +870,15 @@ window.TypingApp = (function () {
       words.forEach((word, wi) => {
         const wordSpan = document.createElement('span');
         wordSpan.className = 'tt-word';
-        const wIdx = wi;
+        wordSpans.push(wordSpan);
+        const wIdx = wordSpans.length - 1;
         for (let c = 0; c < word.length; c++) {
           const cs = document.createElement('span');
           cs.className = 'tt-char';
           cs.textContent = word[c];
           wordSpan.appendChild(cs);
           charSpans.push(cs);
-          charWordIndex.push(wIdx + li * 1000);
+          charWordIndex.push(wIdx);
           charIndex++;
         }
         frag.appendChild(wordSpan);
@@ -822,15 +888,37 @@ window.TypingApp = (function () {
           sp.textContent = ' ';
           frag.appendChild(sp);
           charSpans.push(sp);
-          charWordIndex.push(wIdx + li * 1000);
+          charWordIndex.push(-1);
           charIndex++;
         }
       });
     });
 
     wrap.appendChild(frag);
-    updateTypedClasses();
-    requestAnimationFrame(() => scrollToActiveWord());
+    
+    // Measure line offsets once, then render state
+    requestAnimationFrame(() => {
+      const tops = new Set();
+      wordSpans.forEach(w => tops.add(w.offsetTop));
+      lineTops = Array.from(tops).sort((a, b) => a - b);
+      const finish = () => {
+        updateTypedClasses();
+        syncCaret();
+        scrollToActiveWord();
+        // Re-enable axis transitions only after snap position is applied.
+        requestAnimationFrame(() => {
+          caret.style.transition = '';
+          if (bar) bar.style.transition = '';
+        });
+      };
+      // If lineTops is degenerate (no layout — hidden viewport or zero width), keep as-is and retry on next frame
+      if (lineTops.length <= 1 && wordSpans.length > 1) {
+        requestAnimationFrame(finish);
+      } else {
+        finish();
+      }
+    });
+
   }
 
   function updateTypedClasses() {
@@ -845,22 +933,22 @@ window.TypingApp = (function () {
       const byWord = {};
       for (let i = 0; i < len; i++) {
         if (typed[i] !== text[i]) {
-          const lastSpace = text.lastIndexOf(' ', i);
-          const w = lastSpace + 1;
-          byWord[w] = (byWord[w] || 0) + 1;
+          const wIdx = charWordIndex[i];
+          if (wIdx !== -1) byWord[wIdx] = (byWord[wIdx] || 0) + 1;
         }
       }
       return byWord;
     })();
 
-    let activeWordStart = -1;
-    let activeWordEnd = -1;
+    let activeWordIdx = -1;
     if (state !== 'finished') {
-      const cur = typed.length;
-      const ls = text.lastIndexOf(' ', cur);
-      activeWordStart = ls + 1;
-      const ns = text.indexOf(' ', activeWordStart);
-      activeWordEnd = ns === -1 ? text.length : ns;
+      activeWordIdx = charWordIndex[typed.length];
+      if (activeWordIdx === -1) {
+        // Find next word if on space/newline
+        for (let i = typed.length; i < charWordIndex.length; i++) {
+          if (charWordIndex[i] !== -1) { activeWordIdx = charWordIndex[i]; break; }
+        }
+      }
     }
 
     for (let i = 0; i < n; i++) {
@@ -875,33 +963,27 @@ window.TypingApp = (function () {
         const ok = typed[i] === text[i];
         if (ok) span.className = base + 'is-correct';
         else {
-          const lastSpace = text.lastIndexOf(' ', i);
-          const wStart = lastSpace + 1;
-          const isSkipped = isSpace && wordErrorMap[wStart] && wordErrorMap[wStart] > 0;
+          const wIdx = charWordIndex[i];
+          const isSkipped = isSpace && wIdx !== -1 && wordErrorMap[wIdx] > 0;
           if (isSkipped) span.className = base + 'is-missed';
           else span.className = base + 'is-incorrect';
         }
       } else if (i === typed.length && state !== 'finished') {
-       span.className = base + 'is-current';
-if (i === typed.length) span.classList.add('caret-here');
+        span.className = base + 'is-current';
       } else {
         const missed = i < text.length && i >= typed.length && state === 'finished' ? ' is-missed' : '';
         span.className = (base.trim() || 'tt-char') + missed;
       }
     }
 
-    // Active word highlight — single word band, updated every keystroke
-    const wordSpans = Array.from(document.querySelectorAll('#typing-text .tt-word'));
-    wordSpans.forEach((w) => w.classList.remove('is-active'));
-    if (activeWordStart !== -1) {
-      let charIdx = 0;
-      let targetWord = null;
-      for (const w of wordSpans) {
-        const len = w.querySelectorAll('.tt-char').length;
-        if (charIdx <= activeWordStart && activeWordStart < charIdx + len + 1) { targetWord = w; break; }
-        charIdx += len + 1; // +1 for the space char span between words
+    if (activeWordIdx !== currentWordIdx) {
+      if (currentWordIdx !== -1 && wordSpans[currentWordIdx]) {
+        wordSpans[currentWordIdx].classList.remove('is-active');
       }
-      if (targetWord) targetWord.classList.add('is-active');
+      if (activeWordIdx !== -1 && wordSpans[activeWordIdx]) {
+        wordSpans[activeWordIdx].classList.add('is-active');
+      }
+      currentWordIdx = activeWordIdx;
     }
 
     if (typed.length < prevLen) {
@@ -911,29 +993,25 @@ if (i === typed.length) span.classList.add('caret-here');
         setTimeout(() => cur.classList.remove('is-recovered'), 220);
         if (!prefs.reducedMotion) playTone(680, 0.05, 'sine', 0.015);
       }
-      const lastSpaceBefore = text.lastIndexOf(' ', prevLen - 1);
-      const wordStart = lastSpaceBefore + 1;
-      let wordNowClean = true;
-      const wordEnd = text.indexOf(' ', wordStart);
-      const end = wordEnd === -1 ? text.length : wordEnd;
-      for (let i = wordStart; i < Math.min(end, typed.length); i++) {
-        if (typed[i] !== text[i]) wordNowClean = false;
-      }
-      if (wordNowClean && end > wordStart && !prefs.reducedMotion) playTone(920, 0.05, 'sine', 0.018);
       lastCorrectedLen = typed.length;
     } else if (typed.length > prevLen) {
       const justCompletedWord = prevLen > 0 && text[prevLen - 1] !== ' ' && (typed.length > text.length || text[typed.length - 1] === ' ' || text[typed.length] === ' ');
       if (justCompletedWord) {
         let wordClean = true;
-        const lastSpace = text.lastIndexOf(' ', prevLen);
-        const ws = lastSpace + 1;
-        for (let i = ws; i < prevLen; i++) if (typed[i] !== text[i]) wordClean = false;
+        const wsIdx = charWordIndex[prevLen - 1];
+        if (wsIdx !== -1) {
+          // Check if word was clean
+          for (let i = 0; i < text.length; i++) {
+            if (charWordIndex[i] === wsIdx && typed[i] !== text[i]) { wordClean = false; break; }
+          }
+        }
         if (wordClean && !prefs.reducedMotion) playTone(1050, 0.04, 'sine', 0.012);
       }
       lastCorrectedLen = typed.length;
     }
     renderExtraChars(typed, text);
     lastTypedLen = typed.length;
+    syncCaret();
   }
 
   function renderExtraChars(typed, text) {
@@ -944,9 +1022,7 @@ if (i === typed.length) span.classList.add('caret-here');
     tray.textContent = extra;
   }
 
-  // Smooth line-by-line scrolling: the active line stays on the 2nd visible row
-  // (one line of context above, the rest ahead), and the text glides up by a
-  // single line each time you reach a new row, so your eyes never jump.
+  // Smooth line-by-line scrolling: maintains the active line at a steady position.
   const ACTIVE_ROW_INDEX = 1;
   let lastScrolledRow = 0;
   let _scrollRaf = 0;
@@ -957,8 +1033,8 @@ if (i === typed.length) span.classList.add('caret-here');
     const viewport = document.querySelector('.typing-viewport');
     if (viewport) {
       viewport.scrollTop = 0;
-      const textEl = viewport.querySelector('.typing-text') || document.querySelector('.typing-text');
-      if (textEl) textEl.style.transform = '';
+      const textEl = $('typing-text');
+      if (textEl) textEl.style.transform = 'translateY(0)';
     }
   }
 
@@ -967,13 +1043,15 @@ if (i === typed.length) span.classList.add('caret-here');
     _scrollRaf = requestAnimationFrame(() => {
       _scrollRaf = 0;
       const viewport = document.querySelector('.typing-viewport');
-      const activeWord = viewport?.querySelector('.tt-word.is-active') || document.querySelector('.tt-word.is-active');
-      if (!viewport || !activeWord) return;
+      const textEl = $('typing-text');
+      const activeWord = wordSpans[currentWordIdx] || viewport?.querySelector('.tt-word.is-active');
+      if (!viewport || !textEl || !activeWord) return;
 
-      const words = Array.from(viewport.querySelectorAll('.tt-word'));
-      if (!words.length) return;
-
-      const lineTops = [...new Set(words.map((w) => w.offsetTop))].sort((a, b) => a - b);
+      if (!lineTops.length) {
+        const tops = new Set();
+        wordSpans.forEach(w => tops.add(w.offsetTop));
+        lineTops = Array.from(tops).sort((a, b) => a - b);
+      }
       if (lineTops.length <= 1) return;
 
       const activeTop = activeWord.offsetTop;
@@ -991,12 +1069,9 @@ if (i === typed.length) span.classList.add('caret-here');
       if (targetRow === lastScrolledRow) return;
       lastScrolledRow = targetRow;
 
-      const targetScrollTop = lineTops[Math.min(targetRow, lineTops.length - 1)];
-      if (Math.abs(viewport.scrollTop - targetScrollTop) <= 2) return;
-
-      const textEl = viewport.querySelector('.typing-text') || document.querySelector('.typing-text');
-      if (textEl) textEl.style.transform = '';
-      viewport.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
+      const targetScrollTop = lineTops[Math.min(targetRow, lineTops.length - 1)] || 0;
+      textEl.style.transform = `translateY(${-targetScrollTop}px)`;
+      syncCaret();
     });
   }
 
@@ -1686,8 +1761,8 @@ if (i === typed.length) span.classList.add('caret-here');
     if (!prefs.sound) return;
     if (prefs.reducedMotion && (kind === 'finish')) return;
     switch (kind) {
-      case 'key': playTone(1180, 0.03, 'sine', 0.022); break;
-      case 'error': playTone(220, 0.07, 'square', 0.03); break;
+      case 'key': playTone(1180, 0.03, 'sine', 0.03); break;
+      case 'error': playTone(220, 0.07, 'square', 0.022); break;
       case 'tick': playTone(720, 0.05, 'sine', 0.03); break;
       case 'soft': playTone(520, 0.05, 'sine', 0.02); break;
       case 'finish': playTone(880, 0.12, 'sine', 0.04); setTimeout(() => playTone(1320, 0.18, 'sine', 0.035), 110); break;
@@ -2032,9 +2107,12 @@ if (i === typed.length) span.classList.add('caret-here');
       });
     }
 
-    TypingCharts.autoRender($('chart-unified'), () => {
-      TypingCharts.unifiedPerformanceChart($('chart-unified'), samples, { animate: true });
-    });
+    const unifiedCanvas = $('chart-unified');
+    if (unifiedCanvas) {
+      TypingCharts.autoRender(unifiedCanvas, () => {
+        TypingCharts.unifiedPerformanceChart(unifiedCanvas, samples, { animate: true });
+      });
+    }
 
     // Tiny inline stats row beneath the unified graph
     const inlineEl = $('result-stats-inline');
@@ -2046,18 +2124,21 @@ if (i === typed.length) span.classList.add('caret-here');
         '<span class="muted">' + result.correct + ' ✓ · ' + result.incorrect + ' ✕ · ' + result.extra + ' extra · ' + result.missed + ' missed</span>';
     }
 
-    TypingCharts.autoRender($('chart-breakdown'), () => {
-      TypingCharts.doughnutChart($('chart-breakdown'), {
-        segments: [
-          { label: 'correct', value: result.correct, color: colors.correct },
-          { label: 'incorrect', value: result.incorrect, color: colors.incorrect },
-          { label: 'extra', value: result.extra, color: colors.extra },
-          { label: 'missed', value: result.missed, color: colors.missed }
-        ],
-        centerLabel: result.correct + result.incorrect + result.extra + result.missed,
-        centerSub: 'chars'
+    const breakdownCanvas = $('chart-breakdown');
+    if (breakdownCanvas) {
+      TypingCharts.autoRender(breakdownCanvas, () => {
+        TypingCharts.doughnutChart(breakdownCanvas, {
+          segments: [
+            { label: 'correct', value: result.correct, color: colors.correct },
+            { label: 'incorrect', value: result.incorrect, color: colors.incorrect },
+            { label: 'extra', value: result.extra, color: colors.extra },
+            { label: 'missed', value: result.missed, color: colors.missed }
+          ],
+          centerLabel: result.correct + result.incorrect + result.extra + result.missed,
+          centerSub: 'chars'
+        });
       });
-    });
+    }
   }
 
   /* ======================================================================
@@ -2232,33 +2313,16 @@ if (i === typed.length) span.classList.add('caret-here');
   }
 
   /* Public hook for debugging / tests */
-  return { init, _state: () => ({ settings, prefs, engine, result }) };
+  return { init, syncCaret, _state: () => ({ settings, prefs, engine, result }) };
 })();
 
 /* ---- Yellow blinking caret (independent of the typing engine) ---- */
 (function () {
-  var lastEl = null;
   function placeCaret() {
-    var wrap = document.getElementById('typing-text');
-    if (!wrap) return;
-    var spans = wrap.querySelectorAll('.tt-char');
-    var el = null;
-    // the caret sits on the first character that has not been typed yet
-    for (var i = 0; i < spans.length; i++) {
-      var c = spans[i].classList;
-      if (!(c.contains('is-correct') || c.contains('is-incorrect') || c.contains('is-missed'))) { el = spans[i]; break; }
-    }
-    if (lastEl && lastEl !== el) {
-  lastEl.classList.remove('caret-here');
-}
-if (el && !el.classList.contains('caret-here')) {
-  el.classList.add('caret-here');
-}
-lastEl = el;
+    if (window.TypingApp && window.TypingApp.syncCaret) window.TypingApp.syncCaret();
   }
   ['input', 'keydown', 'keyup', 'click', 'focusin'].forEach(function (ev) {
     document.addEventListener(ev, function () { requestAnimationFrame(placeCaret); }, true);
   });
-  setInterval(placeCaret, 1000);
-  placeCaret();
+  setInterval(placeCaret, 500);
 })();
