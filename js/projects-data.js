@@ -11,14 +11,14 @@ window.PORTFOLIO_PROJECTS = [
   {
     id: "typing-speed-test",
     number: "01",
-    title: "Typing Speed Test — Practice & Performance",
+    title: "Typing Speed Test — WPM & Accuracy",
     discipline: "Web Application",
     category: "ui-ux",
     role: "Product Designer & Developer",
     year: "2026",
     badge: "Interactive Tool",
     headline: "A focused typing practice experience with meaningful performance insights.",
-    summary: "A private, browser-based typing test with timed challenges, live WPM and accuracy, detailed result graphs, and personal progress history.",
+    summary: "A private browser-based typing test with timed and word-count challenges, live WPM and accuracy readings, detailed result graphs, error analysis, and personal progress history.",
     image: "assets/images/project-7-typing-test.svg",
     imageAlt: "Typing test dashboard showing an 84 WPM result, 98 percent accuracy, a typing passage, progress chart, and keyboard",
     searchDescription: "Test your typing speed, accuracy, and WPM.",
@@ -33,22 +33,22 @@ window.PORTFOLIO_PROJECTS = [
       "typing practice",
       "typing accuracy test"
     ],
-    projectUrl: "typing/index.html"
+    projectUrl: "/typing/"
   },
   {
     id: "neb-gpa-calculator",
     number: "02",
-    title: "NEB GPA Calculator — SEE & +2",
+    title: "NEB GPA Calculator — SEE & +2 Marks",
     discipline: "Web Application",
     category: "ui-ux",
     role: "Product Designer & Developer",
     year: "2026",
     badge: "Interactive Tool",
-    headline: "Nepal-focused GPA calculator for SEE & NEB +2 with accurate grade mapping.",
-    summary: "Calculate NEB GPA for SEE (Class 10) and +2 with stream-based subject presets, theory/practical split, credit-hour weighting, and instant letter-grade mapping. Supports bilingual (EN/NE) entry and elective selection.",
+    headline: "Nepal-focused GPA calculator for SEE & NEB +2 with indicative grade-point estimates.",
+    summary: "Estimate NEB GPA for SEE and +2 from subject marks or letter grades, with theory and practical splits, bilingual entry, and credit-hour weighting. Indicative only, not an official result.",
     image: "gpa-calculator/images/thumbnail.svg",
     imageAlt: "NEB GPA calculator preview showing subject marks, letter grades, and an indicative GPA",
-    searchDescription: "Estimate Nepal NEB GPA for SEE and NEB +2 with credit-hour weighting.",
+    searchDescription: "Estimate Nepal NEB GPA for SEE and NEB +2 using subject marks or letter grades.",
     searchKeywords: [
       "NEB GPA",
       "Nepal GPA calculator",
@@ -58,119 +58,48 @@ window.PORTFOLIO_PROJECTS = [
       "class 12 GPA",
       "letter grading NEP",
       "NEB grade calculator",
-      "credit hour GPA Nepal"
     ],
-    projectUrl: "gpa-calculator/index.html"
+    projectUrl: "/gpa-calculator/"
   },
   {
-    id: "apex-os",
+    id: "speed-pulse-test",
     number: "03",
-    title: "Apex OS — Adaptive Workspace Interface",
-    discipline: "UI/UX Design",
+    title: "SpeedPulse — Internet Speed Test",
+    discipline: "Web Application",
     category: "ui-ux",
-    role: "Lead UI/UX & Systems Designer",
-    year: "2025–2026",
-    badge: "Concept Exploration",
-    headline: "Distraction-free desktop operating canvas & dynamic design system.",
-    summary: "A focused desktop interface tailored for digital thinkers. Built around spatial canvas organization, low-latency micro-interactions, and a calm, contrast-engineered palette.",
-    image: "assets/images/project-1-apex.svg",
-    imageAlt: "Apex OS user interface preview showing canvas latency, spatial layout, and design system tokens",
-    demoUrl: "https://figma.com/@shisiracharya/apex-os-prototype",
-    repoUrl: "https://github.com/shisiracharya/apex-workspace",
-    caseStudy: {
-      challenge: "Modern creative productivity tools suffer from heavy cognitive load, toolbars that crowd the viewport, and disjointed typography scales that strain the eye during long working sessions.",
-      targetAudience: "Designers, writers, researchers, and multidisciplinary creatives who require a distraction-free, deeply responsive digital workspace.",
-      approach: "Engineered a strict 12-column adaptive layout with an obsidian (#141413) base and subtle warm accents. Minimized chrome in favor of spatial keyboard-driven interactions and high optical kerning.",
-      interfaceDecisions: [
-        "4.2ms canvas compositing thread monitoring for fluid 60fps responsiveness.",
-        "Zero-clutter collapsible sidebars with dedicated design token inspect panels.",
-        "Precision typography hierarchy utilizing Plus Jakarta Sans paired with mono metadata."
-      ],
-      deliverables: [
-        "Complete Design System in Figma (Typography, Colors, Spatial Tokens)",
-        "Desktop Application Interactive Prototype",
-        "Responsive Adaptive Layouts (Large Display, Laptop, Compact)",
-        "Usability & Optical Kerning Guidelines"
-      ],
-      tools: ["Figma", "Design Tokens", "Wireframing", "Interaction Prototyping", "Design Systems"]
-    }
-  },
-  {
-    id: "katha-documentary",
-    number: "04",
-    title: "Katha — Documentary Narrative & Pacing",
-    discipline: "Video Editing",
-    category: "video",
-    role: "Editor & Colorist",
-    year: "2025",
-    badge: "Narrative & Color",
-    headline: "Cinematic short-form documentary exploring rural memory, natural light, and acoustic rhythm.",
-    summary: "A quiet, intentional short-form narrative cut capturing rural heritage. Uses deliberate pacing, natural acoustic soundscapes, and custom Kodak 2383 film print emulation curves.",
-    image: "assets/images/project-2-katha.svg",
-    imageAlt: "Katha documentary film frame preview showing 2.39:1 scope anamorphic frame and audio waveform stems",
-    demoUrl: "https://vimeo.com/shisiracharya/katha-cut",
-    // repoUrl omitted intentionally to demonstrate single-button dynamic rendering
-    caseStudy: {
-      challenge: "Contemporary video storytelling often relies on hyperactive cuts and sensory overload. The challenge was to hold audience attention while maintaining contemplative pauses and authentic emotional gravity.",
-      targetAudience: "Cultural storytellers, documentary audiences, and creative directors looking for sensitive, rhythmically masterminded editing.",
-      approach: "Built the edit around the organic rhythm of breath and footsteps. Used ambient sound stems as the primary transition markers rather than abrupt visual wipes.",
-      interfaceDecisions: [
-        "2.39:1 anamorphic aspect ratio framing for sweeping geographical context.",
-        "Kodak 2383 film stock color science with warm golden-hour shadow retention.",
-        "Carefully orchestrated multi-stem audio editing (Foley, Ambient, and Acoustic Score)."
-      ],
-      deliverables: [
-        "4K Master Film Cut (DCI Scope)",
-        "Sound Design & Foley Synchronized Stems",
-        "Color Grading Suite with Look-Up Tables (LUTs)",
-        "Editorial Pacing Breakdown & Timecode Script"
-      ],
-      tools: ["Adobe Premiere Pro", "DaVinci Resolve", "Sound Design", "Color Grading", "Storyboarding"]
-    }
-  },
-  {
-    id: "typographia-series",
-    number: "05",
-    title: "TypoGraphia — Exhibition Identity & Print Series",
-    discipline: "Graphic Design",
-    category: "graphic",
-    role: "Art Director & Typographer",
-    year: "2024–2025",
-    badge: "Editorial Identity",
-    headline: "Contemporary Swiss-inspired poster series exploring micro-typography and structural discipline.",
-    summary: "An exhibition identity and limited edition silkscreen poster collection. Explores asymmetric grid alignments, negative space ratios, and high-density ink contrast on cotton stock.",
-    image: "assets/images/project-3-typographia.svg",
-    imageAlt: "TypoGraphia exhibition poster preview displaying Swiss typography, asymmetric grid lines, and editorial specimen",
-    demoUrl: "https://behance.net/gallery/typographia-specimen",
-    caseStudy: {
-      challenge: "Modern digital posters frequently prioritize decorative trends over functional legibility. The project aimed to strip away ornamental fluff to prove the raw emotional resonance of pure typography.",
-      targetAudience: "Typography enthusiasts, exhibition attendees, gallery curators, and graphic design connoisseurs.",
-      approach: "Applied Swiss International Typographic principles: asymmetric column axes, mathematical margins, optical kerning, and a restricted palette of warm cotton, deep black, and cinnabar vermilion.",
-      interfaceDecisions: [
-        "Modular A1/B2 grid systems ensuring rigid structural harmony across formats.",
-        "Bold geometric headline contrast paired with delicate editorial serif sub-elements.",
-        "Editorial colophons containing precise production metadata and edition numbering."
-      ],
-      deliverables: [
-        "Set of 6 Exhibition Posters (Printed on 350gsm Cotton Paper)",
-        "Exhibition Catalog & Editorial Specimen Guide",
-        "Social Media Announcement Visuals & Digital Campaign Assets",
-        "Brand Identity Manual for Museum of Contemporary Form"
-      ],
-      tools: ["Adobe Illustrator", "InDesign", "Photoshop", "Swiss Grid Systems", "Print Production"]
-    }
+    role: "Product Designer & Developer",
+    year: "2026",
+    badge: "Interactive Tool",
+    headline: "An honest connection measurement with a live gauge, graph, and shareable result card.",
+    summary: "A private browser-based internet speed test measuring download, upload, ping, and jitter against a nearby Cloudflare edge, with a live gauge, local history, and a shareable result image.",
+    image: "assets/images/project-8-speed-test.svg",
+    imageAlt: "Speed test dashboard showing a 248 Mbps download result, upload, ping, jitter, and a live speed graph",
+    searchDescription: "Check your internet speed — download, upload, ping, and jitter.",
+    searchKeywords: [
+      "speed test",
+      "internet speed test",
+      "speedpulse",
+      "test my internet speed",
+      "download speed",
+      "upload speed",
+      "bandwidth test",
+      "ping test",
+      "jitter test",
+      "connection test"
+    ],
+    projectUrl: "/speed-test/"
   },
   {
     id: "lumina-markets",
-    number: "06",
-    title: "Lumina — Financial Analytics & Clarity",
+    number: "04",
+    title: "Lumina — Financial Analytics Dashboard",
     discipline: "UI/UX Design",
     category: "ui-ux",
     role: "UI/UX Designer",
     year: "2025",
     badge: "Web Application",
     headline: "Transforming dense multi-currency asset portfolios into intuitive visual hierarchies.",
-    summary: "A clean, high-accessibility web dashboard for quantitative portfolio oversight. Resolves data density through smooth trend surfaces, clean tabular layouts, and instant latency feedback.",
+    summary: "A clean, high-accessibility web dashboard for quantitative portfolio oversight, resolving data density through smooth trend surfaces, clean tables, and instant latency feedback.",
     image: "assets/images/project-4-lumina.svg",
     imageAlt: "Lumina analytics web application interface displaying asset curves and risk indicators",
     demoUrl: "https://lumina-markets.preview.shisir.design",
@@ -195,15 +124,15 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "chronicle-reel",
-    number: "07",
-    title: "Chronicle — Brand Manifesto & Motion Reel",
+    number: "05",
+    title: "Chronicle — Brand Motion Reel",
     discipline: "Video Editing",
     category: "video",
     role: "Motion Editor & Sound Designer",
     year: "2025",
     badge: "Brand Film",
     headline: "Kinetic brand anthem combining high-tempo speed ramps and transient-locked typography.",
-    summary: "A dynamic 60-second editorial motion reel engineered for modern brand storytelling. Combines kinetic typographic impacts, organic motion blur transitions, and synchronized transient rhythm.",
+    summary: "A dynamic 60-second editorial motion reel for modern brand storytelling, combining kinetic typographic impacts, organic motion blur transitions, and a synchronized transient rhythm.",
     image: "assets/images/project-5-chronicle.svg",
     imageAlt: "Chronicle motion reel frame preview showcasing kinetic title cuts and speed ramp contact sheet",
     demoUrl: "https://youtube.com/watch?v=chronicle-reel",
@@ -227,15 +156,15 @@ window.PORTFOLIO_PROJECTS = [
   },
   {
     id: "forma-monograph",
-    number: "08",
-    title: "Forma — Architectural Monograph & Brand System",
+    number: "06",
+    title: "Forma — Architectural Monograph",
     discipline: "Graphic Design",
     category: "graphic",
     role: "Publication Designer & Art Director",
     year: "2024",
     badge: "Publication Design",
     headline: "Minimalist publication design system featuring custom grid structures and tactile materials.",
-    summary: "A hardcover architectural monograph honoring the concept of the architectural void. Features bespoke column grids, tactile negative space, blind debossing, and quiet typography.",
+    summary: "A hardcover architectural monograph honoring the architectural void, featuring bespoke column grids, tactile negative space, blind debossing, and quietly confident typography.",
     image: "assets/images/project-6-forma.svg",
     imageAlt: "Forma architectural book cover and page spread preview showing structure and negative space",
     // Neither demoUrl nor repoUrl provided: verifies that zero empty CTA area or placeholder buttons appear!

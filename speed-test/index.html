@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SpeedPulse — Fast, Accurate Internet Speed Test</title>
+
+<meta name="description" content="Measure your internet speed in seconds. Test download, upload, ping and jitter with a live animated gauge. No signup, no ads, no backend.">
+<meta name="theme-color" content="#070b16" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark light">
+<meta name="author" content="Shisir Acharya">
+
+<!-- Open Graph / social sharing -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SpeedPulse by Shisir Acharya">
+<meta property="og:title" content="SpeedPulse — Fast, Accurate Internet Speed Test">
+<meta property="og:description" content="Measure download, upload, ping and jitter with a live animated gauge. No signup, no ads.">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://shisiracharya7.com.np/speed-test/">
+<meta property="og:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png">
+<meta property="og:image:alt" content="SpeedPulse internet speed test by Shisir Acharya">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SpeedPulse — Internet Speed Test">
+<meta name="twitter:description" content="Measure download, upload, ping and jitter in seconds.">
+<meta name="twitter:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png">
+
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./favicon.svg">
+<link rel="canonical" href="https://shisiracharya7.com.np/speed-test/">
+
+<!-- Fonts: Outfit (display) + Inter (UI), self-hosted and subset to the
+     characters this site uses. See tools/build_fonts.py. `font-display: swap`
+     plus the system fallbacks in styles.css keep the page readable if the
+     fonts are slow to arrive. -->
+<link rel="preload" href="./fonts/speedpulse-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./fonts/speedpulse-display.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="./styles.css">
+
+<!-- Inline bootstrap: apply the stored theme before first paint to avoid a flash of wrong theme. -->
+<script>
+  (function () {
+    try {
+      var stored = localStorage.getItem('speedpulse:theme');
+      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      var theme = stored || (prefersLight ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme;
+    } catch (e) { /* private mode / storage disabled -> keep the default dark theme */ }
+  })();
+</script>
+</head>
+
+<body>
+<a class="skip-link" href="#test">Skip to the speed test</a>
+
+<!-- Ambient gradient background (pure CSS, no images) -->
+<div class="bg-gradient" aria-hidden="true"></div>
+
+<!--
+  Icon sprite. Every icon in the page is defined once here and referenced with
+  <use href="#icon-name">, which keeps the markup small and the icons cacheable.
+  `aria-hidden` on the sprite keeps it out of the accessibility tree.
+-->
+<svg class="svg-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+
+    <symbol id="i-logo" viewBox="0 0 32 32">
+      <path d="M2 17h7l3-9 5 17 4-11 3 3h6" fill="none" stroke="url(#brandGrad)"
+            stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="i-sun" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="4.2" fill="currentColor"/>
+      <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>
+      </g>
+    </symbol>
+
+    <symbol id="i-moon" viewBox="0 0 24 24">
+      <path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path d="M8 5.5v13l11-6.5z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-retry" viewBox="0 0 24 24">
+      <path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M12 3.2 21 19.5H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M12 9v4.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+      <circle cx="12" cy="16.4" r="1.05" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="M12 11v5.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+      <circle cx="12" cy="7.9" r="1.15" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" fill="currentColor"/>
+    </symbol>
+
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 3v13m0 0 5-5m-5 5-5-5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 20h16" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="i-upload" viewBox="0 0 24 24">
+      <path d="M12 17V4m0 0 5 5m-5-5-5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 20h16" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="i-ping" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M12 7.6V12l3.1 2.1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="i-jitter" viewBox="0 0 24 24">
+      <path d="M3 15.5h3.4l2.2-7 3.3 13 2.6-9 1.8 3h4.7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="i-share" viewBox="0 0 24 24">
+      <path d="M12 15V3m0 0 4 4m-4-4L8 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="i-download-img" viewBox="0 0 24 24">
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#top" aria-label="SpeedPulse home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><use href="#i-logo"/></svg>
+      <span class="brand-name" data-brand>SpeedPulse</span>
+    </a>
+
+    <nav class="header-nav" aria-label="Primary">
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="/" class="header-portfolio-link">Shisir Acharya</a>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Unit toggle: Mbps <-> MB/s -->
+      <div class="unit-toggle" role="group" aria-label="Speed unit">
+        <button type="button" class="unit-btn is-active" data-unit="mbps" aria-pressed="true">Mbps</button>
+        <button type="button" class="unit-btn" data-unit="mbs" aria-pressed="false">MB/s</button>
+        <span class="unit-slider" aria-hidden="true"></span>
+      </div>
+
+      <button type="button" class="icon-btn" id="theme-toggle" aria-label="Switch to light theme" title="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================
+       HERO + TEST AREA
+       ============================================================ -->
+  <section class="hero" id="test" aria-labelledby="test-heading">
+    <div class="container">
+
+      <div class="hero-intro">
+        <p class="eyebrow">Free &middot; No signup &middot; Powered by Cloudflare</p>
+        <h1 id="test-heading">How fast is your internet?</h1>
+        <p class="lede">A fast, honest measurement of your connection using a real global test network. Takes about 30&nbsp;seconds.</p>
+      </div>
+
+      <!-- Phase stepper -->
+      <ol class="stepper" id="stepper" aria-label="Test progress">
+        <li class="step" data-step="ping">
+          <span class="step-dot" aria-hidden="true"></span>
+          <span class="step-label">Ping</span>
+        </li>
+        <li class="step" data-step="download">
+          <span class="step-dot" aria-hidden="true"></span>
+          <span class="step-label">Download</span>
+        </li>
+        <li class="step" data-step="upload">
+          <span class="step-dot" aria-hidden="true"></span>
+          <span class="step-label">Upload</span>
+        </li>
+        <li class="step" data-step="done">
+          <span class="step-dot" aria-hidden="true"></span>
+          <span class="step-label">Done</span>
+        </li>
+      </ol>
+
+      <!-- Main test card -->
+      <div class="card test-card" id="test-card">
+
+        <!-- Status line (screen-reader + visual phase label) -->
+        <p class="phase-label" id="phase-label" aria-live="polite">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <span id="phase-text">Ready when you are</span>
+        </p>
+
+        <div class="gauge-wrap">
+          <!-- SVG gauge: built in JS so it stays in sync with the theme tokens -->
+          <div class="gauge" id="gauge">
+            <svg viewBox="0 0 320 320" class="gauge-svg" role="img" aria-labelledby="gauge-title">
+              <title id="gauge-title">Live speedometer</title>
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%"  stop-color="var(--c-cyan)"/>
+                  <stop offset="55%" stop-color="var(--c-blue)"/>
+                  <stop offset="100%" stop-color="var(--c-violet)"/>
+                </linearGradient>
+                <filter id="gaugeGlow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="5" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- Soft track ring -->
+              <path class="gauge-track" id="gauge-track" d="" />
+              <!-- Value arc (stroke-dasharray animated by JS) -->
+              <path class="gauge-value" id="gauge-value" d="" />
+              <!-- Glowing cap that rides the end of the value arc -->
+              <circle class="gauge-cap" id="gauge-cap" cx="160" cy="160" r="7" />
+            </svg>
+
+            <!-- Hero readout -->
+            <div class="gauge-center">
+              <p class="gauge-value-text" id="gauge-value-text">0</p>
+              <p class="gauge-unit" id="gauge-unit">Mbps</p>
+            </div>
+
+            <!-- Scale legend -->
+            <div class="gauge-scale" aria-hidden="true">
+              <span class="gauge-scale-end" id="gauge-scale-max">100</span>
+              <span class="gauge-scale-end" id="gauge-scale-min">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button type="button" class="btn btn-primary btn-go" id="start-btn">
+            <span class="btn-go-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-play"/></svg>
+            </span>
+            <span class="btn-go-label">Start test</span>
+          </button>
+
+          <button type="button" class="btn btn-ghost" id="cancel-btn" hidden>
+            Cancel
+          </button>
+
+          <button type="button" class="btn btn-primary btn-go" id="again-btn" hidden>
+            <span class="btn-go-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><use href="#i-retry"/></svg>
+            </span>
+            <span class="btn-go-label">Run again</span>
+          </button>
+        </div>
+
+        <!-- Live graph -->
+        <div class="graph-wrap" id="graph-wrap">
+          <div class="graph-head">
+            <h2 class="graph-title" id="graph-title">Live speed</h2>
+            <span class="graph-peak" id="graph-peak">Peak 0 Mbps</span>
+          </div>
+          <canvas id="graph" class="graph" width="900" height="260"
+                  role="img" aria-label="Live speed graph over time"></canvas>
+        </div>
+
+        <!-- Error banner -->
+        <div class="alert" id="alert" role="alert" hidden>
+          <svg class="alert-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg>
+          <div class="alert-body">
+            <p class="alert-title" id="alert-title">Something went wrong</p>
+            <p class="alert-text" id="alert-text"></p>
+          </div>
+          <button type="button" class="btn btn-small" id="retry-btn">Retry</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RESULTS
+       ============================================================ -->
+  <section class="section" id="results" aria-labelledby="results-heading" hidden>
+    <div class="container">
+      <div class="section-head">
+        <h2 id="results-heading">Your results</h2>
+        <p class="section-sub">Measured <span id="result-time">just now</span> against a nearby Cloudflare edge.</p>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict" id="verdict">
+        <span class="verdict-icon" id="verdict-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-star"/></svg>
+        </span>
+        <div class="verdict-text">
+          <p class="verdict-title" id="verdict-title">Great connection</p>
+          <p class="verdict-desc" id="verdict-desc"></p>
+        </div>
+      </div>
+
+      <!-- Metric cards: download leads as the hero, the rest support it -->
+      <div class="metric-grid">
+        <article class="card metric metric-hero" data-metric="download">
+          <header class="metric-head">
+            <span class="metric-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-download"/></svg>
+            </span>
+            <h3 class="metric-name">
+              Download
+              <button type="button" class="tip" aria-label="What is download speed?" data-tip="Download speed is how fast data reaches you. Bigger is better — it controls streaming quality, web page loads and download times.">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+              </button>
+            </h3>
+          </header>
+          <p class="metric-value metric-value-lg"><span id="m-download">--</span><span class="metric-unit" id="m-download-unit">Mbps</span></p>
+          <p class="metric-note" id="m-download-note">—</p>
+        </article>
+
+        <article class="card metric" data-metric="upload">
+          <header class="metric-head">
+            <span class="metric-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-upload"/></svg>
+            </span>
+            <h3 class="metric-name">
+              Upload
+              <button type="button" class="tip" aria-label="What is upload speed?" data-tip="Upload speed is how fast data leaves your device. It matters for video calls, cloud backups and sharing large files.">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+              </button>
+            </h3>
+          </header>
+          <p class="metric-value"><span id="m-upload">--</span><span class="metric-unit" id="m-upload-unit">Mbps</span></p>
+          <p class="metric-note" id="m-upload-note">—</p>
+        </article>
+
+        <article class="card metric" data-metric="ping">
+          <header class="metric-head">
+            <span class="metric-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-ping"/></svg>
+            </span>
+            <h3 class="metric-name">
+              Ping
+              <button type="button" class="tip" aria-label="What is ping?" data-tip="Ping is the round-trip delay to the test server, in milliseconds. Lower is better. Under 30 ms feels instant; above 100 ms feels sluggish in calls and games.">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+              </button>
+            </h3>
+          </header>
+          <p class="metric-value"><span id="m-ping">--</span><span class="metric-unit">ms</span></p>
+          <p class="metric-note" id="m-ping-note">—</p>
+        </article>
+
+        <article class="card metric" data-metric="jitter">
+          <header class="metric-head">
+            <span class="metric-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-jitter"/></svg>
+            </span>
+            <h3 class="metric-name">
+              Jitter
+              <button type="button" class="tip" aria-label="What is jitter?" data-tip="Jitter is how much your ping varies between requests. High jitter causes stuttering calls and laggy audio even when the average ping looks fine.">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+              </button>
+            </h3>
+          </header>
+          <p class="metric-value"><span id="m-jitter">--</span><span class="metric-unit">ms</span></p>
+          <p class="metric-note" id="m-jitter-note">—</p>
+        </article>
+      </div>
+
+      <!-- Connection details -->
+      <div class="card info-card">
+        <div class="info-head">
+          <h3>Connection details</h3>
+          <button type="button" class="btn btn-small btn-outline" id="copy-summary-btn">Copy summary</button>
+        </div>
+        <dl class="info-list" id="info-list">
+          <div class="info-row"><dt>Your IP</dt><dd id="info-ip">—</dd></div>
+          <div class="info-row"><dt>ISP / ASN</dt><dd id="info-isp">—</dd></div>
+          <div class="info-row"><dt>Location</dt><dd id="info-location">—</dd></div>
+          <div class="info-row"><dt>Test server</dt><dd id="info-server">—</dd></div>
+          <div class="info-row"><dt>Server distance</dt><dd id="info-distance">—</dd></div>
+          <div class="info-row"><dt>Connection type</dt><dd id="info-type">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="results-actions">
+        <button type="button" class="btn btn-primary" id="share-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="btn-icon"><use href="#i-share"/></svg>
+          Share result
+        </button>
+        <button type="button" class="btn btn-outline" id="download-img-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="btn-icon"><use href="#i-download-img"/></svg>
+          Download image
+        </button>
+        <button type="button" class="btn btn-outline" id="results-again-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="btn-icon"><use href="#i-retry"/></svg>
+          Run again
+        </button>
+      </div>
+
+      <!-- Hidden canvas used to render the shareable result image -->
+      <canvas id="share-canvas" class="share-canvas" width="1200" height="630" aria-hidden="true"></canvas>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HISTORY
+       ============================================================ -->
+  <section class="section" id="history" aria-labelledby="history-heading" hidden>
+    <div class="container">
+      <div class="section-head">
+        <h2 id="history-heading">Test history</h2>
+        <p class="section-sub">Your last 10 tests, stored only in this browser.</p>
+      </div>
+
+      <div class="card history-card">
+        <ul class="history-list" id="history-list"></ul>
+        <p class="history-empty" id="history-empty" hidden>No tests yet — run your first one above.</p>
+        <div class="history-foot">
+          <button type="button" class="btn btn-small btn-outline" id="clear-history-btn">Clear history</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW IT WORKS
+       ============================================================ -->
+  <section class="section" id="how" aria-labelledby="how-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="how-heading">How it works</h2>
+        <p class="section-sub">Three short phases, real network traffic, no fake numbers.</p>
+      </div>
+
+      <ol class="how-grid">
+        <li class="card how-card">
+          <span class="how-num" aria-hidden="true">01</span>
+          <h3>Latency</h3>
+          <p>We send 20 tiny requests to the nearest edge server and measure the round-trip time of each one. The first request is discarded as a warm-up.</p>
+          <p class="how-meta">Median ping + average jitter</p>
+        </li>
+        <li class="card how-card">
+          <span class="how-num" aria-hidden="true">02</span>
+          <h3>Throughput</h3>
+          <p>Several parallel streams pull progressively larger files for about 10 seconds. The first seconds are skipped so TCP slow start doesn't skew the result.</p>
+          <p class="how-meta">4–6 parallel connections</p>
+        </li>
+        <li class="card how-card">
+          <span class="how-num" aria-hidden="true">03</span>
+          <h3>Scoring</h3>
+          <p>Your result is compared against what common online activities actually need, so the verdict is meaningful rather than a raw number.</p>
+          <p class="how-meta">Plain-language rating</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ
+       ============================================================ -->
+  <section class="section" id="faq" aria-labelledby="faq-heading">
+    <div class="container container-narrow">
+      <div class="section-head">
+        <h2 id="faq-heading">Frequently asked questions</h2>
+        <p class="section-sub">Everything people usually want to know before trusting a speed test.</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item" name="faq" open>
+          <summary><span>Why is my result lower than the speed my ISP advertises?</span></summary>
+          <div class="faq-body">
+            <p>Advertised speeds are the maximum of the line, measured under ideal conditions with no other traffic. Real results are always lower because some bandwidth is used by your router, Wi-Fi, the TV streaming in the background, the VPN you're connected to, and by the fact that the internet is a shared network that peaks at different times.</p>
+            <p>As a rule of thumb, a healthy result lands at 80–95% of the advertised number on Ethernet, and noticeably lower on Wi-Fi.</p>
+          </div>
+        </details>
+
+        <details class="faq-item" name="faq">
+          <summary><span>Should I use Wi-Fi or Ethernet?</span></summary>
+          <div class="faq-body">
+            <p>Use Ethernet for the most accurate reading. Wi-Fi shares airtime with every other device on the network, and 2.4 GHz bands are especially susceptible to interference from neighbouring networks.</p>
+            <p>If you must use Wi-Fi, stand close to the router, use the 5 GHz or 6 GHz band, and close other devices that are streaming or downloading.</p>
+          </div>
+        </details>
+
+        <details class="faq-item" name="faq">
+          <summary><span>What is jitter and why does it matter?</span></summary>
+          <div class="faq-body">
+            <p>Jitter is the variation in your latency. Imagine a ping of 20 ms that never changes: that's steady. Now imagine a ping that jumps between 5 ms and 90 ms: the average might still look fine, but every second of a video call stutters and online games rubber-band.</p>
+            <p>For calls and gaming, jitter matters more than the average ping. Under 10 ms is excellent, under 30 ms is fine.</p>
+          </div>
+        </details>
+
+        <details class="faq-item" name="faq">
+          <summary><span>What is Mbps, and do I need more?</span></summary>
+          <div class="faq-body">
+            <p>Mbps means megabits per second — a measure of how much data moves each second. One megabit is roughly 125 KB, so 100 Mbps downloads about 12.5 MB per second.</p>
+            <p>As a rough guide: 5 Mbps handles one HD stream, 25 Mbps handles a 4K stream plus browsing, 100 Mbps comfortably covers a busy household, and 300 Mbps or more matters if you work from home, game competitively, or upload large files.</p>
+          </div>
+        </details>
+
+        <details class="faq-item" name="faq">
+          <summary><span>How can I improve my speed?</span></summary>
+          <div class="faq-body">
+            <p>Start with the boring stuff: connect by Ethernet, move closer to the router, use the 5 GHz band, and reboot the router to clear any degraded state. Then close apps that sync in the background — cloud backups, video calls and large downloads all compete for the same pipe.</p>
+            <p>Also check that your device isn't the bottleneck: old Wi-Fi cards, USB network adapters and power-saving modes on the Wi-Fi radio all cap you well below what the line can deliver.</p>
+          </div>
+        </details>
+
+        <details class="faq-item" name="faq">
+          <summary><span>Which server is my test running against?</span></summary>
+          <div class="faq-body">
+            <p>Cloudflare routes each request to its nearest data centre — an "edge" location. The results panel shows which one answered, and the distance to it, so you can tell whether latency reflects a busy local network or a genuinely distant server.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="#top" aria-label="SpeedPulse home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><use href="#i-logo"/></svg>
+        <span class="brand-name" data-brand>SpeedPulse</span>
+      </a>
+      <p>Free browser-based speed test. Test traffic is served by the Cloudflare speed test network.</p>
+      <p class="footer-credit">Built by <a href="/">Shisir Acharya</a> — UI/UX Designer, Video Editor &amp; Graphic Designer, based in Kapilvastu, Nepal.</p>
+    </div>
+
+    <nav class="footer-links" aria-label="Footer">
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#test">Run a test</a>
+      <a href="/">Portfolio</a>
+    </nav>
+  </div>
+  <p class="footer-note">Your results never leave your device. History is stored locally in your browser.</p>
+</footer>
+
+<!-- Screen-reader announcements for phase changes and final results -->
+<div class="sr-only" id="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

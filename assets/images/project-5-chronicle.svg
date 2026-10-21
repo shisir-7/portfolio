@@ -1,73 +1,98 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" fill="none">
   <defs>
-    <linearGradient id="chronicleBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#141118" />
-      <stop offset="50%" stop-color="#1A1520" />
-      <stop offset="100%" stop-color="#0E0C12" />
-    </linearGradient>
-    <linearGradient id="splitGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#BD3A1B" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#9333EA" stop-opacity="0.3"/>
+    <pattern id="grain" width="140" height="140" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="12" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="84" cy="42" r="1" fill="#fff" opacity=".1"/>
+      <circle cx="44" cy="108" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="126" cy="128" r="1" fill="#fff" opacity=".08"/>
+    </pattern>
+    <filter id="shadow" x="115" y="105" width="1370" height="875" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="24"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .28 0"/>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+    <linearGradient id="speedRamp" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#BD3A1B"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0.35"/>
     </linearGradient>
   </defs>
 
-  <!-- Background Base -->
-  <rect width="1200" height="800" fill="url(#chronicleBg)"/>
+  <rect width="1600" height="1050" fill="#171715"/>
+  <rect width="1600" height="1050" fill="url(#grain)"/>
+  <path d="M0 824H1600" stroke="#fff" stroke-opacity=".08"/>
+  <text x="112" y="113" fill="#B8B3A8" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="4">RHYTHM / IMPACT / TITLE</text>
+  <text x="1484" y="113" fill="#8E897F" font-family="Arial, sans-serif" font-size="17" letter-spacing="2" text-anchor="end">CHRONICLE  —  05</text>
 
-  <!-- Top Metadata -->
-  <text x="80" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#7E758C" letter-spacing="2">CHRONICLE / MOTION REEL / KINETIC PACING</text>
-  <text x="1120" y="70" font-family="'JetBrains Mono', monospace" font-size="12" fill="#E2847A" letter-spacing="1" text-anchor="end">60 FPS EDITORIAL CUT</text>
+  <g filter="url(#shadow)">
+    <rect x="142" y="154" width="1316" height="670" rx="20" fill="#121214"/>
+    <path d="M162 154H1438C1449.05 154 1458 162.954 1458 174V228H142V174C142 162.954 150.954 154 162 154Z" fill="#1B1B1E"/>
+    <circle cx="179" cy="191" r="6" fill="#BD3A1B"/>
+    <circle cx="201" cy="191" r="6" fill="#D7C7AA"/>
+    <circle cx="223" cy="191" r="6" fill="#C4BFB3"/>
+    <text x="800" y="198" fill="#767168" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3" text-anchor="middle">KINETIC BRAND REEL / 60 SECONDS</text>
+    <rect x="1250" y="176" width="176" height="32" rx="16" fill="#242427"/>
+    <circle cx="1270" cy="192" r="4" fill="#BD3A1B"/>
+    <text x="1284" y="197" fill="#B8B3A8" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.3">BRAND FILM</text>
 
-  <!-- Kinetic Title Sequence Showcase (Film Frames Collage) -->
-  <g transform="translate(100, 110)">
-    <!-- Main Center Hero Cut -->
-    <rect x="0" y="0" width="1000" height="420" rx="8" fill="#0C0A0E" stroke="#2D2636" stroke-width="1.5"/>
-
-    <!-- Kinetic Typography Graphic in Film Frame -->
-    <text x="500" y="190" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="88" fill="#F4F1F7" text-anchor="middle" letter-spacing="-3">MOMENTUM</text>
-    <text x="500" y="245" font-family="'Newsreader', Georgia, serif" font-style="italic" font-size="34" fill="#BD3A1B" text-anchor="middle" letter-spacing="1">and the physics of human attention.</text>
-
-    <!-- Chromatic Abberation / Light Leak Accent -->
-    <path d="M 120 40 L 400 420 L 320 420 L 40 40 Z" fill="url(#splitGradient)" opacity="0.18"/>
-    
-    <!-- Framing Guides -->
-    <g stroke="#F4F1F7" stroke-width="1" opacity="0.3">
-      <line x1="80" y1="210" x2="120" y2="210"/>
-      <line x1="880" y1="210" x2="920" y2="210"/>
-      <circle cx="500" cy="210" r="160" fill="none" stroke-dasharray="4 6"/>
+    <!-- Hero frame -->
+    <rect x="206" y="262" width="1209" height="278" rx="12" fill="#0C0A0E" stroke="#2D2636" stroke-width="1.5"/>
+    <path d="M226 282L506 540L426 540L146 282Z" fill="url(#speedRamp)" opacity=".18"/>
+    <g stroke="#F4F1F7" stroke-width="1" opacity=".28">
+      <line x1="286" y1="400" x2="326" y2="400"/>
+      <line x1="1295" y1="400" x2="1335" y2="400"/>
+      <circle cx="810" cy="400" r="104" fill="none" stroke-dasharray="4 8"/>
     </g>
+    <text x="810" y="392" fill="#F4F1F7" font-family="Arial, sans-serif" font-weight="900" font-size="76" letter-spacing="-3" text-anchor="middle">MOMENTUM</text>
+    <text x="810" y="440" fill="#BD3A1B" font-family="Georgia, serif" font-style="italic" font-size="28" text-anchor="middle">and the physics of human attention.</text>
+    <rect x="238" y="486" width="196" height="30" rx="4" fill="#1C1824" stroke="#362E44"/>
+    <text x="254" y="506" fill="#C5BBD6" font-family="Courier New, monospace" font-size="12">SPEED RAMP 300% &gt; 100%</text>
+    <text x="1383" y="506" fill="#A79BBF" font-family="Courier New, monospace" font-size="12" text-anchor="end">SYNCED TRANSIENT 128 BPM</text>
 
-    <!-- Lower Title Tag -->
-    <rect x="40" y="360" width="180" height="28" rx="4" fill="#1C1824" stroke="#362E44"/>
-    <text x="55" y="378" font-family="'JetBrains Mono', monospace" font-size="11" fill="#C5BBD6">SPEED RAMP: 300% &gt; 100%</text>
+    <!-- Contact sheet -->
+    <text x="206" y="590" fill="#8E897F" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2.4">CONTACT SHEET / IMPACT CUTS</text>
 
-    <text x="960" y="378" font-family="'JetBrains Mono', monospace" font-size="11" fill="#A79BBF" text-anchor="end">SYNCED TRANSIENT BEAT 128BPM</text>
+    <g>
+      <rect x="206" y="608" width="387" height="128" rx="10" fill="#17131D" stroke="#2B2336"/>
+      <rect x="222" y="624" width="355" height="66" fill="#201A29"/>
+      <text x="400" y="662" fill="#8C809E" font-family="Courier New, monospace" font-size="13" text-anchor="middle">FRAME A / IMPACT CUT</text>
+      <text x="222" y="718" fill="#C5BBD6" font-family="Courier New, monospace" font-size="13">TC 00:01:14:02</text>
+      <text x="577" y="718" fill="#BD3A1B" font-family="Courier New, monospace" font-size="13" text-anchor="end">FLASH</text>
+    </g>
+    <g>
+      <rect x="617" y="608" width="387" height="128" rx="10" fill="#17131D" stroke="#2B2336"/>
+      <rect x="633" y="624" width="355" height="66" fill="#201A29"/>
+      <text x="810" y="662" fill="#8C809E" font-family="Courier New, monospace" font-size="13" text-anchor="middle">FRAME B / MATCH CUT</text>
+      <text x="633" y="718" fill="#C5BBD6" font-family="Courier New, monospace" font-size="13">TC 00:01:14:18</text>
+      <text x="988" y="718" fill="#BD3A1B" font-family="Courier New, monospace" font-size="13" text-anchor="end">AXIAL ZOOM</text>
+    </g>
+    <g>
+      <rect x="1028" y="608" width="387" height="128" rx="10" fill="#17131D" stroke="#2B2336"/>
+      <rect x="1044" y="624" width="355" height="66" fill="#201A29"/>
+      <text x="1221" y="662" fill="#8C809E" font-family="Courier New, monospace" font-size="13" text-anchor="middle">FRAME C / TYPO DROP</text>
+      <text x="1044" y="718" fill="#C5BBD6" font-family="Courier New, monospace" font-size="13">TC 00:01:15:06</text>
+      <text x="1399" y="718" fill="#BD3A1B" font-family="Courier New, monospace" font-size="13" text-anchor="end">MOTION BLUR</text>
+    </g>
   </g>
 
-  <!-- 3-Way Filmstrip Contact Sheet below -->
-  <g transform="translate(100, 560)">
-    <!-- Frame 1 -->
-    <rect x="0" y="0" width="310" height="150" rx="6" fill="#17131D" stroke="#2B2336" stroke-width="1"/>
-    <rect x="15" y="15" width="280" height="85" fill="#201A29"/>
-    <text x="155" y="62" font-family="'JetBrains Mono', monospace" font-size="12" fill="#8C809E" text-anchor="middle">FRAME A / IMPACT CUT</text>
-    <text x="20" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#C5BBD6">TC: 00:01:14:02</text>
-    <text x="290" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#BD3A1B" text-anchor="end">FLASH DISPLACE</text>
-
-    <!-- Frame 2 -->
-    <rect x="345" y="0" width="310" height="150" rx="6" fill="#17131D" stroke="#2B2336" stroke-width="1"/>
-    <rect x="360" y="15" width="280" height="85" fill="#201A29"/>
-    <text x="500" y="62" font-family="'JetBrains Mono', monospace" font-size="12" fill="#8C809E" text-anchor="middle">FRAME B / MATCH CUT</text>
-    <text x="365" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#C5BBD6">TC: 00:01:14:18</text>
-    <text x="635" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#BD3A1B" text-anchor="end">AXIAL ZOOM</text>
-
-    <!-- Frame 3 -->
-    <rect x="690" y="0" width="310" height="150" rx="6" fill="#17131D" stroke="#2B2336" stroke-width="1"/>
-    <rect x="705" y="15" width="280" height="85" fill="#201A29"/>
-    <text x="845" y="62" font-family="'JetBrains Mono', monospace" font-size="12" fill="#8C809E" text-anchor="middle">FRAME C / TYPO DROP</text>
-    <text x="710" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#C5BBD6">TC: 00:01:15:06</text>
-    <text x="980" y="125" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="#BD3A1B" text-anchor="end">MOTION BLUR</text>
+  <g transform="translate(348 858)">
+    <rect width="904" height="116" rx="18" fill="#242421" stroke="#fff" stroke-opacity=".12"/>
+    <text x="44" y="46" fill="#8E897F" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="2">DELIVERABLE CUTS</text>
+    <g font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1" text-anchor="middle">
+      <rect x="44" y="66" width="192" height="30" rx="6" fill="#BD3A1B"/>
+      <text x="140" y="87" fill="#F7F5F0">16:9 MASTER</text>
+      <rect x="248" y="66" width="192" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="344" y="87" fill="#C4BFB3">9:16 REELS x3</text>
+      <rect x="452" y="66" width="192" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="548" y="87" fill="#C4BFB3">TITLES</text>
+      <rect x="656" y="66" width="204" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="758" y="87" fill="#C4BFB3">MIXED AUDIO</text>
+    </g>
   </g>
 
-  <!-- Bottom Stamp -->
-  <text x="600" y="745" font-family="'JetBrains Mono', monospace" font-size="11" fill="#756985" text-anchor="middle" letter-spacing="2">MOTION EDITING &amp; SOUND DESIGN SYNCHRONIZATION / SHISIR ACHARYA</text>
+  <text x="800" y="1011" fill="#8E897F" font-family="Arial, sans-serif" font-size="14" letter-spacing="2.2" text-anchor="middle">CUT ON THE BEAT  ·  HOLD THE SILENCE</text>
 </svg>

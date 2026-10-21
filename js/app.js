@@ -140,10 +140,30 @@ function initProjects() {
       || (words.includes('speed') && words.includes('test'));
   }
 
+  /**
+   * Detects a search aimed at the internet speed test.
+   * Keeps it separate from isTypingSearch so a bare "speed test" can be
+   * routed to the right tool instead of always favouring the typing test.
+   */
+  function isSpeedTestSearch(query) {
+    const normalized = normalizeSearchText(query);
+    const words = normalized.split(/\s+/).filter(Boolean);
+    const networkWords = ['internet', 'bandwidth', 'broadband', 'connection', 'download', 'upload', 'ping', 'jitter', 'latency', 'mbps'];
+    const typingWords = ['typing', 'type', 'wpm', 'monkeytype'];
+
+    return words.some(word => word === 'speedpulse' || (word.length >= 4 && 'speedpulse'.startsWith(word)))
+      || words.some(word => networkWords.includes(word))
+      || (words.includes('speed') && words.includes('test') && !words.some(word => typingWords.includes(word)));
+  }
+
   function matchesProject(project, query) {
     const normalizedQuery = normalizeSearchText(query);
     if (!normalizedQuery) return true;
-    if (project.id === 'typing-speed-test') return isTypingSearch(normalizedQuery);
+    if (project.id === 'typing-speed-test') {
+      // The typing test only answers typing intent, never a network-speed query.
+      if (isSpeedTestSearch(normalizedQuery) && !mentionsTypingIntent(normalizedQuery)) return false;
+      return isTypingSearch(normalizedQuery);
+    }
 
     const searchableText = normalizeSearchText([
       project.title,
@@ -158,16 +178,34 @@ function initProjects() {
       || normalizedQuery.split(' ').every(term => searchableText.includes(term));
   }
 
+  /** True when the query explicitly names the typing tool. */
+  function mentionsTypingIntent(normalizedQuery) {
+    const words = normalizeSearchText(normalizedQuery).split(/\s+/).filter(Boolean);
+    return words.some(word => ['typing', 'type', 'wpm', 'monkeytype', 'keystroke', 'accuracy'].includes(word));
+  }
+
   function getRecommendations(query) {
     const normalizedQuery = normalizeSearchText(query);
     if (!normalizedQuery) return [];
 
-    const typingSearch = isTypingSearch(normalizedQuery);
+    const typingIntent = isTypingSearch(normalizedQuery);
+    const speedIntent = isSpeedTestSearch(normalizedQuery);
+    const mentionsTyping = mentionsTypingIntent(normalizedQuery);
+
+    // A bare "speed test" is ambiguous. When the query mentions typing, the
+    // typing test is the closer match; otherwise the internet speed test is.
+    const typingWins = typingIntent && (!speedIntent || mentionsTyping);
+
+    const priority = project => {
+      if (typingWins && project.id === 'typing-speed-test') return 0;
+      if (!typingWins && speedIntent && project.id === 'speed-pulse-test') return 0;
+      return 1;
+    };
+
     return window.PORTFOLIO_PROJECTS
       .filter(project => matchesProject(project, normalizedQuery))
       .sort((a, b) => {
-        const typingPriority = project => typingSearch && project.id === 'typing-speed-test' ? 0 : 1;
-        if (typingPriority(a) !== typingPriority(b)) return typingPriority(a) - typingPriority(b);
+        if (priority(a) !== priority(b)) return priority(a) - priority(b);
         return window.PORTFOLIO_PROJECTS.indexOf(a) - window.PORTFOLIO_PROJECTS.indexOf(b);
       })
       .slice(0, 5);
@@ -207,7 +245,10 @@ function initProjects() {
   }
 
   function renderProjects(category = activeCategory, query = searchQuery) {
-    const categoryMatches = category === 'all' || isTypingSearch(query)
+    // A tool-focused search overrides the discipline filter, otherwise the
+    // result would be hidden by an unrelated active tab.
+    const toolIntent = isTypingSearch(query) || isSpeedTestSearch(query);
+    const categoryMatches = category === 'all' || toolIntent
       ? window.PORTFOLIO_PROJECTS 
       : window.PORTFOLIO_PROJECTS.filter(p => p.category === category);
     const filtered = categoryMatches.filter(project => matchesProject(project, query));

@@ -1,27 +1,139 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
-  <rect width="1200" height="675" fill="#EFECE4"/>
-  <path d="M0 0h1200v80H0z" fill="#121211"/>
-  <text x="58" y="51" fill="#F7F5F0" font-family="monospace" font-size="19" letter-spacing="4">NEPAL · LETTER GRADING</text>
-  <rect x="58" y="125" width="1084" height="488" fill="#fff"/>
-  <text x="96" y="201" fill="#121211" font-family="Georgia,serif" font-size="47">Make your marks</text>
-  <text x="96" y="254" fill="#BD3A1B" font-family="Georgia,serif" font-size="47" font-style="italic">add up.</text>
-  <text x="96" y="315" fill="#524F48" font-family="Arial,sans-serif" font-size="16">SEE / +2 GPA CALCULATOR</text>
-  <path d="M96 350h1008" stroke="#DCD6C9"/>
-  <text x="96" y="397" fill="#777267" font-family="monospace" font-size="13">SUBJECT</text>
-  <text x="430" y="397" fill="#777267" font-family="monospace" font-size="13">MARKS</text>
-  <text x="678" y="397" fill="#777267" font-family="monospace" font-size="13">GRADE</text>
-  <text x="887" y="397" fill="#777267" font-family="monospace" font-size="13">CREDITS</text>
-  <path d="M96 418h1008M96 474h1008M96 530h1008" stroke="#E8E4DA"/>
-  <text x="96" y="455" fill="#121211" font-family="Arial,sans-serif" font-size="19">English</text>
-  <text x="430" y="455" fill="#121211" font-family="monospace" font-size="17">91 / 100</text>
-  <rect x="678" y="431" width="60" height="30" fill="#E9F2EC"/>
-  <text x="690" y="452" fill="#286149" font-family="monospace" font-size="16">A+</text>
-  <text x="887" y="455" fill="#121211" font-family="monospace" font-size="17">4</text>
-  <text x="96" y="511" fill="#121211" font-family="Arial,sans-serif" font-size="19">Physics</text>
-  <text x="430" y="511" fill="#121211" font-family="monospace" font-size="17">84 / 100</text>
-  <rect x="678" y="487" width="60" height="30" fill="#E9F2EC"/>
-  <text x="697" y="508" fill="#286149" font-family="monospace" font-size="16">A</text>
-  <text x="887" y="511" fill="#121211" font-family="monospace" font-size="17">5</text>
-  <rect x="884" y="548" width="220" height="48" fill="#121211"/>
-  <text x="901" y="578" fill="#F7F5F0" font-family="monospace" font-size="12" letter-spacing="1">WEIGHTED GPA  3.72</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" fill="none">
+  <defs>
+    <pattern id="grain" width="140" height="140" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="12" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="84" cy="42" r="1" fill="#fff" opacity=".1"/>
+      <circle cx="44" cy="108" r="1" fill="#fff" opacity=".12"/>
+      <circle cx="126" cy="128" r="1" fill="#fff" opacity=".08"/>
+    </pattern>
+    <filter id="shadow" x="115" y="105" width="1370" height="875" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="24"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .28 0"/>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1050" fill="#171715"/>
+  <rect width="1600" height="1050" fill="url(#grain)"/>
+  <path d="M0 824H1600" stroke="#fff" stroke-opacity=".08"/>
+  <text x="112" y="113" fill="#B8B3A8" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="4">GRADES / WEIGHTS / ESTIMATE</text>
+  <text x="1484" y="113" fill="#8E897F" font-family="Arial, sans-serif" font-size="17" letter-spacing="2" text-anchor="end">GPA CALC  —  02</text>
+
+  <g filter="url(#shadow)">
+    <rect x="142" y="154" width="1316" height="670" rx="20" fill="#F7F5F0"/>
+    <path d="M162 154H1438C1449.05 154 1458 162.954 1458 174V228H142V174C142 162.954 150.954 154 162 154Z" fill="#EEECE6"/>
+    <circle cx="179" cy="191" r="6" fill="#BD3A1B"/>
+    <circle cx="201" cy="191" r="6" fill="#D7C7AA"/>
+    <circle cx="223" cy="191" r="6" fill="#C4BFB3"/>
+    <text x="800" y="198" fill="#767168" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="3" text-anchor="middle">NEB GPA CALCULATOR</text>
+    <rect x="1274" y="176" width="152" height="32" rx="16" fill="#E6E1D7"/>
+    <circle cx="1294" cy="192" r="4" fill="#BD3A1B"/>
+    <text x="1308" y="197" fill="#625D54" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.3">INDICATIVE</text>
+
+    <!-- Section label -->
+    <text x="206" y="284" fill="#8D887E" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2.4">SUBJECT ENTRY / MARKS OR LETTER GRADE</text>
+    <text x="1415" y="284" fill="#BD3A1B" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2" text-anchor="end">SEE &amp; +2</text>
+
+    <!-- Table header -->
+    <text x="206" y="336" fill="#777267" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6">SUBJECT</text>
+    <text x="560" y="336" fill="#777267" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6">MARKS</text>
+    <text x="740" y="336" fill="#777267" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6">GRADE</text>
+    <text x="890" y="336" fill="#777267" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6">CREDITS</text>
+    <path d="M206 356H1000" stroke="#DCD6C9" stroke-width="2"/>
+
+    <!-- Row 1 -->
+    <text x="206" y="400" fill="#121211" font-family="Arial, sans-serif" font-size="19" font-weight="500">English</text>
+    <text x="560" y="400" fill="#121211" font-family="Courier New, monospace" font-size="17">91 / 100</text>
+    <rect x="734" y="378" width="62" height="30" rx="4" fill="#E9F2EC"/>
+    <text x="765" y="399" fill="#286149" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">A+</text>
+    <text x="890" y="400" fill="#121211" font-family="Courier New, monospace" font-size="17">4</text>
+    <path d="M206 416H1000" stroke="#E8E4DA"/>
+
+    <!-- Row 2 -->
+    <text x="206" y="452" fill="#121211" font-family="Arial, sans-serif" font-size="19" font-weight="500">Physics</text>
+    <text x="560" y="452" fill="#121211" font-family="Courier New, monospace" font-size="17">84 / 100</text>
+    <rect x="734" y="430" width="62" height="30" rx="4" fill="#E9F2EC"/>
+    <text x="765" y="451" fill="#286149" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">A</text>
+    <text x="890" y="452" fill="#121211" font-family="Courier New, monospace" font-size="17">5</text>
+    <path d="M206 468H1000" stroke="#E8E4DA"/>
+
+    <!-- Row 3 -->
+    <text x="206" y="504" fill="#121211" font-family="Arial, sans-serif" font-size="19" font-weight="500">Mathematics</text>
+    <text x="560" y="504" fill="#121211" font-family="Courier New, monospace" font-size="17">78 / 100</text>
+    <rect x="734" y="482" width="62" height="30" rx="4" fill="#F3F0E2"/>
+    <text x="765" y="503" fill="#8A6D1F" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">B+</text>
+    <text x="890" y="504" fill="#121211" font-family="Courier New, monospace" font-size="17">5</text>
+    <path d="M206 520H1000" stroke="#E8E4DA"/>
+
+    <!-- Row 4 -->
+    <text x="206" y="556" fill="#121211" font-family="Arial, sans-serif" font-size="19" font-weight="500">Chemistry</text>
+    <text x="560" y="556" fill="#121211" font-family="Courier New, monospace" font-size="17">66 / 100</text>
+    <rect x="734" y="534" width="62" height="30" rx="4" fill="#F3F0E2"/>
+    <text x="765" y="555" fill="#8A6D1F" font-family="Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">B</text>
+    <text x="890" y="556" fill="#121211" font-family="Courier New, monospace" font-size="17">4</text>
+
+    <!-- Result panel -->
+    <rect x="1020" y="300" width="395" height="290" rx="14" fill="#121211"/>
+    <text x="1052" y="344" fill="#B8B3A8" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="2">WEIGHTED GPA</text>
+    <text x="1050" y="430" fill="#F7F5F0" font-family="Arial, sans-serif" font-size="84" font-weight="700" letter-spacing="-3">3.72</text>
+    <path d="M1052 452H1383" stroke="#3A3A35" stroke-width="2"/>
+    <text x="1052" y="488" fill="#8E897F" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.6">INDICATIVE · UNOFFICIAL</text>
+    <text x="1052" y="530" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1">OVERALL GRADE</text>
+    <text x="1383" y="530" fill="#F7F5F0" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1" text-anchor="end">B+</text>
+    <text x="1052" y="560" fill="#C4BFB3" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1">TOTAL CREDITS</text>
+    <text x="1383" y="560" fill="#F7F5F0" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1" text-anchor="end">18</text>
+
+    <!-- Grade bands -->
+    <text x="206" y="636" fill="#8D887E" font-family="Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="2.4">GRADE BANDS</text>
+    <g>
+      <rect x="206" y="654" width="156" height="40" rx="4" fill="#EEECE6"/>
+      <text x="222" y="680" fill="#121211" font-family="Arial, sans-serif" font-size="15" font-weight="700">A+</text>
+      <text x="346" y="680" fill="#777267" font-family="Courier New, monospace" font-size="15" text-anchor="end">4.0</text>
+
+      <rect x="376" y="654" width="156" height="40" rx="4" fill="#EEECE6"/>
+      <text x="392" y="680" fill="#121211" font-family="Arial, sans-serif" font-size="15" font-weight="700">A</text>
+      <text x="516" y="680" fill="#777267" font-family="Courier New, monospace" font-size="15" text-anchor="end">3.6</text>
+
+      <rect x="546" y="654" width="156" height="40" rx="4" fill="#121211"/>
+      <text x="562" y="680" fill="#F7F5F0" font-family="Arial, sans-serif" font-size="15" font-weight="700">B+</text>
+      <text x="686" y="680" fill="#B8B3A8" font-family="Courier New, monospace" font-size="15" text-anchor="end">3.2</text>
+
+      <rect x="716" y="654" width="156" height="40" rx="4" fill="#EEECE6"/>
+      <text x="732" y="680" fill="#121211" font-family="Arial, sans-serif" font-size="15" font-weight="700">B</text>
+      <text x="856" y="680" fill="#777267" font-family="Courier New, monospace" font-size="15" text-anchor="end">2.8</text>
+
+      <rect x="886" y="654" width="156" height="40" rx="4" fill="#EEECE6"/>
+      <text x="902" y="680" fill="#121211" font-family="Arial, sans-serif" font-size="15" font-weight="700">C+</text>
+      <text x="1026" y="680" fill="#777267" font-family="Courier New, monospace" font-size="15" text-anchor="end">2.4</text>
+    </g>
+
+    <text x="206" y="748" fill="#8D887E" font-family="Georgia, serif" font-size="17" font-style="italic">An indicative estimate from configured weights — not an official NEB result.</text>
+    <text x="1415" y="748" fill="#8D887E" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.6" text-anchor="end">THEORY &amp; PRACTICAL SPLIT WHERE CONFIGURED</text>
+  </g>
+
+  <g transform="translate(348 858)">
+    <rect width="904" height="116" rx="18" fill="#242421" stroke="#fff" stroke-opacity=".12"/>
+    <text x="44" y="46" fill="#8E897F" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="2">GRADE POINT SCALE</text>
+    <g font-family="Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle">
+      <rect x="44" y="66" width="130" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="109" y="86" fill="#C4BFB3">A+  4.0</text>
+      <rect x="186" y="66" width="130" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="251" y="86" fill="#C4BFB3">A  3.6</text>
+      <rect x="328" y="66" width="130" height="30" rx="6" fill="#BD3A1B"/>
+      <text x="393" y="86" fill="#F7F5F0">B+  3.2</text>
+      <rect x="470" y="66" width="130" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="535" y="86" fill="#C4BFB3">B  2.8</text>
+      <rect x="612" y="66" width="130" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="677" y="86" fill="#C4BFB3">C+  2.4</text>
+      <rect x="754" y="66" width="106" height="30" rx="6" fill="#393934" stroke="#5A5952"/>
+      <text x="807" y="86" fill="#C4BFB3">C  2.0</text>
+    </g>
+  </g>
+
+  <text x="800" y="1011" fill="#8E897F" font-family="Arial, sans-serif" font-size="14" letter-spacing="2.2" text-anchor="middle">ENTER THE MARKS  ·  READ THE INDICATIVE GRADE</text>
 </svg>

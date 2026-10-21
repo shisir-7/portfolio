@@ -233,7 +233,8 @@ window.TypingApp = (function () {
       uppercase: settings.uppercase,
       punctuation: settings.punctuation
     });
-    if (more) engine.extendText(more);
+    if (!more) return;
+    if (!engine.extendText(more)) return;
     const typedLen = engine.getTyped().length;
     const text = engine.getText();
     const frag = document.createDocumentFragment();
@@ -264,13 +265,16 @@ window.TypingApp = (function () {
       words.forEach((word, wi) => {
         const wordSpan = document.createElement('span');
         wordSpan.className = 'tt-word';
+        // Register the new word so word-level highlighting keeps working.
+        wordSpans.push(wordSpan);
+        const wIdx = wordSpans.length - 1;
         for (let c = 0; c < word.length; c++) {
           const cs = document.createElement('span');
           cs.className = 'tt-char';
           cs.textContent = word[c];
           wordSpan.appendChild(cs);
           charSpans.push(cs);
-          charWordIndex.push(charWordIndex.length);
+          charWordIndex.push(wIdx);
         }
         frag.appendChild(wordSpan);
         if (wi < words.length - 1) {
@@ -285,6 +289,9 @@ window.TypingApp = (function () {
     });
     $('typing-text').appendChild(frag);
     lastTypedLen = typedLen;
+    // The appended text can add new line rows — re-measure so the
+    // scroll/caret logic keeps using accurate line offsets.
+    lineTops = [];
     updateTypedClasses();
   }
 
@@ -416,8 +423,6 @@ window.TypingApp = (function () {
     document.addEventListener('keydown', onKey, true);
   }
 
-  function openSettings() { togglePanel('settings-panel'); }
-
   /* ======================================================================
      Countdown (for the explicit countdown toggle)
      ====================================================================== */
@@ -516,7 +521,7 @@ window.TypingApp = (function () {
         }
         if (!tag) return;
         if (tag === '\n') {
-          if (engine.currentWordHasError && engine.currentWordHasError()) return;
+          if (engine.currentWordHasError()) return;
           input.value += '\n';
         } else {
           input.value += tag;
@@ -546,7 +551,7 @@ window.TypingApp = (function () {
     input.addEventListener('beforeinput', (e) => {
       if (engine.getState() !== 'running') return;
       if (e.inputType !== 'insertText' || e.data !== ' ') return;
-      if (!engine.currentWordHasError || !engine.currentWordHasError()) return;
+      if (!engine.currentWordHasError()) return;
       if (engine.getState() === 'finished' || inputLocked) return;
       e.preventDefault();
       const ok = engine.skipWord();
@@ -597,7 +602,7 @@ window.TypingApp = (function () {
       // incorrect current word, treat it as a skip.
       const curBefore = engine.getTyped();
       const nextVal = input.value;
-      if (engine.getState() === 'running' && engine.currentWordHasError && engine.currentWordHasError() &&
+      if (engine.getState() === 'running' && engine.currentWordHasError() &&
           nextVal.length === curBefore.length + 1 && nextVal.endsWith(' ') && curBefore.length < engine.getText().length) {
         const tail = engine.getText().slice(curBefore.length, curBefore.length + 1);
         if (tail !== ' ') {
@@ -928,16 +933,20 @@ window.TypingApp = (function () {
     const prevLen = lastTypedLen;
     const n = Math.max(typed.length + 1, prevLen);
 
-    const wordErrorMap = (() => {
+    // A skipped word is filled with spaces by the engine, so every character
+    // of that word mismatches. Those characters must read as "missed"
+    // (dimmed) rather than "incorrect" (red) — otherwise a deliberate skip
+    // looks like a burst of typing errors.
+    const skippedWordIdx = (() => {
+      const set = {};
       const len = Math.min(typed.length, text.length);
-      const byWord = {};
       for (let i = 0; i < len; i++) {
-        if (typed[i] !== text[i]) {
+        if (typed[i] === ' ' && text[i] !== ' ') {
           const wIdx = charWordIndex[i];
-          if (wIdx !== -1) byWord[wIdx] = (byWord[wIdx] || 0) + 1;
+          if (wIdx !== -1) set[wIdx] = true;
         }
       }
-      return byWord;
+      return set;
     })();
 
     let activeWordIdx = -1;
@@ -964,7 +973,9 @@ window.TypingApp = (function () {
         if (ok) span.className = base + 'is-correct';
         else {
           const wIdx = charWordIndex[i];
-          const isSkipped = isSpace && wIdx !== -1 && wordErrorMap[wIdx] > 0;
+          // Skipped word → dimmed "missed". A wrong char in a normal word
+          // → red "incorrect".
+          const isSkipped = wIdx !== -1 && skippedWordIdx[wIdx];
           if (isSkipped) span.className = base + 'is-missed';
           else span.className = base + 'is-incorrect';
         }
@@ -1267,8 +1278,15 @@ window.TypingApp = (function () {
     settings.content = v;
     persistSettings();
     if (v === 'custom' && !settings.customText.trim()) {
-      openSettings();
-      $('settings-content').scrollIntoView({ block: 'center' });
+      // No custom text yet — keep the panel open and point the user at the
+      // textarea. The caller closes the panel itself, so we must not
+      // re-open it here (that would make the panel impossible to dismiss).
+      const area = $('settings-content');
+      if (area) area.scrollIntoView({ block: 'center' });
+      const ta = $('set-custom-text');
+      if (ta) {
+        try { ta.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+      }
       return;
     }
     newTest();
@@ -1349,7 +1367,18 @@ window.TypingApp = (function () {
       scrimEl.addEventListener('click', () => { closePanel('settings-panel'); closePanel('history-panel'); });
     }
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && TypingCharts._hideTip) TypingCharts._hideTip();
+      if (e.key !== 'Escape') return;
+      if (TypingCharts._hideTip) TypingCharts._hideTip();
+      // Escape closes an open drawer. The pause shortcut lives in
+      // bindShortcuts() and only fires while a test is actually running.
+      const settingsOpen = $('settings-panel').classList.contains('open');
+      const historyOpen = $('history-panel').classList.contains('open');
+      if (settingsOpen || historyOpen) {
+        e.preventDefault();
+        closePanel('settings-panel');
+        closePanel('history-panel');
+        focusInput(true);
+      }
     });
 
     // Focus mode
@@ -1599,8 +1628,11 @@ window.TypingApp = (function () {
       if (!alreadyBound) {
         setContentSel.addEventListener('change', () => {
           if (!setContentSel.value) return;
+          const wasCustomEmpty = setContentSel.value === 'custom' && !settings.customText.trim();
           setContent(setContentSel.value);
-          closePanel('settings-panel');
+          // Selecting "custom" with no text yet keeps the panel open so the
+          // user can type some — closing it here would hide the textarea.
+          if (!wasCustomEmpty) closePanel('settings-panel');
           setContentSel.value = settings.content;
           if (setDiffSel) setDiffSel.value = settings.difficulty;
           if (setLangSel) setLangSel.value = settings.language;
@@ -2171,7 +2203,20 @@ window.TypingApp = (function () {
     });
     $('results-new-test').addEventListener('click', () => newTest());
     $('results-retry').addEventListener('click', () => newTest());
-    $('results-view-history').addEventListener('click', () => { togglePanel('history-panel'); });
+    $('results-view-history').addEventListener('click', () => {
+      // Always open the history drawer from the results screen. A plain
+      // toggle() would close it when it is already open, which reads as a
+      // dead button.
+      closePanel('settings-panel');
+      const panel = $('history-panel');
+      const scrim = $('tt-scrim');
+      if (!panel.classList.contains('open')) {
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden', 'false');
+        if (scrim) scrim.classList.add('open');
+        renderHistory();
+      }
+    });
     $('results-practice').addEventListener('click', () => newTest({ practice: true }));
     $('results-share').addEventListener('click', shareResults);
   }

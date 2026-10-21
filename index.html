@@ -12,6 +12,16 @@
   <meta name="author" content="Shisir Acharya" />
   <meta name="theme-color" content="#F7F5F0" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <script>
+    if (/\/index\.html$/i.test(window.location.pathname)) {
+      const cleanPath = window.location.pathname.replace(/index\.html$/i, "");
+      window.history.replaceState(
+        window.history.state,
+        "",
+        cleanPath + window.location.search + window.location.hash
+      );
+    }
+  </script>
 
   <!-- Open Graph / Facebook / LinkedIn / Social Preview -->
   <meta property="og:type" content="website" />
@@ -217,7 +227,7 @@
             <button class="filter-btn" data-filter="video" role="tab" aria-selected="false">Video Editing</button>
             <button class="filter-btn" data-filter="graphic" role="tab" aria-selected="false">Graphic Design</button>
           </div>
-          <div class="work-counter" id="work-counter">SHOWING 7 OF 7 WORKS</div>
+          <div class="work-counter" id="work-counter">SHOWING 6 OF 6 WORKS</div>
         </div>
 
         <!-- Projects Grid (Injected via projects-data.js) -->

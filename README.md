@@ -41,6 +41,15 @@ shisir-acharya-portfolio/
 │   ├── js/                    # Typing app modules
 │   ├── assets/                # Typing app favicon
 │   └── backups/               # Archived typing-file backups
+├── speed-test/                # Standalone internet speed test (SpeedPulse)
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js                 # Gauge, live graph, results, history, sharing
+│   ├── engine.js              # Pure measurement logic (no DOM)
+│   ├── speedtest.worker.js    # Runs ping + download off the main thread
+│   ├── share.js               # Lazy-loaded 1200x630 result image renderer
+│   ├── fonts/                 # Subset self-hosted WOFF2 fonts
+│   └── tools/                 # Font subsetting scripts
 └── assets/
     ├── favicon.svg            # Distinctive architectural brand logo
     └── images/
@@ -48,26 +57,28 @@ shisir-acharya-portfolio/
         ├── og-cover.png            # High-resolution (1200x630) social preview image
         ├── hero-composition.svg    # Editorial hero architectural artwork
         ├── avatar-shisir.svg       # Geometric monogram & biography emblem
-        ├── project-1-apex.svg      # Apex OS UI/UX interface preview
-        ├── project-2-katha.svg     # Katha narrative video editing preview
-        ├── project-3-typographia.svg # TypoGraphia Swiss poster preview
         ├── project-4-lumina.svg    # Lumina FinTech web app preview
         ├── project-5-chronicle.svg # Chronicle motion reel preview
         ├── project-6-forma.svg     # Forma architectural monograph preview
-        └── project-7-typing-test.svg # Typing speed test dashboard preview
+        ├── project-7-typing-test.svg # Typing speed test dashboard preview
+        └── project-8-speed-test.svg # Internet speed test dashboard preview
 ```
 
 ---
 
 ## ✦ Typing Speed Test Project
 
-The typing speed test appears as an interactive web application in the **Selected Work** project gallery and opens `typing/index.html`. Its implementation is self-contained in `typing/`; it can also be served or deployed independently. Settings, theme, and test history are stored locally in the browser.
+The typing speed test appears in the **Selected Work** project gallery and is served at [`/typing/`](https://shisiracharya7.com.np/typing/). The legacy `/typing.html` URL forwards visitors to this canonical page. Its assets remain in `typing/`; settings, theme, and test history are stored locally in the browser.
 
 ## ✦ NEB GPA Calculator
 
-The NEB GPA calculator is a standalone app in `gpa calculator/`, linked from the **Selected Work** project gallery. It supports SEE and Grades XI–XII with a searchable historical subject catalogue, editable/custom subjects, bilingual UI, and both exact-mark and transcript-letter-grade entry. It calculates an equal-weight mean of subject grade points because the simplified interface omits credit-hour fields; treat it as an estimate, not an official or credit-weighted NEB GPA. Marks remain in the current browser session; custom subject configurations are stored locally. See [`gpa calculator/AUDIT.md`](gpa%20calculator/AUDIT.md) for sources, catalogue counts, and unresolved policy gaps.
+The NEB GPA calculator is served at [`/gpa-calculator/`](https://shisiracharya7.com.np/gpa-calculator/) and is linked from the **Selected Work** project gallery. It supports SEE and Grades XI–XII with subject selection, bilingual UI, and exact-mark or transcript-letter-grade entry. The SEE estimate weights subjects by configured total marks; +2 uses catalogue credit-hour weights, some of which are historical or incomplete. Treat either result as an estimate, not an official NEB GPA. Marks remain in the current browser session; custom subject configurations are stored locally. See [`gpa-calculator/AUDIT.md`](gpa-calculator/AUDIT.md) for sources and unresolved policy gaps.
 
-Run its unit tests with `node --test "gpa calculator/tests/calculator.test.mjs"`.
+Run its unit tests with `node --test "gpa-calculator/tests/calculator.test.mjs"`.
+
+## ✦ Internet Speed Test (SpeedPulse)
+
+The internet speed test appears in the **Selected Work** project gallery and is served at [`/speed-test/`](https://shisiracharya7.com.np/speed-test/). It measures download, upload, ping, and jitter against a nearby Cloudflare edge using a live animated gauge, a rolling throughput graph, and a plain-language verdict. Test history, theme, and unit preferences are stored locally in the browser; results are never uploaded. Its own implementation notes live in [`speed-test/README.md`](speed-test/README.md).
 
 ---
 
@@ -89,7 +100,7 @@ Run its unit tests with `node --test "gpa calculator/tests/calculator.test.mjs"`
 3. **Selected Work & Deep Case Studies**:
    - Filter tabs: `All Works`, `UI/UX Design`, `Video Editing`, `Graphic Design`.
    - Live project search with relevant recommendations and direct links to interactive projects.
-   - 6 curated case studies and one interactive web application, with custom SVG previews.
+   - 3 curated case studies and three interactive web applications, with custom SVG previews.
    - Interactive slide-in Case Study Drawer providing:
      - Design Challenge
      - Target Audience

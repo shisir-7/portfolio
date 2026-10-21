@@ -5,21 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
-  <title>Typing Speed Test — Shisir Acharya</title>
-  <meta name="description" content="A Monkeytype-inspired typing speed test: WPM, accuracy, consistency, error analysis, personal progress graphs and test history — stored only in your browser." />
+  <title>Free Online Typing Test — WPM &amp; Accuracy | Shisir Acharya</title>
+  <meta name="description" content="Take a free online English typing test with timed or word-count practice. See WPM, typing accuracy and errors; your results stay in this browser." />
   <meta name="author" content="Shisir Acharya" />
   <meta name="theme-color" content="#F7F5F0" />
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="canonical" href="https://shisiracharya7.com.np/typing/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Free Online Typing Test — WPM &amp; Accuracy" />
+  <meta property="og:description" content="Practice English typing with timed or word-count tests and review your speed, accuracy and errors." />
+  <meta property="og:url" content="https://shisiracharya7.com.np/typing/" />
+  <meta property="og:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Online Typing Test — WPM &amp; Accuracy" />
+  <meta name="twitter:description" content="Practice English typing and review your speed, accuracy and errors." />
+  <meta name="twitter:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png" />
+  <link rel="icon" type="image/svg+xml" href="/typing/assets/favicon.svg" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Free Online Typing Test",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "url": "https://shisiracharya7.com.np/typing/",
+      "description": "A browser-based English typing test with timed and word-count practice, WPM, accuracy and error analysis.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Timed and word-count typing tests",
+        "English typing practice",
+        "Words per minute and typing accuracy results",
+        "Local test history"
+      ],
+      "browserRequirements": "Requires JavaScript"
+    }
+  </script>
 
   <!-- Fonts and styles are self-contained in this folder. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles/typography.css" />
-  <link rel="stylesheet" href="styles/main.css" />
-  <link rel="stylesheet" href="styles/components.css" />
-  <link rel="stylesheet" href="styles/typing.css" />
+  <link rel="stylesheet" href="/typing/styles/typography.css" />
+  <link rel="stylesheet" href="/typing/styles/main.css" />
+  <link rel="stylesheet" href="/typing/styles/components.css" />
+  <link rel="stylesheet" href="/typing/styles/typing.css" />
 
   <!-- Pre-theme: avoid a flash of the wrong theme -->
   <script>
@@ -84,6 +117,8 @@
           <span class="section-header__index">TOOL / 01</span>
           <span class="section-header__category">Typing Speed Test</span>
         </div>
+        <h1 class="section-header__title">Free Online Typing Speed Test</h1>
+        <p class="section-header__subtitle">Take an English WPM test, check your typing accuracy, and practise at your own pace. Choose a time or word-count test and start typing; the timer begins with your first keystroke.</p>
       </header>
 
       <!-- ======= TEST VIEW ======= -->
@@ -246,6 +281,18 @@
           <ul class="suggestion-list" id="result-suggestions"></ul>
         </div>
       </div>
+
+      <section class="typing-guide" aria-labelledby="typing-guide-title">
+        <h2 id="typing-guide-title">How this typing test works</h2>
+        <p>Choose a timed test or a word-count test, select a passage style, and type the text shown. The timer starts on your first keystroke. Pausing does not add to your active test time, and you can correct mistakes with Backspace.</p>
+        <h3>What your typing results mean</h3>
+        <dl>
+          <div><dt>Net WPM</dt><dd>Correct characters divided by five, then divided by active minutes. Five characters count as one standard word.</dd></div>
+          <div><dt>Raw WPM</dt><dd>All inserted characters—including incorrect and extra characters—divided by five and by active minutes.</dd></div>
+          <div><dt>Accuracy</dt><dd>Correct character insertions divided by all character insertions. Backspaces are not counted as keystrokes.</dd></div>
+        </dl>
+        <p>After a test, review errors and your saved progress history. Test history and preferences stay in this browser and are not uploaded. For another study tool, try the <a href="/gpa-calculator/">NEB GPA calculator for SEE and +2</a> or the <a href="/speed-test/">internet speed test</a>, or return to the <a href="/">portfolio homepage</a>.</p>
+      </section>
 
     </div>
   </main>
@@ -492,10 +539,10 @@
     </div>
   </footer>
 
-  <script src="js/typing-data.js"></script>
-  <script src="js/typing-engine.js"></script>
-  <script src="js/typing-charts.js"></script>
-  <script src="js/typing-history.js"></script>
-  <script src="js/typing-app.js"></script>
+  <script src="/typing/js/typing-data.js"></script>
+  <script src="/typing/js/typing-engine.js"></script>
+  <script src="/typing/js/typing-charts.js"></script>
+  <script src="/typing/js/typing-history.js"></script>
+  <script src="/typing/js/typing-app.js"></script>
 </body>
 </html>

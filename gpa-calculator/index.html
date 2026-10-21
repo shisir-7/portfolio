@@ -4,8 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#F7F5F0" />
-  <meta name="description" content="A simple NEB GPA estimate calculator with marks and transcript-grade entry." />
-  <title>NEB GPA Calculator</title>
+  <meta name="description" content="Estimate your Nepal NEB GPA for SEE or Grades 11–12. Enter subject marks or letter grades, review theory and practical components, and see how the estimate is calculated." />
+  <title>NEB GPA Calculator for SEE &amp; +2 | Nepal GPA Estimate</title>
+  <link rel="canonical" href="https://shisiracharya7.com.np/gpa-calculator/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="NEB GPA Calculator for SEE &amp; +2" />
+  <meta property="og:description" content="Estimate a Nepal NEB GPA for SEE or Grades 11–12 with marks or letter grades. Review the calculation and its limitations." />
+  <meta property="og:url" content="https://shisiracharya7.com.np/gpa-calculator/" />
+  <meta property="og:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NEB GPA Calculator for SEE &amp; +2" />
+  <meta name="twitter:description" content="Estimate a Nepal NEB GPA for SEE or Grades 11–12 with marks or letter grades." />
+  <meta name="twitter:image" content="https://shisiracharya7.com.np/assets/images/og-cover.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "NEB GPA Calculator for SEE and Grades 11–12",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "url": "https://shisiracharya7.com.np/gpa-calculator/",
+      "description": "A browser-based Nepal NEB GPA estimate calculator with marks and letter-grade entry for SEE and Grades 11–12.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "SEE and Grades 11–12 subject selection",
+        "Exact-marks and letter-grade entry",
+        "Theory and practical components where available",
+        "Indicative grade-point average"
+      ],
+      "browserRequirements": "Requires JavaScript"
+    }
+  </script>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1171,6 +1204,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
       </div>
     </header>
 
+    <section class="gpa-intro" aria-labelledby="gpa-page-title">
+      <h1 id="gpa-page-title">NEB GPA Calculator for SEE &amp; Class 11–12</h1>
+      <p>Use this Nepal GPA calculator to estimate an indicative result for SEE (Class 10) or NEB Grades XI–XII. Choose a level and stream, add subjects, then enter exact marks or transcript letter grades. Subject forms show separate theory and practical entries when those components are available.</p>
+    </section>
+
     <section class="setup-card" aria-label="Student details">
       <label class="field-label" for="student-name">
         <span data-i18n="studentName">Student name</span>
@@ -1239,6 +1277,34 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     </section>
     <p class="result-status" id="result-status" role="status" data-i18n="chooseLevel">Choose level</p>
     <div id="subject-summary-breakdown" class="subject-summary-breakdown"></div>
+
+    <article class="gpa-guide" aria-labelledby="gpa-guide-title">
+      <h2 id="gpa-guide-title">How to use this Nepal GPA calculator</h2>
+      <ol>
+        <li>Select SEE/Class 10 or +2 (NEB), then choose a stream where requested.</li>
+        <li>Add the listed subjects and choose <strong>Enter Exact Marks</strong> or <strong>Enter Letter Grades</strong>.</li>
+        <li>For a subject with theory and practical components, enter each component separately against the displayed maximum marks. Add or configure a subject if it is missing.</li>
+        <li>Read the overall GPA and grade as an estimate based on the completed subject entries.</li>
+      </ol>
+
+      <h2>Grade points and what the result means</h2>
+      <p>The built-in percentage-to-grade-point bands below are reference bands used by this tool. For SEE, theory and practical marks are combined using their displayed maximum marks, then subject grade points are weighted by each subject’s total maximum marks. For Grades XI–XII, configured theory and practical grade points are weighted using the catalogue’s credit hours. The overall estimate is rounded to two decimal places. These describe the calculator’s implementation, not confirmation that every weight reflects current NEB policy.</p>
+      <ul class="gpa-grade-scale">
+        <li>90–100%: A+ (4.0)</li>
+        <li>80–&lt;90%: A (3.6)</li>
+        <li>70–&lt;80%: B+ (3.2)</li>
+        <li>60–&lt;70%: B (2.8)</li>
+        <li>50–&lt;60%: C+ (2.4)</li>
+        <li>40–&lt;50%: C (2.0)</li>
+        <li>30–&lt;40%: D+ (1.8)</li>
+        <li>20–&lt;30%: D (1.6)</li>
+        <li>0–&lt;20%: E (0.8)</li>
+      </ul>
+
+      <h2>Subject marks and important limitations</h2>
+      <p>Marks distributions depend on the subject and level. The official <a href="https://neb.gov.np/neb-notice-file/Notices-202610011508438468.pdf" target="_blank" rel="noopener noreferrer">NEB SEE assessment framework (April 2025)</a> specifies 75 external and 25 internal marks for English, Mathematics, Science and Technology, and Social Studies. Some other subject and credit-hour details in the catalogue are historical or incomplete; their current applicability is not confirmed here. The calculator may use a four-credit default when a +2 subject has no component credit-hour values. Current subject combinations and all component pass thresholds are not fully verified or enforced.</p>
+      <p>This is an unofficial estimate, not an official NEB result. Check your current NEB or school guidance before relying on the result. For timed practice, try the <a href="/typing/">free online typing speed test</a>, or check your <a href="/speed-test/">internet connection speed</a>, or return to the <a href="/">portfolio homepage</a>.</p>
+    </article>
 
     <dialog class="subject-dialog" id="subject-dialog" aria-labelledby="dialog-title">
       <form class="dialog-header" method="dialog">

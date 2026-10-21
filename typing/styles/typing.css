@@ -57,6 +57,28 @@
 }
 
 .typing-page .container.section-header { margin-bottom: .35rem; }
+
+.typing-guide {
+  max-width: 76ch;
+  margin: 4rem auto 2.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.typing-guide h2,
+.typing-guide h3 {
+  margin: 1.4rem 0 .65rem;
+  color: var(--text-primary);
+}
+
+.typing-guide h2 { font-size: var(--text-xl); }
+.typing-guide h3 { font-size: var(--text-lg); }
+.typing-guide p,
+.typing-guide dd { line-height: var(--lh-relaxed); }
+.typing-guide dl { display: grid; gap: .75rem; margin: 1rem 0; }
+.typing-guide dt { color: var(--text-primary); font-weight: 700; }
+.typing-guide a { color: var(--accent); text-decoration: underline; text-underline-offset: .18em; }
 .typing-page .tt-header-actions { opacity: .96; }
 
 @media (max-width: 860px) {
@@ -651,12 +673,15 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 .pause-card p  { color: var(--text-secondary); margin-bottom: 1.15rem; font-size: var(--text-sm); }
 
 /* ---------------------------------------------------------------- scrim behind drawers */
+/* The drawer must stack above the fixed site header (z-index 1000) —
+   otherwise the header covers the drawer's close button and the panel
+   becomes impossible to dismiss. */
 .tt-scrim {
   position: fixed; inset: 0;
   background: rgba(18, 18, 17, .42);
   -webkit-backdrop-filter: blur(3px);
           backdrop-filter: blur(3px);
-  z-index: 199;
+  z-index: 1099;
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition-normal);
@@ -671,7 +696,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   background: var(--surface-card);
   border-left: 1px solid var(--border-subtle);
   box-shadow: -22px 0 64px rgba(18, 18, 17, .18);
-  z-index: 200;
+  z-index: 1100;
   transform: translateX(105%);
   transition: transform var(--transition-smooth);
   display: flex;
@@ -1493,7 +1518,9 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   background: rgba(18, 18, 17, .38);
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
-  z-index: 300;
+  /* Above the fixed site header (z-index 1000) so the dialog is not
+     obscured and its buttons stay clickable. */
+  z-index: 1200;
   padding: 1rem;
 }
 .modal-overlay-center.open { display: flex; animation: overlay-in .22s both; }
@@ -1630,7 +1657,9 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
   left: 50%;
   top: 22px;
   transform: translateX(-50%) translateY(-8px);
-  z-index: 220;
+  /* Above the fixed site header (z-index 1000) so the celebration toast
+     is not hidden behind it. */
+  z-index: 1300;
   display: flex;
   align-items: center;
   gap: 14px;
