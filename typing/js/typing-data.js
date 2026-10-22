@@ -530,12 +530,15 @@ git push origin main`,
     const needed = Math.max(minWords, 25);
     const out = [];
     let count = 0;
-    let guard = 0;
-    while (count < needed && guard < 20) {
+    // Enough iterations to reach the requested word count. The snippet pool
+    // has 15 entries averaging ~17 words, so a generous bound keeps long
+    // time-mode tests (custom durations up to 600s) fully covered.
+    let guard = Math.max(20, Math.ceil(needed / 12) + 4);
+    while (count < needed && guard > 0) {
       const snippet = pick(rng, CODE_SNIPPETS);
       out.push(snippet);
       count += snippet.split(/\s+/).length;
-      guard++;
+      guard--;
     }
     return out.join('\n\n');
   }
@@ -564,7 +567,13 @@ git push origin main`,
       return cleanCustomText(settings.customText || '');
     }
     if (content === 'code') {
-      const words = settings.mode === 'words' ? settings.limit : Math.max(40, Math.round(settings.limit * 1.4));
+      // Time mode: scale with the duration so a long test has enough code to
+      // type through. Code tokens are long (≈7.5 chars/word), so the word
+      // target is higher than for prose. The engine streams more via
+      // topUpText() if it runs low.
+      const words = settings.mode === 'words'
+        ? settings.limit
+        : Math.max(40, Math.round(settings.limit * 3.2));
       return generateCode(words, rng);
     }
 
@@ -572,14 +581,20 @@ git push origin main`,
     if (settings.mode === 'words') {
       minWords = Math.max(1, Math.min(500, parseInt(settings.limit, 10) || 25));
     } else {
-      // Time mode: generously sized stream; engine tops up as needed
+      // Time mode: size the passage to the duration.
+      // A fast typist manages roughly 150 wpm = 750 characters per minute,
+      // so ~13 characters per second leaves generous headroom. The old
+      // Math.max(50, seconds * 1.6) floor made 15s and 30s identical and
+      // left 60s/120s runs short of text before the timer expired.
       const secs = Math.max(5, Math.min(600, parseInt(settings.limit, 10) || 30));
-      minWords = Math.max(50, Math.round(secs * 1.6));
+      minWords = Math.max(40, Math.round(secs * 2.6));
     }
 
     let text;
     if (content === 'numbers') {
-      text = generateNumbers(Math.max(8, Math.round(minWords * 0.8)), rng);
+      // Numeric tokens average ~5 chars, so keep the full word target rather
+      // than trimming it — trimming left long time-mode tests short of text.
+      text = generateNumbers(Math.max(8, minWords), rng);
     } else if (content === 'mixed') {
       text = generateMixed(minWords, rng);
     } else if (content === 'punctuation') {

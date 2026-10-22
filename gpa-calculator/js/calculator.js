@@ -158,8 +158,89 @@ export function calculateComponentGradePoint(components) {
   return weightedPoints / totalMarks;
 }
 
+/**
+ * Groups of subjects a student may take *instead of* each other.
+ *
+ * A student picks one of each group, never both. Mathematics and
+ * Social Studies & Life Skill Education are the pair this calculator
+ * supports: the subject combination is fixed, so taking both would
+ * double-count a slot the combination only allows once.
+ */
+export const MUTUALLY_EXCLUSIVE_GROUPS = Object.freeze([
+  Object.freeze(["mathematics", "social studies"])
+]);
+
+/**
+ * Reduces a subject name to the key used by the exclusive groups.
+ */
+export function normalizeExclusiveName(name) {
+  const normalized = String(name ?? "").toLowerCase();
+  if (normalized.includes("mathematics") || normalized === "math") return "mathematics";
+  if (normalized.includes("social studies")) return "social studies";
+  return normalized.trim();
+}
+
+/**
+ * True when a subject carries any entry that could influence a result.
+ */
+export function subjectHasEntries(subject) {
+  if (!subject) return false;
+  const hasValue = value => value !== null && value !== undefined && String(value).trim() !== "";
+  return [subject.theoryObtained, subject.practicalObtained, subject.letterGrade, subject.theoryGrade, subject.practicalGrade]
+    .some(hasValue)
+    || (Array.isArray(subject.components) && subject.components.some(component =>
+      hasValue(component.obtained) || hasValue(component.letter) || hasValue(component.letterGrade)
+      || hasValue(component.grade?.letter)));
+}
+
+/**
+ * Decides which member of an exclusive group counts towards the result.
+ *
+ * The subject the student filled in is the one that counts; every other
+ * member of the group stays in the list but is disabled and contributes
+ * nothing. An explicit choice (the "use this instead" control) always wins.
+ * When both have data without an explicit choice, the first-listed subject
+ * wins. With neither an explicit choice nor entries, both remain selectable.
+ *
+ * Returns the winning subject, or null when no group applies.
+ */
+export function resolveExclusiveWinner(subjects) {
+  if (!Array.isArray(subjects) || subjects.length === 0) return null;
+  for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
+    const members = subjects.filter(subject => group.includes(normalizeExclusiveName(subject.name)));
+    if (members.length < 2) continue;
+
+    // An explicit choice always wins.
+    const chosen = members.filter(subject => subject.exclusiveChoice);
+    if (chosen.length === 1) return chosen[0];
+
+    // Exactly one subject has data — that is the one the student chose.
+    const filled = members.filter(subject => subjectHasEntries(subject));
+    if (filled.length === 1) return filled[0];
+
+    // If both have data, keep the result deterministic. With no data, leave
+    // both available until the student makes a selection.
+    if (filled.length > 1) return members[0];
+  }
+  return null;
+}
+
+/**
+ * Returns the subjects that contribute to the calculation: everything except
+ * the members of an exclusive group that lost the selection.
+ */
+export function subjectsForCalculation(subjects) {
+  const winner = resolveExclusiveWinner(subjects);
+  if (!winner) return subjects.slice();
+  const winnerGroup = MUTUALLY_EXCLUSIVE_GROUPS.find(group =>
+    group.includes(normalizeExclusiveName(winner.name)));
+  if (!winnerGroup) return subjects.slice();
+  return subjects.filter(subject => !winnerGroup.includes(normalizeExclusiveName(subject.name))
+    || subject === winner);
+}
+
 export function calculateAggregateTotals(subjects) {
-  return subjects.reduce((totals, subject) => {
+  return subjectsForCalculation(subjects).reduce((totals, subject) => {
     const theory = subject.components.find(component => component.kind === "theory");
     const practical = subject.components.find(component => component.kind === "practical");
     const components = [

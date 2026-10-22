@@ -404,9 +404,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 .subject-card.is-excluded {
   opacity: .55;
-  pointer-events: none;
   filter: grayscale(.15);
 }
+/* The card body is not interactive while excluded, but the "use this
+   instead" control stays clickable so the student can switch. */
+.subject-card.is-excluded .subject-fields { pointer-events: none; }
 .subject-card.is-excluded .subject-heading h2::after {
   content: " — excluded";
   color: var(--muted);
@@ -415,6 +417,23 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   text-transform: uppercase;
   letter-spacing: .04em;
 }
+.subject-card__switch {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--app-accent);
+  background: var(--accent-tint);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+}
+.subject-card__switch:hover { border-color: var(--app-accent); background: var(--accent-muted); }
+.subject-card__switch[hidden] { display: none; }
 .subject-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; margin-bottom: 18px; }
 .subject-heading h2 { overflow: hidden; margin: 0; color: var(--text-primary); font-size: 16px; font-weight: 700; text-overflow: ellipsis; }
 .subject-grade {

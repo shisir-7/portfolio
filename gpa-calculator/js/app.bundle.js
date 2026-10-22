@@ -161,7 +161,7 @@ function calculateComponentGradePoint(components) {
 }
 
 function calculateAggregateTotals(subjects) {
-  return subjects.reduce((totals, subject) => {
+  return subjectsForCalculation(subjects).reduce((totals, subject) => {
     const theory = subject.components.find(component => component.kind === "theory");
     const practical = subject.components.find(component => component.kind === "practical");
     const components = [
@@ -673,8 +673,11 @@ const text = {
     chooseElectivesLaw: "Choose 1 optional subject",
     chooseElectivesTechnical: "Choose 1 optional subject",
     chooseElectivesOther: "Choose 1 optional subject",
-    electiveOptional: "Optional"
+    electiveOptional: "Optional",
+    useThisInstead: "Use this instead",
+    excludedAlternative: "Not part of this combination"
   },
+
   ne: {
     appName: "NEB GPA क्याल्कुलेटर", reset: "रिसेट", studentName: "विद्यार्थीको नाम (ऐच्छिक)",
     classLabel: "कक्षा / तह", chooseLevel: "कक्षा छान्नुहोस्", class10: "कक्षा १० · SEE",
@@ -702,9 +705,12 @@ const text = {
     chooseElectivesLaw: "१ वटा ऐच्छिक विषय छान्नुहोस्",
     chooseElectivesTechnical: "१ वटा ऐच्छिक विषय छान्नुहोस्",
     chooseElectivesOther: "१ वटा ऐच्छिक विषय छान्नुहोस्",
-    electiveOptional: "ऐच्छिक"
+    electiveOptional: "ऐच्छिक",
+    useThisInstead: "यसलाई प्रयोग गर्नुहोस्",
+    excludedAlternative: "यो संयोजनमा समावेश छैन"
   }
 };
+
 
 function getPresets() {
   return {
@@ -780,7 +786,9 @@ if (themeToggleButton) themeToggleButton.addEventListener("click", () => {
 
 const t = key => text[language][key] ?? text.en[key] ?? key;
 const normalizeLevel = level => level === "XI" || level === "XII" || level === "11" ? "12" : level;
-const safe = value => String(value ?? "").replace(/[&<>"']/g, character => ({ "&": "&", "<": "<", ">": ">", '"': '"', "'": "'" })[character]);
+const safe = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+})[character]);
 const displayName = name => String(name).replace(/^Com\.\s*/, "Compulsory ");
 
 function initCustomDropdown(dropdownElement, onChange) {
@@ -932,9 +940,13 @@ function createSubject(record) {
     theoryGrade: "",
     practicalGrade: "",
     letterGrade: "",
+    // Set when the student explicitly picks this subject out of an
+    // exclusive group (Mathematics / Social Studies & Life Skill).
+    exclusiveChoice: false,
     custom: record.verification === "custom"
   };
 }
+
 
 function positiveOrNull(value) {
   const number = Number(value);
@@ -1031,38 +1043,101 @@ function updateElectivePicker() {
   electiveSection.hidden = false;
 }
 
+/**
+ * Groups of subjects a student may take *instead of* each other.
+ *
+ * A student picks one of each group, never both. Mathematics and
+ * Social Studies & Life Skill Education are the pair this calculator
+ * supports: the subject combination is fixed, so taking both would
+ * double-count a slot the combination only allows once.
+ */
+const MUTUALLY_EXCLUSIVE_GROUPS = Object.freeze([
+  Object.freeze(["mathematics", "social studies"])
+]);
+const MINIMUM_GPA_SUBJECTS = 2;
+
+/**
+ * Reduces a subject name to the key used by the exclusive groups.
+ */
 function normalizeExclusiveName(name) {
-  const normalized = String(name).toLowerCase();
+  const normalized = String(name ?? "").toLowerCase();
   if (normalized.includes("mathematics") || normalized === "math") return "mathematics";
   if (normalized.includes("social studies")) return "social studies";
   return normalized.trim();
 }
-const MUTUALLY_EXCLUSIVE_GROUPS = [
-  ["mathematics", "social studies"]
-];
+
+/**
+ * True when a subject carries any entry that could influence a result.
+ */
+function subjectHasEntries(subject) {
+  if (!subject) return false;
+  const hasValue = value => value !== null && value !== undefined && String(value).trim() !== "";
+  return [subject.theoryObtained, subject.practicalObtained, subject.letterGrade, subject.theoryGrade, subject.practicalGrade]
+    .some(hasValue)
+    || (Array.isArray(subject.components) && subject.components.some(component =>
+      hasValue(component.obtained) || hasValue(component.letter) || hasValue(component.letterGrade)
+      || hasValue(component.grade?.letter)));
+}
+
+/**
+ * Decides which member of an exclusive group counts towards the result.
+ *
+ * The subject the student filled in is the one that counts; every other
+ * member of the group stays in the list but is disabled and contributes
+ * nothing. An explicit choice (the "use this instead" control) always wins.
+ * When both have data without an explicit choice, the first-listed subject
+ * wins. With neither an explicit choice nor entries, both remain selectable.
+ *
+ * Returns the winning subject, or null when no group applies.
+ */
+function resolveExclusiveWinner(subjects) {
+  if (!Array.isArray(subjects) || subjects.length === 0) return null;
+  for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
+    const members = subjects.filter(subject => group.includes(normalizeExclusiveName(subject.name)));
+    if (members.length < 2) continue;
+
+    // An explicit choice always wins.
+    const chosen = members.filter(subject => subject.exclusiveChoice);
+    if (chosen.length === 1) return chosen[0];
+
+    // Exactly one subject has data — that is the one the student chose.
+    const filled = members.filter(subject => subjectHasEntries(subject));
+    if (filled.length === 1) return filled[0];
+
+    // If both have data, keep the result deterministic. With no data, leave
+    // both available until the student makes a selection.
+    if (filled.length > 1) return members[0];
+  }
+  return null;
+}
+
 
 function isMutuallyExclusiveExcluded(subject) {
+  if (!MUTUALLY_EXCLUSIVE_GROUPS.length) return false;
   if (getLevelValue() === "SEE") return false;
   const stream = getStreamValue();
   if (stream !== "science" && stream !== "management") return false;
   const level = getLevelValue();
   if (level !== "12") return false;
-  const canon = normalizeExclusiveName(subject.name);
-  for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
-    if (!group.includes(canon)) continue;
-    const sibling = selectedSubjects.find(s => s !== subject && group.includes(normalizeExclusiveName(s.name)));
-    if (!sibling) continue;
-    const subjectHas = subject.theoryObtained !== "" || subject.practicalObtained !== "" || !!subject.letterGrade || !!subject.theoryGrade || !!subject.practicalGrade;
-    const siblingHas = sibling.theoryObtained !== "" || sibling.practicalObtained !== "" || !!sibling.letterGrade || !!sibling.theoryGrade || !!sibling.practicalGrade;
-    if (!subjectHas && !siblingHas) return false;
-    if (siblingHas && !subjectHas) return true;
-    if (siblingHas && subjectHas) {
-      const si = selectedSubjects.indexOf(subject);
-      const sj = selectedSubjects.indexOf(sibling);
-      return si > sj;
-    }
-  }
-  return false;
+  const winner = resolveExclusiveWinner(selectedSubjects);
+  if (!winner || winner === subject) return false;
+  // Only the subjects of the winning group are excluded; everything else
+  // in the list stays active.
+  const winnerGroup = MUTUALLY_EXCLUSIVE_GROUPS.find(group => group.includes(normalizeExclusiveName(winner.name)));
+  if (!winnerGroup) return false;
+  return winnerGroup.includes(normalizeExclusiveName(subject.name));
+}
+
+/**
+ * Clears every entry on a subject so it cannot contribute to the result.
+ * Used when a subject is disabled by the mutual-exclusivity rule.
+ */
+function clearSubjectEntries(subject) {
+  subject.theoryObtained = "";
+  subject.practicalObtained = "";
+  subject.theoryGrade = "";
+  subject.practicalGrade = "";
+  subject.letterGrade = "";
 }
 
 function applyMutualExclusivityUI() {
@@ -1071,14 +1146,34 @@ function applyMutualExclusivityUI() {
     document.querySelectorAll(".subject-card input, .subject-card button.dropdown-trigger").forEach(el => { el.disabled = false; });
     return;
   }
+  let changed = false;
   selectedSubjects.forEach(subject => {
     const card = document.querySelector(`.subject-card[data-key="${CSS.escape(subject.key)}"]`);
     if (!card) return;
     const excluded = isMutuallyExclusiveExcluded(subject);
+    // A disabled subject must not keep values that would silently affect the
+    // calculation, so drop its entries when it becomes disabled.
+    if (excluded && subjectHasEntries(subject)) {
+      clearSubjectEntries(subject);
+      changed = true;
+    }
     card.classList.toggle("is-excluded", excluded);
     card.querySelectorAll("input, button.dropdown-trigger").forEach(el => { el.disabled = excluded; });
+    // The disabled card keeps a "use this instead" control so the student
+    // can switch to it; the card itself is not pointer-interactive.
+    const switchBtn = card.querySelector(".subject-card__switch");
+    if (switchBtn) {
+      switchBtn.hidden = !excluded;
+      switchBtn.disabled = false;
+    }
   });
+  if (changed) {
+    // Re-sync the cleared fields in the DOM so the inputs do not keep
+    // showing the values that were just discarded.
+    renderSubjects();
+  }
 }
+
 
 function activeSubjectsForCalculation() {
   return selectedSubjects.filter(subject => !isMutuallyExclusiveExcluded(subject) && subjectGrade(subject) !== null);
@@ -1103,17 +1198,48 @@ function componentField(subject, kind, label) {
   </label>`;
 }
 
+/**
+ * Maps a grade point back to its letter grade.
+ *
+ * Derived from the `grades` table so it can never drift out of sync with
+ * the letters offered in the dropdown. The table is ordered highest grade
+ * point first, so the first entry at or above the given point wins.
+ */
 function gradeLetterFromPoint(gp) {
-  if (gp >= 3.6) return "A+";
-  if (gp >= 3.2) return "A";
-  if (gp >= 2.8) return "B+";
-  if (gp >= 2.4) return "B";
-  if (gp >= 2.0) return "C+";
-  if (gp >= 1.8) return "C";
-  if (gp >= 1.6) return "D+";
-  if (gp >= 0.8) return "D";
-  return "E";
+  const match = grades.find(grade => gp >= grade.gradePoint - 1e-9);
+  return match ? match.letter : "E";
 }
+
+/**
+ * Maps an overall GPA to its indicative letter grade.
+ *
+ * Uses the same band table as the subject grade points so the overall
+ * letter always agrees with the letters shown on the subject cards.
+ */
+function overallGradeLetter(gpa) {
+  if (!Number.isFinite(gpa)) return "—";
+  return gradeLetterFromPoint(gpa);
+}
+
+/**
+ * Maps a percentage to its grade point.
+ *
+ * Mirrors GRADE_BANDS in calculator.js (A+ at 90, A at 80, B+ at 70 …) but
+ * is derived from the `grades` table so the two can never drift apart.
+ */
+function gradePointFromPercent(pct) {
+  if (!Number.isFinite(pct)) return 0.8;
+  if (pct >= 90) return 4.0;
+  if (pct >= 80) return 3.6;
+  if (pct >= 70) return 3.2;
+  if (pct >= 60) return 2.8;
+  if (pct >= 50) return 2.4;
+  if (pct >= 40) return 2.0;
+  if (pct >= 30) return 1.8;
+  if (pct >= 20) return 1.6;
+  return 0.8;
+}
+
 
 function subjectGrade(subject) {
   if (mode === "grades") {
@@ -1166,8 +1292,43 @@ function renderSubject(subject) {
       ${componentField(subject, "practical", t("practical"))}
       <div class="grade-field-set"${mode === "marks" ? " hidden" : ""}>${gradeFields}</div>
     </div>
+    <button type="button" class="subject-card__switch" data-switch-key="${safe(subject.key)}" hidden>${safe(t("useThisInstead"))}</button>
   </article>`;
 }
+
+/**
+ * Finds the other subject of an exclusive group, if the student has both.
+ */
+function exclusiveSibling(subject) {
+  for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
+    const canon = normalizeExclusiveName(subject.name);
+    if (!group.includes(canon)) continue;
+    return selectedSubjects.find(s => s !== subject && group.includes(normalizeExclusiveName(s.name))) || null;
+  }
+  return null;
+}
+
+/**
+ * Switches the selection from one member of an exclusive group to the other.
+ * The previously selected subject is cleared and disabled, the new one is
+ * enabled and ready for input.
+ */
+function switchExclusiveSubject(subject) {
+  const sibling = exclusiveSibling(subject);
+  if (!sibling) return;
+  // Record the explicit choice so it survives until the student types.
+  selectedSubjects.forEach(item => { item.exclusiveChoice = false; });
+  subject.exclusiveChoice = true;
+  clearSubjectEntries(sibling);
+  clearSubjectEntries(subject);
+  renderSubjects();
+  // Focus the first input of the newly selected subject so the student can
+  // type straight away.
+  const card = document.querySelector(`.subject-card[data-key="${CSS.escape(subject.key)}"]`);
+  const input = card?.querySelector(".mark-input:not([disabled]), button.dropdown-trigger:not([disabled])");
+  if (input) { try { input.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+}
+
 
 function gradeField(subject, kind, label) {
   const value = kind === "theory" ? subject.theoryGrade : kind === "practical" ? subject.practicalGrade : subject.letterGrade;
@@ -1206,11 +1367,16 @@ function renderSubjects() {
         if (kind === "theory") subject.theoryGrade = val;
         else if (kind === "practical") subject.practicalGrade = val;
         else subject.letterGrade = val;
+        // Choosing a grade in one member of an exclusive pair selects it.
+        if (subjectHasEntries(subject)) {
+          selectedSubjects.forEach(item => { item.exclusiveChoice = item === subject; });
+        }
       }
       updateResult();
       applyMutualExclusivityUI();
     });
   });
+
   updateResult();
   applyMutualExclusivityUI();
 }
@@ -1252,20 +1418,17 @@ function evaluate() {
       const weight = (subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) || 100;
       return { gradePoint: grade.gradePoint, weight };
     }).filter(Boolean);
-    if (validSubjects.length === 0) return { gpa: null, grade: null, state: "incomplete" };
+    if (validSubjects.length < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
     const gpa = calculateMeanGPA(validSubjects);
     if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
-    const grade = [
-      { minimum: 3.6, letter: "A+" }, { minimum: 3.2, letter: "A" },
-      { minimum: 2.8, letter: "B+" }, { minimum: 2.4, letter: "B" },
-      { minimum: 2.0, letter: "C+" }, { minimum: 1.6, letter: "C" },
-      { minimum: 1.2, letter: "D+" }, { minimum: 0.8, letter: "D" },
-      { minimum: 0, letter: "E" }
-    ].find(band => gpa >= band.minimum)?.letter ?? "—";
+    const grade = overallGradeLetter(gpa);
     return { gpa, grade, state: "ready", count: validSubjects.length };
+
   }
 
   const componentEntries = [];
+  const completedSubjectCount = evaluableSubjects.filter(subject => subjectGrade(subject) !== null).length;
+  const addComponentEntry = (subject, entry) => componentEntries.push({ ...entry, subjectKey: subject.key });
   for (const subject of evaluableSubjects) {
     const thMax = subject.theoryMaximum;
     const prMax = subject.practicalMaximum;
@@ -1282,38 +1445,35 @@ function evaluate() {
       const grade = subjectGrade(subject);
       if (!grade) continue;
       if (grade.letter === "NG") {
-        if (thHas && thCH !== null && thCH > 0) componentEntries.push({ gradePoint: 0, creditHours: thCH });
-        if (prHas && prCH !== null && prCH > 0) componentEntries.push({ gradePoint: 0, creditHours: prCH });
+        if (thHas && thCH !== null && thCH > 0) addComponentEntry(subject, { gradePoint: 0, creditHours: thCH });
+        if (prHas && prCH !== null && prCH > 0) addComponentEntry(subject, { gradePoint: 0, creditHours: prCH });
         continue;
       }
       if (thHas && thObtained !== "" && thCH !== null && thCH > 0) {
         const pct = Math.max(0, Math.min(100, (Number(thObtained) / thMax) * 100));
-        let gp;
-        if (pct >= 90) gp = 4.0; else if (pct >= 80) gp = 3.6; else if (pct >= 70) gp = 3.2; else if (pct >= 60) gp = 2.8; else if (pct >= 50) gp = 2.4; else if (pct >= 40) gp = 2.0; else if (pct >= 30) gp = 1.8; else if (pct >= 20) gp = 1.6; else gp = 0.8;
-        componentEntries.push({ gradePoint: gp, creditHours: thCH });
+        addComponentEntry(subject, { gradePoint: gradePointFromPercent(pct), creditHours: thCH });
       }
       if (prHas && prObtained !== "" && prCH !== null && prCH > 0) {
         const pct = Math.max(0, Math.min(100, (Number(prObtained) / prMax) * 100));
-        let gp;
-        if (pct >= 90) gp = 4.0; else if (pct >= 80) gp = 3.6; else if (pct >= 70) gp = 3.2; else if (pct >= 60) gp = 2.8; else if (pct >= 50) gp = 2.4; else if (pct >= 40) gp = 2.0; else if (pct >= 30) gp = 1.8; else if (pct >= 20) gp = 1.6; else gp = 0.8;
-        componentEntries.push({ gradePoint: gp, creditHours: prCH });
+        addComponentEntry(subject, { gradePoint: gradePointFromPercent(pct), creditHours: prCH });
       }
+
     } else {
       const thDone = thHas && thLetter !== "";
       const prDone = prHas && prLetter !== "";
       if (thHas || prHas) {
         if (thHas && thLetter) {
-          if (thLetter === "NG" && thCH !== null && thCH > 0) componentEntries.push({ gradePoint: 0, creditHours: thCH });
+          if (thLetter === "NG" && thCH !== null && thCH > 0) addComponentEntry(subject, { gradePoint: 0, creditHours: thCH });
           else {
             const gp = grades.find(g => g.letter === thLetter)?.gradePoint;
-            if (gp !== undefined && thCH !== null && thCH > 0) componentEntries.push({ gradePoint: gp, creditHours: thCH });
+            if (gp !== undefined && thCH !== null && thCH > 0) addComponentEntry(subject, { gradePoint: gp, creditHours: thCH });
           }
         }
         if (prHas && prLetter) {
-          if (prLetter === "NG" && prCH !== null && prCH > 0) componentEntries.push({ gradePoint: 0, creditHours: prCH });
+          if (prLetter === "NG" && prCH !== null && prCH > 0) addComponentEntry(subject, { gradePoint: 0, creditHours: prCH });
           else {
             const gp = grades.find(g => g.letter === prLetter)?.gradePoint;
-            if (gp !== undefined && prCH !== null && prCH > 0) componentEntries.push({ gradePoint: gp, creditHours: prCH });
+            if (gp !== undefined && prCH !== null && prCH > 0) addComponentEntry(subject, { gradePoint: gp, creditHours: prCH });
           }
         }
         if ((thHas && !thDone) && (prHas && !prDone)) continue;
@@ -1325,7 +1485,7 @@ function evaluate() {
         const gp = grade.letter === "NG" ? 0 : grades.find(g => g.letter === grade.letter)?.gradePoint;
         if (gp !== undefined) {
           const ch = subject.creditHours || 4.0;
-          componentEntries.push({ gradePoint: gp, creditHours: ch });
+          addComponentEntry(subject, { gradePoint: gp, creditHours: ch });
         }
       }
     }
@@ -1338,32 +1498,23 @@ function evaluate() {
       const weight = (subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) || 100;
       return { gradePoint: grade.gradePoint, weight };
     }).filter(Boolean);
-    if (fallback.length === 0) return { gpa: null, grade: null, state: "incomplete" };
+    if (fallback.length < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
     const gpa = calculateMeanGPA(fallback);
     if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
-    const grade = [
-      { minimum: 3.6, letter: "A+" }, { minimum: 3.2, letter: "A" },
-      { minimum: 2.8, letter: "B+" }, { minimum: 2.4, letter: "B" },
-      { minimum: 2.0, letter: "C+" }, { minimum: 1.6, letter: "C" },
-      { minimum: 1.2, letter: "D+" }, { minimum: 0.8, letter: "D" },
-      { minimum: 0, letter: "E" }
-    ].find(band => gpa >= band.minimum)?.letter ?? "—";
+    const grade = overallGradeLetter(gpa);
     return { gpa, grade, state: "ready", count: fallback.length };
+
   }
 
+  if (completedSubjectCount < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
   const totalCH = componentEntries.reduce((s,c)=>s+c.creditHours,0);
   const weighted = componentEntries.reduce((s,c)=>s+c.gradePoint*c.creditHours,0);
   const gpa = totalCH ? Math.round((weighted/totalCH + Number.EPSILON)*100)/100 : null;
   if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
-  const grade = [
-    { minimum: 3.6, letter: "A+" }, { minimum: 3.2, letter: "A" },
-    { minimum: 2.8, letter: "B+" }, { minimum: 2.4, letter: "B" },
-    { minimum: 2.0, letter: "C+" }, { minimum: 1.6, letter: "C" },
-    { minimum: 1.2, letter: "D+" }, { minimum: 0.8, letter: "D" },
-    { minimum: 0, letter: "E" }
-  ].find(band => gpa >= band.minimum)?.letter ?? "—";
-  return { gpa, grade, state: "ready", count: componentEntries.length };
+  const grade = overallGradeLetter(gpa);
+  return { gpa, grade, state: "ready", count: completedSubjectCount };
 }
+
 
 function updateResult() {
   const result = evaluate();
@@ -1391,11 +1542,15 @@ function updateResult() {
   if (summaryContainer) {
     summaryContainer.innerHTML = "";
     if (result.state === "ready" || result.state === "incomplete") {
+      // Only the subjects that actually count towards the result are listed,
+      // so a disabled subject never shows up in the summary.
       selectedSubjects.forEach(subject => {
+        if (isMutuallyExclusiveExcluded(subject)) return;
         const grade = subjectGrade(subject);
         if (grade) summaryContainer.innerHTML += `<div>${safe(subject.name)} : ${safe(grade.letter)}</div>`;
       });
     }
+
   }
 }
 
@@ -1493,14 +1648,32 @@ function setMode(nextMode) {
 marksModeButton.addEventListener("click", () => setMode("marks"));
 gradesModeButton.addEventListener("click", () => setMode("grades"));
 
+// "Use this instead" on a disabled subject switches the exclusive pair.
+subjectList.addEventListener("click", event => {
+  const button = event.target.closest(".subject-card__switch");
+  if (!button) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const subject = selectedSubjects.find(item => item.key === button.dataset.switchKey);
+  if (subject) switchExclusiveSubject(subject);
+});
+
+
 subjectList.addEventListener("input", event => {
   const card = event.target.closest(".subject-card");
   if (!card) return;
   const subject = selectedSubjects.find(item => item.key === card.dataset.key);
-  if (subject) syncSubject(subject, card);
+  if (subject) {
+    syncSubject(subject, card);
+    // Entering a value in one member of an exclusive pair selects it.
+    if (subjectHasEntries(subject)) {
+      selectedSubjects.forEach(item => { item.exclusiveChoice = item === subject; });
+    }
+  }
   updateResult();
   applyMutualExclusivityUI();
 });
+
 
 subjectList.addEventListener("keydown", event => {
   if (event.key !== "Enter") return;
@@ -1605,9 +1778,12 @@ document.getElementById("reset-calculator").addEventListener("click", () => {
     subject.theoryGrade = "";
     subject.practicalGrade = "";
     subject.letterGrade = "";
+    // Drop the explicit choice so the default selection is restored.
+    subject.exclusiveChoice = false;
   });
   renderSubjects();
 });
+
 
 function flushActiveInputsToModel() {
   document.querySelectorAll(".subject-card").forEach(card => {
