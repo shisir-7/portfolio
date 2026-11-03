@@ -954,6 +954,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   pointer-events: none;
   filter: grayscale(.15);
 }
+.subject-card.is-excluded .subject-card__switch { pointer-events: auto; }
 .subject-card.is-excluded .subject-heading h2::after {
   content: " — excluded";
   color: var(--muted);
@@ -996,6 +997,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .mark-input:focus { border-color: var(--app-accent); box-shadow: 0 0 0 3px var(--accent-muted); outline: none; }
 .mark-input.is-invalid { border-color: var(--danger); box-shadow: 0 0 0 3px var(--accent-muted); }
 .mark-input:disabled { cursor: not-allowed; opacity: .5; }
+.field-error { color: var(--danger); font-size: 12px; line-height: 1.4; }
 .grade-field-set {
   display: grid;
   grid-column: 1 / -1;
@@ -1273,7 +1275,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
         <span class="result-label" data-i18n="overallGrade">Overall grade</span>
         <strong id="live-grade">—</strong>
       </div>
-      <button id="download-pdf" style="display: none;">Download Result</button>
+      <button id="download-pdf" data-i18n="printMarksheet" style="display: none;">Print / Save as PDF</button>
     </section>
     <p class="result-status" id="result-status" role="status" data-i18n="chooseLevel">Choose level</p>
     <div id="subject-summary-breakdown" class="subject-summary-breakdown"></div>

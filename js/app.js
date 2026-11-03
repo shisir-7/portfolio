@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initClipboard();
   initCustomCursor();
   initScrollSpy();
+  initCookieConsent();
 });
 
 /* --------------------------------------------------------------------------
@@ -89,14 +90,16 @@ function initLiveClock() {
 function initNavigation() {
   const mobileToggle = document.getElementById('mobile-nav-toggle');
   const mobileDrawer = document.getElementById('mobile-nav-drawer');
-  const mobileLinks = document.querySelectorAll('.mobile-nav-drawer__link');
+  const mobileLinks = mobileDrawer ? mobileDrawer.querySelectorAll('a') : [];
 
   if (mobileToggle && mobileDrawer) {
     mobileToggle.addEventListener('click', () => {
       const isOpen = mobileToggle.classList.toggle('open');
       mobileDrawer.classList.toggle('open', isOpen);
       mobileToggle.setAttribute('aria-expanded', isOpen);
+      mobileDrawer.setAttribute('aria-hidden', String(!isOpen));
       document.body.style.overflow = isOpen ? 'hidden' : '';
+      if (isOpen && mobileLinks[0]) mobileLinks[0].focus();
     });
 
     mobileLinks.forEach(link => {
@@ -104,8 +107,34 @@ function initNavigation() {
         mobileToggle.classList.remove('open');
         mobileDrawer.classList.remove('open');
         mobileToggle.setAttribute('aria-expanded', 'false');
+        mobileDrawer.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
       });
+    });
+
+    document.addEventListener('keydown', event => {
+      if (!mobileDrawer.classList.contains('open')) return;
+      if (event.key === 'Escape') {
+        mobileToggle.classList.remove('open');
+        mobileDrawer.classList.remove('open');
+        mobileToggle.setAttribute('aria-expanded', 'false');
+        mobileDrawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        mobileToggle.focus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = [mobileToggle, ...mobileDrawer.querySelectorAll('a[href], button:not([disabled])')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
   }
 }
@@ -234,7 +263,7 @@ function initProjects() {
         aria-label="${project.title}: ${project.searchDescription || project.summary}"
         ${project.projectUrl ? '' : `data-project-id="${project.id}"`}
       >
-        <img src="${project.image}" alt="" loading="lazy" />
+        <img src="${project.image}" alt="${project.imageAlt || project.title + ' preview thumbnail'}" loading="lazy" />
         <span class="project-search__suggestion-copy">
           <span class="project-search__suggestion-title">${project.title}</span>
           <span class="project-search__suggestion-description">${project.searchDescription || project.summary}</span>
@@ -378,12 +407,20 @@ function initCaseStudyModal() {
   const modalOverlay = document.getElementById('case-study-modal');
   const modalDrawer = document.getElementById('modal-drawer');
   const closeBtn = document.getElementById('modal-close-btn');
+  let previouslyFocusedElement = null;
 
   if (!modalOverlay || !modalDrawer) return;
 
   function closeModal() {
     modalOverlay.classList.remove('open');
     document.body.style.overflow = '';
+    const focusTarget = previouslyFocusedElement;
+    previouslyFocusedElement = null;
+    if (focusTarget && focusTarget.isConnected && focusTarget.getClientRects().length) {
+      focusTarget.focus({ preventScroll: true });
+    } else {
+      document.getElementById('project-search-input')?.focus({ preventScroll: true });
+    }
   }
 
   if (closeBtn) {
@@ -397,8 +434,26 @@ function initCaseStudyModal() {
   });
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOverlay.classList.contains('open')) {
+    if (!modalOverlay.classList.contains('open')) return;
+    if (e.key === 'Escape') {
       closeModal();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+
+    const focusable = Array.from(modalDrawer.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility === 'visible');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first) {
+      e.preventDefault();
+    } else if (e.shiftKey && (document.activeElement === first || !modalDrawer.contains(document.activeElement))) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !modalDrawer.contains(document.activeElement))) {
+      e.preventDefault();
+      first.focus();
     }
   });
 
@@ -406,6 +461,7 @@ function initCaseStudyModal() {
   window.openCaseStudy = function(projectId) {
     const project = window.PORTFOLIO_PROJECTS.find(p => p.id === projectId);
     if (!project) return;
+    previouslyFocusedElement = document.activeElement;
 
     // Fill Modal Content
     document.getElementById('modal-num').textContent = `[ PROJECT ${project.number} ]`;
@@ -477,6 +533,17 @@ function initCaseStudyModal() {
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     modalDrawer.scrollTop = 0;
+    if (closeBtn) {
+      const focusCloseButton = () => {
+        if (!modalOverlay.classList.contains('open')) return;
+        if (getComputedStyle(closeBtn).visibility === 'visible') {
+          closeBtn.focus({ preventScroll: true });
+        } else {
+          requestAnimationFrame(focusCloseButton);
+        }
+      };
+      requestAnimationFrame(focusCloseButton);
+    }
   };
 }
 
@@ -496,9 +563,21 @@ function initInquiryForm() {
     const email = document.getElementById('form-email').value.trim();
     const service = document.getElementById('form-service').value;
     const message = document.getElementById('form-message').value.trim();
+    const consentInput = document.getElementById('form-consent');
 
     if (!name || !email || !message) {
       alert('Please fill in your name, email, and project message.');
+      return;
+    }
+
+    if (consentInput && !consentInput.checked) {
+      alert('Please confirm that you are at least 16 years of age (or have guardian consent) and agree to our privacy policy.');
+      consentInput.focus();
+      return;
+    }
+    const emailInput = document.getElementById('form-email');
+    if (!emailInput.checkValidity()) {
+      emailInput.reportValidity();
       return;
     }
 
@@ -519,7 +598,7 @@ function initInquiryForm() {
 
     const recipient = 'acharyashiru939@gmail.com';
     const subject = encodeURIComponent(`Project Inquiry: ${service} — ${name}`);
-    const bodyContent = `Hello Shisir,\n\nName: ${name}\nEmail: ${email}\nDiscipline / Interest: ${service}\n\nProject Details:\n${message}\n\nSent from your portfolio website inquiry system.`;
+    const bodyContent = `Hello Shisir,\n\nName: ${name}\nEmail: ${email}\nDiscipline / Interest: ${service}\n\nProject Details:\n${message}\n\n[Consent Confirmed: 16+ or Guardian Approval | Direct Inquiry]\n[Communication Preference: Reply 'UNSUBSCRIBE' or 'CEASE' at any time to delete correspondence and stop replies]\nSent from your portfolio website inquiry system.`;
     const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${encodeURIComponent(bodyContent)}`;
 
     // Open visitor's default email client
@@ -636,3 +715,39 @@ function initScrollSpy() {
     });
   }
 }
+
+/* --------------------------------------------------------------------------
+   10. Cookie & Local Preference Consent Banner
+   -------------------------------------------------------------------------- */
+function initCookieConsent() {
+  const banner = document.getElementById('cookie-banner');
+  const acceptBtn = document.getElementById('cookie-accept-btn');
+  const declineBtn = document.getElementById('cookie-decline-btn');
+
+  if (!banner) return;
+
+  const consentGiven = localStorage.getItem('sa-cookie-consent');
+  if (!consentGiven) {
+    // Show banner after brief delay
+    setTimeout(() => {
+      banner.removeAttribute('hidden');
+      banner.classList.add('visible');
+    }, 800);
+  }
+
+  const hideBanner = (status) => {
+    localStorage.setItem('sa-cookie-consent', status);
+    banner.classList.remove('visible');
+    setTimeout(() => {
+      banner.setAttribute('hidden', 'true');
+    }, 300);
+  };
+
+  if (acceptBtn) {
+    acceptBtn.addEventListener('click', () => hideBanner('accepted'));
+  }
+  if (declineBtn) {
+    declineBtn.addEventListener('click', () => hideBanner('declined_non_essential'));
+  }
+}
+

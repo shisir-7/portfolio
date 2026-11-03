@@ -223,6 +223,7 @@ window.TypingApp = (function () {
   }
 
   function topUpText() {
+    if (settings.content === 'custom') return;
     const more = TypingData.generateText({
       mode: 'time',
       limit: 50,
@@ -500,6 +501,21 @@ window.TypingApp = (function () {
       if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header')) return;
       focusInput(true);
     });
+
+    // Mobile: touchstart on viewport/textWrap focuses the hidden input
+    viewport.addEventListener('touchstart', (e) => {
+      if (!isTypingContext()) return;
+      focusInput();
+    }, { passive: true });
+    textWrap.addEventListener('touchstart', (e) => {
+      if (!isTypingContext()) return;
+      focusInput();
+    }, { passive: true });
+    document.addEventListener('touchstart', (e) => {
+      if (!isTypingContext()) return;
+      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header')) return;
+      focusInput();
+    }, { passive: true });
     document.addEventListener('keydown', (e) => {
       if (currentView !== 'test') return;
       if (engine.getState() === 'finished') return;
@@ -530,14 +546,27 @@ window.TypingApp = (function () {
       }
     });
 
-    input.addEventListener('blur', () => {
-      if (engine.getState() === 'running') {
+    let _blurTimeout = null;
+    input.addEventListener('blur', (event) => {
+      if (event.relatedTarget && event.relatedTarget.id === 'btn-pause') return;
+      if (engine.getState() !== 'running') return;
+      // On touch devices, blur fires when keyboard opens/adjusts — debounce it
+      const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+      if (isTouchDevice) {
+        _blurTimeout = setTimeout(() => {
+          if (document.activeElement !== input && engine.getState() === 'running') {
+            engine.pause();
+            $('pause-overlay').classList.add('open');
+          }
+        }, 250);
+      } else {
         engine.pause();
         $('pause-overlay').classList.add('open');
       }
     });
 
     input.addEventListener('focus', () => {
+      if (_blurTimeout) { clearTimeout(_blurTimeout); _blurTimeout = null; }
       $('pause-overlay').classList.remove('open');
       if (engine.getState() === 'paused') {
         engine.resume();
@@ -1981,7 +2010,13 @@ window.TypingApp = (function () {
     if (statsBefore.count > 0) maybeCelebrateRecord(res, statsBefore);
     // Defer chart paint until the results view is laid out — prevents
     // the classic "display:none reports width 0 → blurry canvas" bug.
-    requestAnimationFrame(() => requestAnimationFrame(() => renderResultCharts()));
+    // Two rAF frames give the browser one layout pass after making the view
+    // visible; a follow-up at ~380 ms catches the end of the .32 s CSS
+    // animation where getBoundingClientRect() finally returns stable values.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      renderResultCharts();
+      setTimeout(() => { if (currentView === 'results' && result) renderResultCharts(); }, 380);
+    }));
   }
 
   function renderComparison(res, stats, validation) {

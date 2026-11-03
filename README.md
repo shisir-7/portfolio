@@ -28,7 +28,7 @@ shisir-acharya-portfolio/
 ├── js/
 │   ├── projects-data.js       # Structured project dataset with case studies, demoUrl & repoUrl
 │   └── app.js                 # Theme switcher, live clock, modal engine, clipboard, inquiry composer
-├── gpa calculator/            # Standalone, bilingual NEB GPA calculator
+├── gpa-calculator/            # Standalone, bilingual NEB GPA calculator
 │   ├── index.html
 │   ├── css/styles.css
 │   ├── js/                    # Source-aware catalogue, estimates, and accessible interactions
@@ -74,7 +74,7 @@ The typing speed test appears in the **Selected Work** project gallery and is se
 
 The NEB GPA calculator is served at [`/gpa-calculator/`](https://shisiracharya7.com.np/gpa-calculator/) and is linked from the **Selected Work** project gallery. It supports SEE and Grades XI–XII with subject selection, bilingual UI, and exact-mark or transcript-letter-grade entry. The SEE estimate weights subjects by configured total marks; +2 uses catalogue credit-hour weights, some of which are historical or incomplete. Treat either result as an estimate, not an official NEB GPA. Marks remain in the current browser session; custom subject configurations are stored locally. See [`gpa-calculator/AUDIT.md`](gpa-calculator/AUDIT.md) for sources and unresolved policy gaps.
 
-Run its unit tests with `node --test "gpa-calculator/tests/calculator.test.mjs"`.
+Run the GPA and typing engine tests with `node --test "gpa-calculator/tests/calculator.test.mjs" "gpa-calculator/tests/exclusive-subjects.test.mjs" "typing/js/typing-engine.test.mjs"`.
 
 ## ✦ Internet Speed Test (SpeedPulse)
 
@@ -128,7 +128,7 @@ The internet speed test appears in the **Selected Work** project gallery and is 
    - Direct email link: `acharyashiru939@gmail.com`.
    - One-click "Copy Email" button with instant feedback.
    - Direct inquiry composer that pre-fills and opens a genuine email in the visitor's mail client.
-   - Editable social channel links (Instagram, Behance, Dribbble, LinkedIn, GitHub).
+   - Verified GitHub profile link.
 
 9. **Accessibility & Interactions**:
    - Subdued custom cursor on desktop (automatically disabled on touch screens and when `prefers-reduced-motion` is active).

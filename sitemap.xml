@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://shisiracharya7.com.np/</loc>
+  </url>
+  <url>
     <loc>https://shisiracharya7.com.np/typing/</loc>
   </url>
   <url>
@@ -8,5 +11,17 @@
   </url>
   <url>
     <loc>https://shisiracharya7.com.np/speed-test/</loc>
+  </url>
+  <url>
+    <loc>https://shisiracharya7.com.np/legal/privacy.html</loc>
+  </url>
+  <url>
+    <loc>https://shisiracharya7.com.np/legal/terms.html</loc>
+  </url>
+  <url>
+    <loc>https://shisiracharya7.com.np/legal/refunds.html</loc>
+  </url>
+  <url>
+    <loc>https://shisiracharya7.com.np/legal/cookies.html</loc>
   </url>
 </urlset>

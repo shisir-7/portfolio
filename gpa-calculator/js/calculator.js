@@ -119,6 +119,20 @@ export function calculateMeanGPA(subjects) {
   return totalWeight ? Math.round((weightedSum / totalWeight + Number.EPSILON) * 100) / 100 : null;
 }
 
+export function getCompletedSubjects(subjects, getSubjectGrade) {
+  if (!Array.isArray(subjects) || typeof getSubjectGrade !== "function") {
+    throw new TypeError("Subjects and a grade resolver are required.");
+  }
+  return subjects.filter(subject => {
+    const grade = getSubjectGrade(subject);
+    return grade !== null && grade !== undefined;
+  });
+}
+
+export function hasEnoughSubjectsForOverallGPA(subjects) {
+  return Array.isArray(subjects) && subjects.length >= 2;
+}
+
 export function calculateCreditWeightedGPA(componentGrades) {
   if (!Array.isArray(componentGrades) || componentGrades.length === 0) {
     throw new TypeError("At least one component grade is required.");
@@ -198,9 +212,9 @@ export function subjectHasEntries(subject) {
  *
  * The subject the student filled in is the one that counts; every other
  * member of the group stays in the list but is disabled and contributes
- * nothing. An explicit choice (the "use this instead" control) always wins.
- * When both have data without an explicit choice, the first-listed subject
- * wins. With neither an explicit choice nor entries, both remain selectable.
+ * nothing. An explicit choice (the "use this instead" control) wins while
+ * that subject has entries. When both have data without an explicit choice,
+ * the first-listed subject wins. With no entries, both remain selectable.
  *
  * Returns the winning subject, or null when no group applies.
  */
@@ -211,7 +225,7 @@ export function resolveExclusiveWinner(subjects) {
     if (members.length < 2) continue;
 
     // An explicit choice always wins.
-    const chosen = members.filter(subject => subject.exclusiveChoice);
+    const chosen = members.filter(subject => subject.exclusiveChoice && subjectHasEntries(subject));
     if (chosen.length === 1) return chosen[0];
 
     // Exactly one subject has data — that is the one the student chose.

@@ -1,4 +1,4 @@
-import { calculateComponentGradePoint, calculateMeanGPA, calculateSubject, MUTUALLY_EXCLUSIVE_GROUPS, normalizeExclusiveName, resolveExclusiveWinner, subjectHasEntries } from "./calculator.js";
+import { calculateComponentGradePoint, calculateMeanGPA, calculateSubject, getCompletedSubjects, hasEnoughSubjectsForOverallGPA, MUTUALLY_EXCLUSIVE_GROUPS, normalizeExclusiveName, resolveExclusiveWinner, subjectHasEntries } from "./calculator.js";
 import { SUBJECT_CATALOGUE } from "./subject-catalog.js";
 
 const CUSTOM_STORAGE_KEY = "neb-gpa-custom-subjects-v1";
@@ -13,6 +13,7 @@ const grades = [
 const text = {
   en: {
     appName: "NEB GPA Calculator", reset: "Reset", studentName: "Student Name (Optional)",
+    printMarksheet: "Print / Save as PDF",
     classLabel: "Class / Level", chooseLevel: "Choose level", class10: "Class 10 · SEE",
     class11: "+2 (NEB)", class12: "+2 (NEB)", plus2: "+2 (NEB)", streamLabel: "Stream", science: "Science",
     management: "Management", humanities: "Humanities", law: "Law", technical: "Technical / Vocational",
@@ -44,6 +45,7 @@ const text = {
   },
   ne: {
     appName: "NEB GPA क्याल्कुलेटर", reset: "रिसेट", studentName: "विद्यार्थीको नाम (ऐच्छिक)",
+    printMarksheet: "प्रिन्ट / PDF मा सुरक्षित गर्नुहोस्",
     classLabel: "कक्षा / तह", chooseLevel: "कक्षा छान्नुहोस्", class10: "कक्षा १० · SEE",
     class11: "+2 (NEB)", class12: "+2 (NEB)", plus2: "+2 (NEB)", streamLabel: "सङ्काय", science: "विज्ञान",
     management: "व्यवस्थापन", humanities: "मानविकी", law: "कानुन", technical: "प्राविधिक / व्यावसायिक",
@@ -417,7 +419,6 @@ function updateElectivePicker() {
  * they can be unit-tested without a DOM.
  */
 const EXCLUSIVE_GROUPS = MUTUALLY_EXCLUSIVE_GROUPS;
-const MINIMUM_GPA_SUBJECTS = 2;
 
 function isMutuallyExclusiveExcluded(subject) {
   if (!EXCLUSIVE_GROUPS.length) return false;
@@ -494,13 +495,15 @@ function componentField(subject, kind, label) {
   const obtained = kind === "theory" ? subject.theoryObtained : subject.practicalObtained;
   const maxLabel = maximum === null ? t("unknown") : `${t("sourceLabel")} ${maximum}`;
   const disabled = mode === "marks" && maximum === null;
-  const clampAttr = maximum !== null && maximum > 0 ? ` oninput="if(this.value > ${maximum}) this.value = ${maximum}; if(this.value < 0) this.value = 0;"` : "";
+  const errorId = `mark-error-${subject.key}-${kind}`;
   return `<label class="component-field${disabled ? " is-unavailable" : ""}"${mode !== "marks" ? " hidden" : ""}>
     <span class="component-label">${label}<small>${safe(maxLabel)}</small></span>
     <input class="mark-input" data-kind="${kind}" type="number" min="0" ${maximum === null ? "" : `max="${maximum}"`}
       step="any" value="${safe(obtained)}" placeholder="${safe(t("marksObtained"))}"
       aria-label="${safe(`${label}, ${t("marksObtained")}, ${maxLabel}`)}"
-      ${mode !== "marks" || disabled ? "hidden" : ""} ${disabled ? "disabled" : ""}${clampAttr} />
+      aria-describedby="${safe(errorId)}" aria-invalid="false"
+      ${mode !== "marks" || disabled ? "hidden" : ""} ${disabled ? "disabled" : ""} />
+    <small class="field-error" id="${safe(errorId)}" data-mark-error="${kind}" role="alert" hidden>${safe(t("invalidMarks"))}</small>
   </label>`;
 }
 
@@ -687,18 +690,14 @@ function renderSubjects() {
 function syncSubject(subject, card) {
   for (const input of card.querySelectorAll(".mark-input")) {
     const kind = input.dataset.kind;
-    let raw = input.value.trim();
+    const raw = input.value.trim();
     const mark = raw === "" ? null : Number(raw);
     const maximum = kind === "theory" ? subject.theoryMaximum : subject.practicalMaximum;
-    
-    if (maximum !== null && Number.isFinite(mark)) {
-      if (mark > maximum) { input.value = maximum; raw = String(maximum); }
-      else if (mark < 0) { input.value = 0; raw = "0"; }
-    }
-
-    const invalid = raw !== "" && (!Number.isFinite(Number(raw)) || Number(raw) < 0 || (maximum !== null && Number(raw) > maximum));
+    const invalid = raw !== "" && (!Number.isFinite(mark) || mark < 0 || (maximum !== null && mark > maximum));
     input.classList.toggle("is-invalid", invalid);
     input.setAttribute("aria-invalid", String(invalid));
+    const error = card.querySelector(`[data-mark-error="${kind}"]`);
+    if (error) error.hidden = !invalid;
     if (kind === "theory") subject.theoryObtained = raw;
     else subject.practicalObtained = raw;
   }
@@ -715,13 +714,12 @@ function evaluate() {
 
   const level = getLevelValue();
   if (level === "SEE") {
-    const validSubjects = evaluableSubjects.map(subject => {
+    const validSubjects = getCompletedSubjects(evaluableSubjects, subjectGrade).map(subject => {
       const grade = subjectGrade(subject);
-      if (!grade) return null;
       const weight = (subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) || 100;
       return { gradePoint: grade.gradePoint, weight };
-    }).filter(Boolean);
-    if (validSubjects.length < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
+    });
+    if (!hasEnoughSubjectsForOverallGPA(validSubjects)) return { gpa: null, grade: null, state: "incomplete" };
     const gpa = calculateMeanGPA(validSubjects);
     if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
     const grade = overallGradeLetter(gpa);
@@ -729,9 +727,10 @@ function evaluate() {
   }
 
   const componentEntries = [];
-  const completedSubjectCount = evaluableSubjects.filter(subject => subjectGrade(subject) !== null).length;
+  const completedSubjects = getCompletedSubjects(evaluableSubjects, subjectGrade);
+  const completedSubjectCount = completedSubjects.length;
   const addComponentEntry = (subject, entry) => componentEntries.push({ ...entry, subjectKey: subject.key });
-  for (const subject of evaluableSubjects) {
+  for (const subject of completedSubjects) {
     const thMax = subject.theoryMaximum;
     const prMax = subject.practicalMaximum;
     const thCH = subject.theoryCreditHours;
@@ -799,14 +798,14 @@ function evaluate() {
       const weight = (subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) || 100;
       return { gradePoint: grade.gradePoint, weight };
     }).filter(Boolean);
-    if (fallback.length < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
+    if (!hasEnoughSubjectsForOverallGPA(fallback)) return { gpa: null, grade: null, state: "incomplete" };
     const gpa = calculateMeanGPA(fallback);
     if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
     const grade = overallGradeLetter(gpa);
     return { gpa, grade, state: "ready", count: fallback.length };
   }
 
-  if (completedSubjectCount < MINIMUM_GPA_SUBJECTS) return { gpa: null, grade: null, state: "incomplete" };
+  if (!hasEnoughSubjectsForOverallGPA(completedSubjects)) return { gpa: null, grade: null, state: "incomplete" };
   const totalCH = componentEntries.reduce((s,c)=>s+c.creditHours,0);
   const weighted = componentEntries.reduce((s,c)=>s+c.gradePoint*c.creditHours,0);
   const gpa = totalCH ? Math.round((weighted/totalCH + Number.EPSILON)*100)/100 : null;
@@ -1090,37 +1089,49 @@ function flushActiveInputsToModel() {
 function generatePDFTranscript() {
   flushActiveInputsToModel();
   const level = getLevelValue();
-  if (level !== "12") {
-    const text = generateResultText();
-    if (!text) return;
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "neb-gpa-result.txt";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    return;
-  }
-
   const result = evaluate();
   if (!result || result.state !== "ready") return;
 
+  const isSEE = level === "SEE";
   const name = (nameInput.value || "").trim();
-  const classLabel = "+2 (NEB)";
-  const streamLabel = getStreamValue();
+  const classLabel = isSEE ? "Class 10 · SEE" : "+2 (NEB)";
+  const streamLabel = isSEE ? "" : getStreamValue();
 
   const transcriptSubjects = selectedSubjects.filter(s => !isMutuallyExclusiveExcluded(s) && subjectGrade(s) !== null);
-  if (transcriptSubjects.length === 0) {
-    const fallbackText = generateResultText();
-    if (!fallbackText) { flushActiveInputsToModel(); renderSubjects(); }
-    return;
-  }
+  if (transcriptSubjects.length === 0) return;
   let subjectRows = "";
   transcriptSubjects.forEach((subject, idx) => {
     const grade = subjectGrade(subject);
+    if (isSEE) {
+      const formatComponent = (kind) => {
+        const maximum = kind === "theory" ? subject.theoryMaximum : subject.practicalMaximum;
+        if (maximum === null) return "—";
+        if (mode === "grades") return (kind === "theory" ? subject.theoryGrade : subject.practicalGrade) || "—";
+        const obtained = kind === "theory" ? subject.theoryObtained : subject.practicalObtained;
+        return `${obtained}/${maximum}`;
+      };
+      const availableComponents = [
+        { maximum: subject.theoryMaximum, obtained: subject.theoryObtained },
+        { maximum: subject.practicalMaximum, obtained: subject.practicalObtained }
+      ].filter(component => component.maximum !== null);
+      const total = mode === "marks" && availableComponents.length
+        ? `${availableComponents.reduce((sum, component) => sum + Number(component.obtained || 0), 0)}/${availableComponents.reduce((sum, component) => sum + component.maximum, 0)}`
+        : "—";
+      const gradePoint = grade.letter === "NG" ? "0.00" : grade.gradePoint.toFixed(2);
+      subjectRows += `
+        <tr${idx % 2 === 1 ? ' class="striped"' : ""}>
+          <td>${idx + 1}</td>
+          <td class="subj">${safe(subject.name)}</td>
+          <td>${safe(formatComponent("theory"))}</td>
+          <td>${safe(formatComponent("practical"))}</td>
+          <td>${safe(total)}</td>
+          <td class="gp">${gradePoint}</td>
+          <td><span class="grade-badge">${safe(grade.letter)}</span></td>
+        </tr>
+      `;
+      return;
+    }
+
     const subjectCode = (subject.subjectCode && subject.subjectCode !== subject.id) ? subject.subjectCode : "";
     const cleanSubjectCode = subjectCode ? subjectCode.replace(/^0+/, "") : `SUB${String(idx + 1).padStart(2, "0")}`;
     const ch = subject.theoryCreditHours !== null || subject.practicalCreditHours !== null
@@ -1234,26 +1245,20 @@ function generatePDFTranscript() {
       <div class="disclaimer">Unofficial Estimation / Self-Calculated Result Summary</div>
       <div class="header">
         <div class="badge">Calculated on ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</div>
-        <h1>+2 GPA CALCULATION REPORT</h1>
+        <h1>${isSEE ? "SEE GPA ESTIMATION REPORT" : "+2 GPA CALCULATION REPORT"}</h1>
         <div class="sub">Academic Marksheet Summary — ${safe(classLabel)}</div>
       </div>
       <div class="student-info">
         <div><label>Student</label>${safe(addressName)}</div>
         <div style="text-align:right"><label>Level</label>${safe(classLabel)}</div>
+        ${isSEE ? "" : `<div style="text-align:right"><label>Stream</label>${safe(streamLabel)}</div>`}
       </div>
       ${congratsHtml}
       <table>
         <thead>
-          <tr>
-            <th>S.N.</th>
-            <th>Code</th>
-            <th>Subject</th>
-            <th>Credit Hr</th>
-            <th>GP</th>
-            <th>Grade</th>
-            <th>Final</th>
-            <th>Remarks</th>
-          </tr>
+          ${isSEE
+            ? `<tr><th>S.N.</th><th>Subject</th><th>Theory / Grade</th><th>Practical / Grade</th><th>Total Marks</th><th>GP</th><th>Grade</th></tr>`
+            : `<tr><th>S.N.</th><th>Code</th><th>Subject</th><th>Credit Hr</th><th>GP</th><th>Grade</th><th>Final</th><th>Remarks</th></tr>`}
         </thead>
         <tbody>
           ${subjectRows}
@@ -1289,41 +1294,6 @@ function generatePDFTranscript() {
       setTimeout(() => { iframe.remove(); }, 1000);
     }, 250);
   };
-}
-
-function generateResultText() {
-  flushActiveInputsToModel();
-  const result = evaluate();
-  if (!result || result.state !== "ready") return "";
-  const name = (nameInput.value || "").trim();
-  const level = getLevelValue() || "";
-  const hasActive = selectedSubjects.some(s => !isMutuallyExclusiveExcluded(s) && subjectGrade(s) !== null);
-  if (!hasActive) return "";
-  const lines = [];
-  lines.push("NEB GPA Calculator Result");
-  lines.push("");
-  if (name) lines.push(`Student: ${name}`);
-  lines.push(`Class / Level: ${level}`);
-  lines.push(`Overall GPA: ${result.gpa.toFixed(2)}`);
-  lines.push(`Overall Grade: ${result.grade}`);
-  lines.push("");
-  lines.push("Subjects:");
-  const exportSubjects = selectedSubjects.filter(s => !isMutuallyExclusiveExcluded(s));
-  exportSubjects.forEach(subject => {
-    const grade = subjectGrade(subject);
-    if (!grade) return;
-    const ch = subject.theoryCreditHours !== null || subject.practicalCreditHours !== null
-      ? ((subject.theoryCreditHours || 0) + (subject.practicalCreditHours || 0)).toFixed(1)
-      : (subject.creditHours ? subject.creditHours.toFixed(1) : (((subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) === 100) ? "4.0" : "3.0"));
-    const marksInfo = mode === "marks"
-      ? [subject.theoryMaximum !== null ? `Th ${subject.theoryObtained || "—"}/${subject.theoryMaximum}` : null,
-         subject.practicalMaximum !== null ? `Pr ${subject.practicalObtained || "—"}/${subject.practicalMaximum}` : null].filter(Boolean).join(", ")
-      : `Grade ${grade.letter}`;
-    lines.push(`- ${subject.name} (${ch} CH): ${marksInfo} → ${grade.letter} (${grade.gradePoint.toFixed(2)})`);
-  });
-  lines.push("");
-  lines.push("Note: This is an estimate / unverified result.");
-  return lines.join("\n");
 }
 
 downloadButton.addEventListener("click", generatePDFTranscript);

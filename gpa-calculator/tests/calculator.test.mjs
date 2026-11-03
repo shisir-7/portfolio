@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { calculateAggregateTotals, calculateComponentGradePoint, calculateGPA, calculateMeanGPA, calculateSubject, getGrade } from "../js/calculator.js";
+import { calculateAggregateTotals, calculateComponentGradePoint, calculateGPA, calculateMeanGPA, calculateSubject, getCompletedSubjects, getGrade, hasEnoughSubjectsForOverallGPA, resolveExclusiveWinner } from "../js/calculator.js";
 import {
   createSubjectCatalogueAudit,
   NEB_XI_XII_CATALOGUE,
@@ -8,6 +8,31 @@ import {
   SUBJECT_CATALOGUE,
   SUBJECT_SOURCE_REGISTRY
 } from "../js/subject-catalog.js";
+
+test("clearing the selected Math or Social Studies entries unlocks both subjects", () => {
+  const mathematics = {
+    name: "Mathematics",
+    theoryObtained: "40",
+    practicalObtained: "",
+    letterGrade: "",
+    theoryGrade: "",
+    practicalGrade: "",
+    exclusiveChoice: true
+  };
+  const socialStudies = {
+    name: "Social Studies",
+    theoryObtained: "",
+    practicalObtained: "",
+    letterGrade: "",
+    theoryGrade: "",
+    practicalGrade: "",
+    exclusiveChoice: false
+  };
+
+  assert.equal(resolveExclusiveWinner([mathematics, socialStudies]), mathematics);
+  mathematics.theoryObtained = "";
+  assert.equal(resolveExclusiveWinner([mathematics, socialStudies]), null);
+});
 
 test("maps every NEB reference grade boundary without inventing a grade below 0%", () => {
   assert.equal(getGrade(100).letter, "A+");
@@ -41,6 +66,20 @@ test("calculates a weighted mean GPA for the simplified calculator", () => {
   assert.equal(calculateMeanGPA([{ gradePoint: 4, weight: 1 }, { gradePoint: null, weight: 1 }]), null);
   assert.throws(() => calculateMeanGPA([]), TypeError);
   assert.throws(() => calculateMeanGPA([{ gradePoint: 4.1, weight: 1 }]), RangeError);
+});
+
+test("requires at least two completed subjects for an overall GPA", () => {
+  const oneSubject = [{ id: "one", complete: true }];
+  const twoSubjects = [...oneSubject, { id: "two", complete: true }];
+  assert.equal(hasEnoughSubjectsForOverallGPA(oneSubject), false);
+  assert.equal(hasEnoughSubjectsForOverallGPA(twoSubjects), true);
+
+  const completed = getCompletedSubjects([
+    { id: "complete", grade: "A" },
+    { id: "incomplete", grade: null }
+  ], subject => subject.grade === null ? null : { letter: subject.grade });
+  assert.deepEqual(completed.map(subject => subject.id), ["complete"]);
+  assert.throws(() => getCompletedSubjects([], null), TypeError);
 });
 
 test("combines component letter grades using each subject's configured component maxima", () => {

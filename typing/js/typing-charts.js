@@ -843,29 +843,45 @@ window.TypingCharts = (function () {
       });
     }
 
+    // Store the latest drawFrame on the canvas so the hover handler always
+    // calls the most recent version, even after re-renders.
+    canvas.__unifiedDrawFrame = drawFrame;
+
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (opts.animate === false || prefersReduced) {
       drawFrame(1, null);
-      attachUnifiedHover(canvas, drawFrame);
+      attachUnifiedHover(canvas);
       return;
     }
+
+    // Cancel any in-progress animation from a previous call so we never have
+    // two concurrent loops writing to the same canvas at once.
+    if (canvas.__unifiedRafId) {
+      cancelAnimationFrame(canvas.__unifiedRafId);
+      canvas.__unifiedRafId = null;
+    }
+
     const t0 = performance.now();
     const dur = 620;
     function frame(now) {
       const t = Math.min(1, (now - t0) / dur);
       const e = 1 - Math.pow(1 - t, 3);
       drawFrame(e, null);
-      if (t < 1) requestAnimationFrame(frame);
-      else {
+      if (t < 1) {
+        canvas.__unifiedRafId = requestAnimationFrame(frame);
+      } else {
+        canvas.__unifiedRafId = null;
         // Ensure the final frame is rendered before attaching hover
         drawFrame(1, null);
-        attachUnifiedHover(canvas, drawFrame);
+        attachUnifiedHover(canvas);
       }
     }
-    requestAnimationFrame(frame);
+    canvas.__unifiedRafId = requestAnimationFrame(frame);
   }
 
-  function attachUnifiedHover(canvas, drawFrame) {
+  function attachUnifiedHover(canvas) {
+    // Always keep the hover handler — but route through canvas.__unifiedDrawFrame
+    // so it always uses the latest closure even after re-renders.
     if (canvas.__unifiedHoverBound) return;
     canvas.__unifiedHoverBound = true;
     canvas.addEventListener('mousemove', (e) => {
@@ -978,6 +994,26 @@ window.TypingCharts = (function () {
       if (resView) obs.observe(resView, { attributes: true, attributeFilter: ['class', 'style'] });
       const histView = document.getElementById('history-panel');
       if (histView) obs.observe(histView, { attributes: true, attributeFilter: ['class', 'style'] });
+    }
+
+    // ResizeObserver: re-render whenever the canvas gains a real layout size.
+    // This covers the common case where the chart is rendered while its parent
+    // view is display:none (reporting 0 × 0) and then becomes visible after a
+    // CSS animation — the observer fires as soon as the element gets real dims.
+    if (typeof ResizeObserver !== 'undefined' && !canvas.__roAttached) {
+      canvas.__roAttached = true;
+      let _lastW = 0;
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const w = Math.round(entry.contentRect.width);
+          if (w > 40 && w !== _lastW) {
+            _lastW = w;
+            const fn = registry.get(canvas);
+            if (fn && canvas.isConnected) { try { fn(); } catch (_) {} }
+          }
+        }
+      });
+      ro.observe(canvas);
     }
   }
 

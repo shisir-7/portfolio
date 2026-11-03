@@ -98,10 +98,7 @@ window.TypingEngine = (function () {
 
     function shouldFinish() {
       if (state !== 'running') return false;
-      // Time mode must only finish when the countdown reaches zero — never
-      // because the visible text was exhausted (new words are appended).
-      if (config.mode === 'time') return isTimeUp();
-      return isTextComplete();
+      return isTimeUp() || isTextComplete();
     }
 
     function charStats() {
@@ -408,7 +405,7 @@ window.TypingEngine = (function () {
       sampleSecondIfDue();
 
       if (shouldFinish()) {
-        finish(config.mode === 'time' ? 'time' : 'complete');
+        finish(isTimeUp() ? 'time' : 'complete');
         return true;
       }
 
@@ -534,13 +531,20 @@ window.TypingEngine = (function () {
      */
     function syncFromValue(value) {
       if (state === 'finished') return;
-      if (value.length > typed.length) {
-        const diff = value.slice(typed.length);
-        for (let i = 0; i < diff.length; i++) {
-          if (!typeChar(diff[i])) break;
-        }
-      } else if (value.length < typed.length) {
-        backspace(typed.length - value.length);
+      // Find the divergence point between old typed and new value
+      let prefix = 0;
+      const minLen = Math.min(typed.length, value.length);
+      while (prefix < minLen && typed[prefix] === value[prefix]) prefix++;
+      // If nothing diverged and lengths match, nothing changed
+      if (prefix === typed.length && prefix === value.length) return;
+      // Delete from the divergence point onward (if any were typed past it)
+      if (typed.length > prefix) {
+        backspace(typed.length - prefix);
+      }
+      // Type the new suffix (if any)
+      const newSuffix = value.slice(prefix);
+      for (let i = 0; i < newSuffix.length; i++) {
+        if (!typeChar(newSuffix[i])) break;
       }
     }
 

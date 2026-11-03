@@ -102,8 +102,6 @@ window.PORTFOLIO_PROJECTS = [
     summary: "A clean, high-accessibility web dashboard for quantitative portfolio oversight, resolving data density through smooth trend surfaces, clean tables, and instant latency feedback.",
     image: "assets/images/project-4-lumina.svg",
     imageAlt: "Lumina analytics web application interface displaying asset curves and risk indicators",
-    demoUrl: "https://lumina-markets.preview.shisir.design",
-    repoUrl: "https://github.com/shisiracharya/lumina-markets",
     caseStudy: {
       challenge: "Traders and capital allocators navigate excessive numbers and flashing indicators that lead to visual fatigue and costly oversight errors.",
       targetAudience: "FinTech operators, fund analysts, and individual investors demanding speed, clarity, and zero ambiguity.",
@@ -135,7 +133,6 @@ window.PORTFOLIO_PROJECTS = [
     summary: "A dynamic 60-second editorial motion reel for modern brand storytelling, combining kinetic typographic impacts, organic motion blur transitions, and a synchronized transient rhythm.",
     image: "assets/images/project-5-chronicle.svg",
     imageAlt: "Chronicle motion reel frame preview showcasing kinetic title cuts and speed ramp contact sheet",
-    demoUrl: "https://youtube.com/watch?v=chronicle-reel",
     caseStudy: {
       challenge: "Capturing instant engagement in the first three seconds while communicating a substantive brand identity that doesn't feel like a cookie-cutter corporate promo.",
       targetAudience: "Creative agencies, lifestyle brands, and audiences who consume high-impact short-form and widescreen content.",
