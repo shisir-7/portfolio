@@ -64,4 +64,53 @@ test("a word-count test finishes when the target text is complete", () => {
 
   assert.equal(engine.getState(), "finished");
   assert.equal(result.reason, "complete");
+  assert.ok(typeof result.id === "string" && result.id.startsWith("r_"));
+});
+
+test("typing engine result produces an id and respects wpm cap", () => {
+  const harness = createEngineHarness();
+  const engine = harness.createEngine({ mode: "time", limit: 15, text: "hello world" });
+  let result = null;
+  engine.on("finish", value => { result = value; });
+
+  engine.start();
+  harness.setNow(1000);
+  result = engine.finish();
+
+  assert.ok(result);
+  assert.ok(typeof result.id === "string" && result.id.length > 5);
+  assert.ok(result.wpm <= 400);
+  assert.ok(result.rawWpm <= 400);
+});
+
+test("advances to next word when word typed incorrectly with exact length", () => {
+  const harness = createEngineHarness();
+  const engine = harness.createEngine({ mode: "words", limit: 2, text: "example next" });
+  engine.start();
+
+  for (const ch of "exampla") engine.typeChar(ch);
+
+  assert.equal(engine.currentWordHasError(), true);
+  assert.equal(engine.getTyped(), "exampla");
+
+  // User presses Space to skip to next word
+  const ok = engine.skipWord();
+  assert.equal(ok, true);
+  assert.equal(engine.getTyped(), "exampla ");
+  assert.equal(engine.liveStats().skippedWords, 1);
+});
+
+test("incomplete final word finishes test when skipped with Space", () => {
+  const harness = createEngineHarness();
+  const engine = harness.createEngine({ mode: "words", limit: 2, text: "first example" });
+  let result = null;
+  engine.on("finish", value => { result = value; });
+  engine.start();
+
+  for (const ch of "first exampl") engine.typeChar(ch);
+
+  const ok = engine.skipWord();
+  assert.equal(ok, true);
+  assert.equal(engine.getState(), "finished");
+  assert.equal(result.reason, "complete");
 });

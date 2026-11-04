@@ -500,8 +500,7 @@ git push origin main`,
     for (let i = 0; i < words.length; i += 4 + Math.floor(rng() * 5)) {
       if (rng() < 0.35) {
         const ex = pick(rng, extras);
-        if (ex === '(' || ex === '"') words[i] = ex + words[i];
-        else if (ex === ')' || ex === '"') words[i] = words[i] + ex;
+        if (ex === '(' || (ex === '"' && rng() < 0.5)) words[i] = ex + words[i];
         else words[i] = words[i] + ex;
       }
     }

@@ -33,8 +33,8 @@ window.TypingHistory = (function () {
   function sanitizeResult(raw) {
     if (!raw || typeof raw !== 'object') return null;
     const wpm = Number(raw.wpm);
-    if (!isFinite(wpm) || wpm < 0 || wpm > 300) return null;
-    const rawWpm = Math.min(300, Math.max(0, Number(raw.rawWpm) || 0));
+    if (!isFinite(wpm) || wpm < 0 || wpm > 400) return null;
+    const rawWpm = Math.min(400, Math.max(0, Number(raw.rawWpm) || 0));
     const acc = Number(raw.accuracy);
     if (!isFinite(acc) || acc < 0 || acc > 100) return null;
 
@@ -54,7 +54,7 @@ window.TypingHistory = (function () {
     }
 
     const base = {
-      id: typeof raw.id === 'string' ? raw.id : ('r_' + Math.random().toString(36).slice(2) + '_' + (raw.finishedAt || Date.now())),
+      id: typeof raw.id === 'string' && raw.id ? raw.id : ('r_' + Math.random().toString(36).slice(2) + '_' + (raw.finishedAt || Date.now())),
       finishedAt: Number(raw.finishedAt) || Date.now(),
       mode: raw.mode === 'words' ? 'words' : 'time',
       limit: Math.max(1, Math.min(600, Number(raw.limit) || 30)),

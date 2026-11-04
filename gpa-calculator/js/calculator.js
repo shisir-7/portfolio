@@ -5,9 +5,7 @@ export const GRADE_BANDS = Object.freeze([
   { min: 60, letter: "B", gradePoint: 2.8 },
   { min: 50, letter: "C+", gradePoint: 2.4 },
   { min: 40, letter: "C", gradePoint: 2.0 },
-  { min: 30, letter: "D+", gradePoint: 1.8 },
-  { min: 20, letter: "D", gradePoint: 1.6 },
-  { min: 0, letter: "E", gradePoint: 0.8 }
+  { min: 35, letter: "D", gradePoint: 1.6 }
 ]);
 
 export function getGrade(percentage) {
@@ -224,9 +222,15 @@ export function resolveExclusiveWinner(subjects) {
     const members = subjects.filter(subject => group.includes(normalizeExclusiveName(subject.name)));
     if (members.length < 2) continue;
 
-    // An explicit choice always wins.
-    const chosen = members.filter(subject => subject.exclusiveChoice && subjectHasEntries(subject));
-    if (chosen.length === 1) return chosen[0];
+    // An explicit choice wins. If neither has entries and the choice is the
+    // default first-listed member, leave both selectable.
+    const chosen = members.filter(subject => subject.exclusiveChoice);
+    if (chosen.length === 1) {
+      if (subjectHasEntries(chosen[0]) || members.some(subjectHasEntries) || chosen[0] !== members[0]) {
+        return chosen[0];
+      }
+      return null;
+    }
 
     // Exactly one subject has data — that is the one the student chose.
     const filled = members.filter(subject => subjectHasEntries(subject));
@@ -296,4 +300,28 @@ export function calculateAggregateTotals(subjects) {
     historicalOrUnverifiedSubjects: 0,
     incompleteComponents: 0
   });
+}
+
+/**
+ * Maps a GPA or continuous grade point to its official NEB letter grade:
+ * 3.61 – 4.00: A+
+ * 3.21 – 3.60: A
+ * 2.81 – 3.20: B+
+ * 2.41 – 2.80: B
+ * 2.01 – 2.40: C+
+ * 1.61 – 2.00: C
+ * 1.60: D
+ * Below 1.60: NG
+ */
+export function overallGradeLetter(gpa) {
+  if (!Number.isFinite(gpa)) return "—";
+  const rounded = Math.round((gpa + Number.EPSILON) * 100) / 100;
+  if (rounded > 3.60) return "A+";
+  if (rounded > 3.20) return "A";
+  if (rounded > 2.80) return "B+";
+  if (rounded > 2.40) return "B";
+  if (rounded > 2.00) return "C+";
+  if (rounded > 1.60) return "C";
+  if (rounded >= 1.60 - 1e-9) return "D";
+  return "NG";
 }

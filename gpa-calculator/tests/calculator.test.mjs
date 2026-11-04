@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { calculateAggregateTotals, calculateComponentGradePoint, calculateGPA, calculateMeanGPA, calculateSubject, getCompletedSubjects, getGrade, hasEnoughSubjectsForOverallGPA, resolveExclusiveWinner } from "../js/calculator.js";
+import { calculateAggregateTotals, calculateComponentGradePoint, overallGradeLetter, calculateGPA, calculateMeanGPA, calculateSubject, getCompletedSubjects, getGrade, hasEnoughSubjectsForOverallGPA, resolveExclusiveWinner } from "../js/calculator.js";
 import {
   createSubjectCatalogueAudit,
   NEB_XI_XII_CATALOGUE,
@@ -44,12 +44,10 @@ test("maps every NEB reference grade boundary without inventing a grade below 0%
   assert.equal(getGrade(60).letter, "B");
   assert.equal(getGrade(50).letter, "C+");
   assert.equal(getGrade(40).letter, "C");
-  assert.equal(getGrade(35).letter, "D+");
-  assert.equal(getGrade(30).letter, "D+");
-  assert.equal(getGrade(29.99).letter, "D");
-  assert.equal(getGrade(20).letter, "D");
-  assert.equal(getGrade(19.99).letter, "E");
-  assert.equal(getGrade(0).letter, "E");
+  assert.equal(getGrade(39.99).letter, "D");
+  assert.equal(getGrade(35).letter, "D");
+  assert.equal(getGrade(34.99), null);
+  assert.equal(getGrade(0), null);
   assert.throws(() => getGrade(101), RangeError);
 });
 
@@ -277,4 +275,26 @@ test("reports source-derived catalogue audit counts and unresolved current resea
       seventyFiveTwentyFive: 90, fiftyFifty: 24, otherDistributions: 0, requiringResearch: 114
     }
   ]);
+});
+
+test("maps overall GPA to official NEB letter grade intervals (e.g. 3.55 is A)", () => {
+  assert.equal(overallGradeLetter(4.0), "A+");
+  assert.equal(overallGradeLetter(3.65), "A+");
+  assert.equal(overallGradeLetter(3.61), "A+");
+  assert.equal(overallGradeLetter(3.60), "A");
+  assert.equal(overallGradeLetter(3.55), "A");
+  assert.equal(overallGradeLetter(3.21), "A");
+  assert.equal(overallGradeLetter(3.20), "B+");
+  assert.equal(overallGradeLetter(3.10), "B+");
+  assert.equal(overallGradeLetter(2.81), "B+");
+  assert.equal(overallGradeLetter(2.80), "B");
+  assert.equal(overallGradeLetter(2.41), "B");
+  assert.equal(overallGradeLetter(2.40), "C+");
+  assert.equal(overallGradeLetter(2.01), "C+");
+  assert.equal(overallGradeLetter(2.00), "C");
+  assert.equal(overallGradeLetter(1.61), "C");
+  assert.equal(overallGradeLetter(1.60), "D");
+  assert.equal(overallGradeLetter(1.59), "NG");
+  assert.equal(overallGradeLetter(0), "NG");
+  assert.equal(overallGradeLetter(null), "—");
 });

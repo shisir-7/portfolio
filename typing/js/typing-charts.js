@@ -348,6 +348,7 @@ window.TypingCharts = (function () {
   }
 
   function attachLineHover(canvas, drawFrame) {
+    canvas.__lineDrawFrame = drawFrame;
     if (canvas.__lineHoverBound) return;
     canvas.__lineHoverBound = true;
 
@@ -362,7 +363,8 @@ window.TypingCharts = (function () {
       const idx = nearestIndex(meta.allPoints, x);
       if (idx < 0) return;
 
-      drawFrame(1, idx);
+      const df = canvas.__lineDrawFrame;
+      if (df) df(1, idx);
 
       // tooltip
       const lbl = (meta._labels && meta._labels[idx] != null) ? meta._labels[idx] : String(idx);
@@ -380,7 +382,8 @@ window.TypingCharts = (function () {
 
     canvas.addEventListener('mouseleave', () => {
       hideTip();
-      drawFrame(1, null);
+      const df = canvas.__lineDrawFrame;
+      if (df) df(1, null);
     });
 
     canvas.addEventListener('touchstart', () => {}, passive);
@@ -488,6 +491,7 @@ window.TypingCharts = (function () {
   }
 
   function attachBarHover(canvas, drawFrame) {
+    canvas.__barDrawFrame = drawFrame;
     if (canvas.__barHoverBound) return;
     canvas.__barHoverBound = true;
 
@@ -504,13 +508,14 @@ window.TypingCharts = (function () {
       // only if reasonably near
       const plotW = rect.width - DEFAULTS.padding.left - DEFAULTS.padding.right;
       const slot = plotW / meta._bars.length;
-      if (bestD > slot * 0.55) { hideTip(); drawFrame(1, null); return; }
-      drawFrame(1, best);
+      if (bestD > slot * 0.55) { hideTip(); const df = canvas.__barDrawFrame; if (df) df(1, null); return; }
+      const df = canvas.__barDrawFrame;
+      if (df) df(1, best);
       const b = meta._bars[best];
       const lbl = b.label || ('#' + (b.index + 1));
       showTip('<span style="opacity:.65">' + lbl + '</span> &nbsp;<strong>' + b.value + '</strong>', e.clientX, e.clientY - 14);
     });
-    canvas.addEventListener('mouseleave', () => { hideTip(); drawFrame(1, null); });
+    canvas.addEventListener('mouseleave', () => { hideTip(); const df = canvas.__barDrawFrame; if (df) df(1, null); });
   }
 
   /* ════════════════════════════════════════════════════════════════════
@@ -607,6 +612,7 @@ window.TypingCharts = (function () {
   }
 
   function attachDoughnutHover(canvas, drawFrame) {
+    canvas.__doughnutDrawFrame = drawFrame;
     if (canvas.__doughnutHoverBound) return;
     canvas.__doughnutHoverBound = true;
 
@@ -630,8 +636,9 @@ window.TypingCharts = (function () {
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
       const idx = hitIndex(meta, mx, my);
-      if (idx === -1) { hideTip(); drawFrame(1, null); return; }
-      drawFrame(1, idx);
+      if (idx === -1) { hideTip(); const df = canvas.__doughnutDrawFrame; if (df) df(1, null); return; }
+      const df = canvas.__doughnutDrawFrame;
+      if (df) df(1, idx);
       const s = meta._segs[idx];
       const total = meta._segs.reduce((a, x) => a + x.value, 0);
       const pct = Math.round((s.value / total) * 100);
@@ -639,7 +646,7 @@ window.TypingCharts = (function () {
       showTip(dot + s.label + ' · <strong>' + s.value + '</strong> (' + pct + '%)', e.clientX, e.clientY - 16);
     });
 
-    canvas.addEventListener('mouseleave', () => { hideTip(); drawFrame(1, null); });
+    canvas.addEventListener('mouseleave', () => { hideTip(); const df = canvas.__doughnutDrawFrame; if (df) df(1, null); });
   }
 
   function sanitizeSampleNumber(v, lo, hi, fallback) {
@@ -891,7 +898,8 @@ window.TypingCharts = (function () {
       const x = e.clientX - rect.left;
       const idx = nearestIndex(meta.allPoints, x);
       if (idx < 0) return;
-      drawFrame(1, idx);
+      const df = canvas.__unifiedDrawFrame;
+      if (df) df(1, idx);
       const lbl = meta._labels[idx];
       let html = '<strong style="display:block;margin-bottom:5px">' + lbl + '</strong>';
       const rows = [
@@ -906,7 +914,7 @@ window.TypingCharts = (function () {
       });
       showTip(html, e.clientX, e.clientY - 14);
     }, { passive: true });
-    canvas.addEventListener('mouseleave', () => { hideTip(); drawFrame(1, null); });
+    canvas.addEventListener('mouseleave', () => { hideTip(); const df = canvas.__unifiedDrawFrame; if (df) df(1, null); });
   }
 
   /* ── wrap helper (needed for tooltip anchor) ───────────────────────── */

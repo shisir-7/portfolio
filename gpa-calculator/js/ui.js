@@ -1,4 +1,4 @@
-import { calculateComponentGradePoint, calculateMeanGPA, calculateSubject, getCompletedSubjects, hasEnoughSubjectsForOverallGPA, MUTUALLY_EXCLUSIVE_GROUPS, normalizeExclusiveName, resolveExclusiveWinner, subjectHasEntries } from "./calculator.js";
+import { calculateComponentGradePoint, calculateMeanGPA, calculateSubject, getCompletedSubjects, hasEnoughSubjectsForOverallGPA, MUTUALLY_EXCLUSIVE_GROUPS, normalizeExclusiveName, overallGradeLetter, resolveExclusiveWinner, subjectHasEntries } from "./calculator.js";
 import { SUBJECT_CATALOGUE } from "./subject-catalog.js";
 
 const CUSTOM_STORAGE_KEY = "neb-gpa-custom-subjects-v1";
@@ -6,8 +6,7 @@ const grades = [
   { letter: "A+", gradePoint: 4.0 }, { letter: "A", gradePoint: 3.6 },
   { letter: "B+", gradePoint: 3.2 }, { letter: "B", gradePoint: 2.8 },
   { letter: "C+", gradePoint: 2.4 }, { letter: "C", gradePoint: 2.0 },
-  { letter: "D+", gradePoint: 1.8 }, { letter: "D", gradePoint: 1.6 },
-  { letter: "E", gradePoint: 0.8 }
+  { letter: "D", gradePoint: 1.6 }
 ];
 
 const text = {
@@ -515,8 +514,7 @@ function componentField(subject, kind, label) {
  * point first, so the first entry at or above the given point wins.
  */
 function gradeLetterFromPoint(gp) {
-  const match = grades.find(grade => gp >= grade.gradePoint - 1e-9);
-  return match ? match.letter : "E";
+  return overallGradeLetter(gp);
 }
 
 /**
@@ -525,10 +523,7 @@ function gradeLetterFromPoint(gp) {
  * Uses the same band table as the subject grade points so the overall
  * letter always agrees with the letters shown on the subject cards.
  */
-function overallGradeLetter(gpa) {
-  if (!Number.isFinite(gpa)) return "—";
-  return gradeLetterFromPoint(gpa);
-}
+
 
 /**
  * Maps a percentage to its grade point.
@@ -537,16 +532,15 @@ function overallGradeLetter(gpa) {
  * is derived from the `grades` table so the two can never drift apart.
  */
 function gradePointFromPercent(pct) {
-  if (!Number.isFinite(pct)) return 0.8;
+  if (!Number.isFinite(pct) || pct < 35) return 0;
   if (pct >= 90) return 4.0;
   if (pct >= 80) return 3.6;
   if (pct >= 70) return 3.2;
   if (pct >= 60) return 2.8;
   if (pct >= 50) return 2.4;
   if (pct >= 40) return 2.0;
-  if (pct >= 30) return 1.8;
-  if (pct >= 20) return 1.6;
-  return 0.8;
+  if (pct >= 35) return 1.6;
+  return 0;
 }
 
 function subjectGrade(subject) {
@@ -714,12 +708,17 @@ function evaluate() {
 
   const level = getLevelValue();
   if (level === "SEE") {
+    const hasNG = evaluableSubjects.some(subject => {
+      const g = subjectGrade(subject);
+      return g && g.letter === "NG";
+    });
     const validSubjects = getCompletedSubjects(evaluableSubjects, subjectGrade).map(subject => {
       const grade = subjectGrade(subject);
       const weight = (subject.theoryMaximum || 0) + (subject.practicalMaximum || 0) || 100;
       return { gradePoint: grade.gradePoint, weight };
     });
     if (!hasEnoughSubjectsForOverallGPA(validSubjects)) return { gpa: null, grade: null, state: "incomplete" };
+    if (hasNG) return { gpa: null, grade: "NG", state: "ready", count: validSubjects.length, hasNG: true };
     const gpa = calculateMeanGPA(validSubjects);
     if (gpa === null) return { gpa: null, grade: null, state: "incomplete" };
     const grade = overallGradeLetter(gpa);
@@ -729,6 +728,10 @@ function evaluate() {
   const componentEntries = [];
   const completedSubjects = getCompletedSubjects(evaluableSubjects, subjectGrade);
   const completedSubjectCount = completedSubjects.length;
+  const hasNG = evaluableSubjects.some(subject => {
+    const g = subjectGrade(subject);
+    return g && g.letter === "NG";
+  });
   const addComponentEntry = (subject, entry) => componentEntries.push({ ...entry, subjectKey: subject.key });
   for (const subject of completedSubjects) {
     const thMax = subject.theoryMaximum;
@@ -806,6 +809,7 @@ function evaluate() {
   }
 
   if (!hasEnoughSubjectsForOverallGPA(completedSubjects)) return { gpa: null, grade: null, state: "incomplete" };
+  if (hasNG) return { gpa: null, grade: "NG", state: "ready", count: completedSubjectCount, hasNG: true };
   const totalCH = componentEntries.reduce((s,c)=>s+c.creditHours,0);
   const weighted = componentEntries.reduce((s,c)=>s+c.gradePoint*c.creditHours,0);
   const gpa = totalCH ? Math.round((weighted/totalCH + Number.EPSILON)*100)/100 : null;
@@ -954,6 +958,11 @@ subjectList.addEventListener("input", event => {
     // Entering a value in one member of an exclusive pair selects it.
     if (subjectHasEntries(subject)) {
       selectedSubjects.forEach(item => { item.exclusiveChoice = item === subject; });
+    } else {
+      const sibling = exclusiveSibling(subject);
+      if (!sibling || !subjectHasEntries(sibling)) {
+        selectedSubjects.forEach(item => { item.exclusiveChoice = false; });
+      }
     }
   }
   updateResult();

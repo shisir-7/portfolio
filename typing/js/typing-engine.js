@@ -307,14 +307,15 @@ window.TypingEngine = (function () {
 
       const result = {
         version: 1,
+        id: 'r_' + Math.random().toString(36).slice(2) + '_' + Date.now(),
         finishedAt: Date.now(),
         reason: reason || (config.mode === 'time' ? 'time' : 'complete'),
         mode: config.mode,
         limit: config.limit,
         meta: Object.assign({}, config.meta),
         durationMs: Math.round(elapsedMs()),
-        wpm: Math.round(net * 10) / 10,
-        rawWpm: Math.round(raw * 10) / 10,
+        wpm: Math.round(Math.min(400, Math.max(0, net)) * 10) / 10,
+        rawWpm: Math.round(Math.min(400, Math.max(0, raw)) * 10) / 10,
         accuracy: Math.round(acc * 100) / 100,
         errorRate: Math.round((100 - acc) * 100) / 100,
         consistency: computeConsistency(),
@@ -481,8 +482,14 @@ window.TypingEngine = (function () {
     function skipWord() {
       if (state !== 'running') return false;
       const cursor = typed.length;
-      if (cursor >= text.length) return false;
-      if (text[cursor] === ' ') return false; // already at a boundary
+      if (cursor >= text.length) {
+        finish(config.mode === 'time' ? 'time' : 'complete');
+        return true;
+      }
+      if (text[cursor] === ' ') {
+        skippedWords++;
+        return typeChar(' ');
+      }
       const nextSpace = text.indexOf(' ', cursor);
       const target = nextSpace === -1 ? text.length : nextSpace + 1;
       if (target <= cursor) return false;

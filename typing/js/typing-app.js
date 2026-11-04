@@ -211,7 +211,8 @@ window.TypingApp = (function () {
     inputLocked = true;
     result = res;
     if (!res.validation || !res.validation.isInvalid) {
-      TypingHistory.add(res);
+      const saved = TypingHistory.add(res);
+      if (saved && saved.id) res.id = saved.id;
     }
     hideIdleHint();
     playSound('finish');
@@ -1899,7 +1900,7 @@ window.TypingApp = (function () {
 
     // Mode badge line
     const modeTxt = res.mode === 'time' ? res.limit + ' seconds' : res.limit + ' words';
-    const contentTxt = meta.content + ' · ' + meta.language.toUpperCase() + ' · ' + meta.difficulty;
+    const contentTxt = (meta.content || 'common') + ' · ' + (meta.language ? meta.language.toUpperCase() : 'EN') + ' · ' + (meta.difficulty || 'intermediate');
     $('result-mode').innerHTML = modeTxt + ' · ' + contentTxt + (meta.practice ? ' · practice' : '') + (meta.daily ? ' · daily challenge' : '') + ' ' + validationBadge(validation);
 
     // Validity note (honest: never show misleading numbers as if they were normal)
@@ -2304,9 +2305,9 @@ window.TypingApp = (function () {
           <span class="history-row__date">${shortDate(r.finishedAt)} ${shortTime(r.finishedAt)}</span>
           <div class="history-row__badges">
             <span class="history-row__badge">${r.mode === 'time' ? r.limit + 's' : r.limit + 'w'}</span>
-            <span class="history-row__badge">${escapeHtml(r.meta.content)}</span>
-            ${r.meta.practice ? '<span class="history-row__badge history-row__badge--practice">practice</span>' : ''}
-            ${r.meta.daily ? '<span class="history-row__badge history-row__badge--daily">daily</span>' : ''}
+            <span class="history-row__badge">${escapeHtml((r.meta && r.meta.content) || 'common')}</span>
+            ${r.meta && r.meta.practice ? '<span class="history-row__badge history-row__badge--practice">practice</span>' : ''}
+            ${r.meta && r.meta.daily ? '<span class="history-row__badge history-row__badge--daily">daily</span>' : ''}
           </div>
         </div>
         <div class="history-row__stats">
