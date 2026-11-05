@@ -126,7 +126,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 [data-theme="dark"] .dropdown-trigger {
   background-color: #121211;
-  border-color: #2A2A28;
+  border-color: #383832;
   color: #F7F5F0;
 }
 .dropdown-trigger:hover, .custom-dropdown.is-open .dropdown-trigger {
@@ -162,7 +162,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 [data-theme="dark"] .dropdown-menu {
   background-color: #18181B;
-  border: 1px solid #2A2A28;
+  border: 1px solid #383832;
 }
 .dropdown-menu[hidden] { display: none; }
 .dropdown-option {

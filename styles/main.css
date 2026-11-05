@@ -58,12 +58,12 @@
   --surface-elevated: #21211E;
 
   --text-primary: #F5F3EC;
-  --text-secondary: #B8B3A8;
-  --text-muted: #9C968B; /* Enhanced WCAG AA contrast in dark mode (6.5:1) */
-  --text-light: #524E46;
+  --text-secondary: #C8C3B8;
+  --text-muted: #ABA598;
+  --text-light: #8F897D;
 
-  --border-subtle: #242421;
-  --border-medium: #33332D;
+  --border-subtle: #33332D;
+  --border-medium: #4A4A42;
   --border-dark: #F5F3EC;
 
   --accent: #E04E2C;

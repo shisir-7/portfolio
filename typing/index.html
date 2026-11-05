@@ -112,13 +112,12 @@
   <main class="site-main">
     <div class="container">
 
-      <header class="section-header focus-dim" style="margin-bottom: var(--space-md);">
+      <header class="section-header focus-dim">
         <div class="section-header__meta">
           <span class="section-header__index">TOOL / 01</span>
           <span class="section-header__category">Typing Speed Test</span>
         </div>
-        <h1 class="section-header__title">Free Online Typing Speed Test</h1>
-        <p class="section-header__subtitle">Take an English WPM test, check your typing accuracy, and practise at your own pace. Choose a time or word-count test and start typing; the timer begins with your first keystroke.</p>
+        <h1 class="sr-only">Free Online Typing Speed Test</h1>
       </header>
 
       <!-- ======= TEST VIEW ======= -->
@@ -159,7 +158,8 @@
               <textarea
                 id="typing-input"
                 class="typing-input-hidden"
-                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+                inputmode="text" enterkeyhint="done"
                 aria-label="Typing input. Start typing to begin the test."
                 rows="1"></textarea>
             </div>

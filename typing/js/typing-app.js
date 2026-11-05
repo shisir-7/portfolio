@@ -101,6 +101,8 @@ window.TypingApp = (function () {
     newTest({ silent: true });
 
     if (!prefs.helpSeen) showHelp();
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
     window.addEventListener('beforeunload', teardown);
   }
 
@@ -472,8 +474,10 @@ window.TypingApp = (function () {
     const isTypingContext = () => currentView === 'test' && engine.getState() !== 'finished';
 
     const focusFromViewport = (e) => {
-      focusInput(true);
-      if (e && e.cancelable) e.preventDefault();
+      focusInput();
+      if (e && e.cancelable && e.type === 'mousedown' && !window.matchMedia('(pointer: coarse)').matches) {
+        e.preventDefault();
+      }
     };
 
     viewport.addEventListener('mousedown', (e) => {
@@ -494,27 +498,22 @@ window.TypingApp = (function () {
     });
     document.addEventListener('mousedown', (e) => {
       if (!isTypingContext()) return;
-      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header')) return;
+      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header, .typing-guide, footer')) return;
       focusInput(true);
     });
     document.addEventListener('click', (e) => {
       if (!isTypingContext()) return;
-      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header')) return;
+      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header, .typing-guide, footer')) return;
       focusInput(true);
     });
 
-    // Mobile: touchstart on viewport/textWrap focuses the hidden input
-    viewport.addEventListener('touchstart', (e) => {
+    // Mobile: touch on viewport/textWrap focuses the hidden input without blocking page scroll
+    viewport.addEventListener('touchend', (e) => {
       if (!isTypingContext()) return;
       focusInput();
     }, { passive: true });
-    textWrap.addEventListener('touchstart', (e) => {
+    textWrap.addEventListener('touchend', (e) => {
       if (!isTypingContext()) return;
-      focusInput();
-    }, { passive: true });
-    document.addEventListener('touchstart', (e) => {
-      if (!isTypingContext()) return;
-      if (e.target.closest('a, button, select, input, textarea, .side-panel, .tt-scrim, .modal-overlay-center, .site-header')) return;
       focusInput();
     }, { passive: true });
     document.addEventListener('keydown', (e) => {
@@ -551,16 +550,23 @@ window.TypingApp = (function () {
     input.addEventListener('blur', (event) => {
       if (event.relatedTarget && event.relatedTarget.id === 'btn-pause') return;
       if (engine.getState() !== 'running') return;
-      // On touch devices, blur fires when keyboard opens/adjusts — debounce it
+      // On touch devices, blur fires when keyboard opens/adjusts — don't pause aggressively
       const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
       if (isTouchDevice) {
         _blurTimeout = setTimeout(() => {
-          if (document.activeElement !== input && engine.getState() === 'running') {
+          if (document.activeElement !== input && engine.getState() === 'running' && document.visibilityState === 'hidden') {
             engine.pause();
             $('pause-overlay').classList.add('open');
           }
-        }, 250);
+        }, 2000);
       } else {
+        engine.pause();
+        $('pause-overlay').classList.add('open');
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' && engine && engine.getState() === 'running') {
         engine.pause();
         $('pause-overlay').classList.add('open');
       }
@@ -1127,7 +1133,11 @@ window.TypingApp = (function () {
     scrollToActiveWord();
   }
 
-  window.addEventListener('resize', scrollToActiveWord);
+  window.addEventListener('resize', () => {
+    lineTops = [];
+    scrollToActiveWord();
+    syncCaret();
+  });
 
   function hideIdleHint() {
     const el = document.getElementById('idle-hint');
@@ -1471,6 +1481,7 @@ window.TypingApp = (function () {
     if (name === 'test') {
       $('view-results').classList.remove('visible');
       $('view-test').classList.add('visible');
+      window.scrollTo(0, 0);
     }
     if (name === 'results') focusResultsRestartButton();
   }

@@ -41,30 +41,40 @@ html, body {
   --tt-correct: #4fbf72;
   --tt-incorrect: #ff3b30;
   --tt-extra: #d9a529;
-  --tt-missed: #6f6a60;
+  --tt-missed: #8e8a80;
   --tt-caret: #f0c800;
   --tt-raw: #8ba6cc;
   --card-shadow: 0 8px 32px rgba(0, 0, 0, .38), 0 1.5px 6px rgba(0, 0, 0, .35);
   --card-shadow-hover: 0 16px 48px rgba(0, 0, 0, .55), 0 3px 12px rgba(0, 0, 0, .40);
 }
 
-/* ---------------------------------------------------------------- page rhythm — lifted typing section */
-.typing-page .site-main { flex: 1 0 auto; padding-top: 40px; }
+/* ---------------------------------------------------------------- page rhythm — clear of fixed header */
+.typing-page .site-main {
+  flex: 1 0 auto;
+  padding-top: calc(var(--header-height, 76px) + 1.25rem);
+}
 
-#view-test { padding-top: 2rem; margin-top: 0.5rem; }
+#view-test { padding-top: 0; margin-top: 0; }
 
 @media (min-width: 861px) {
-  #view-test { padding-top: 3rem; margin-top: 0.75rem; }
+  #view-test { padding-top: 0; margin-top: 0; }
 }
 
 @media (max-width: 860px) {
-  #view-test { padding-top: 1.75rem; margin-top: .4rem; }
+  #view-test { padding-top: 0; margin-top: 0; }
+  .typing-page .site-main {
+    padding-top: calc(var(--header-height, 68px) + 1rem);
+  }
 }
 
-.typing-page .container.section-header { margin-bottom: .35rem; }
+.typing-page .section-header {
+  max-width: var(--tt-width, 880px);
+  margin-inline: auto;
+  margin-bottom: 0.85rem;
+}
 
 .typing-guide {
-  max-width: 76ch;
+  max-width: var(--tt-width, 880px);
   margin: 4rem auto 2.5rem;
   padding: 1.5rem 0;
   border-top: 1px solid var(--border-subtle);
@@ -85,10 +95,6 @@ html, body {
 .typing-guide dt { color: var(--text-primary); font-weight: 700; }
 .typing-guide a { color: var(--accent); text-decoration: underline; text-underline-offset: .18em; }
 .typing-page .tt-header-actions { opacity: .96; }
-
-@media (max-width: 860px) {
-  .typing-page .site-main { padding-top: 66px; }
-}
 
 .typing-shell {
   max-width: var(--tt-width, 880px);
@@ -138,8 +144,12 @@ html, body {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  width: 100%;
   gap: .6rem .9rem;
   padding: .35rem 0;
+  margin-bottom: 0.85rem;
+  position: relative;
+  z-index: 10;
   background: transparent;
   border: none;
   box-shadow: none;
@@ -280,7 +290,11 @@ html, body {
   align-items: center;
   gap: .5rem;
   flex-wrap: wrap;
-  margin: 0 0 1.1rem;
+  width: 100%;
+  margin: 0 0 1.25rem;
+  position: relative;
+  z-index: 5;
+  clear: both;
   font-family: var(--font-mono);
   color: var(--text-secondary);
 }
@@ -387,7 +401,7 @@ html, body {
   width: 34px; height: 34px;
 }
 .test-actions .tt-icon-btn:hover { background: var(--surface-elevated); color: var(--text-primary); border-color: var(--border-subtle); }
-[data-theme="dark"] .test-actions .tt-icon-btn { color: #8a8782; }
+[data-theme="dark"] .test-actions .tt-icon-btn { color: var(--text-secondary); }
 
 /* ---------------------------------------------------------------- typing stage — free, calm, spacious */
 #typing-stage {
@@ -395,9 +409,10 @@ html, body {
   background: transparent;
   border: none;
   box-shadow: none;
-  padding: 2rem 0 1.6rem;
+  padding: 1.25rem 0 1rem;
   overflow: visible;
-  max-width: min(100%, 1120px);
+  width: 100%;
+  max-width: 100%;
   margin-inline: auto;
 }
 
@@ -470,7 +485,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   font-family: var(--font-mono);
   font-size: var(--tt-font-size);
   line-height: 1.82;
-  color: var(--text-light);
+  color: var(--text-muted);
   user-select: none;
   font-variant-ligatures: none;
   letter-spacing: -.010em;
@@ -500,7 +515,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 [data-theme="dark"] .tt-char.is-incorrect { color: #ff3b30; background: rgba(255, 59, 48, .16); }
 
 .tt-char.is-missed {
-  color: var(--text-light);
+  color: var(--text-muted);
   opacity: .48;
   background: transparent;
 }
@@ -586,13 +601,14 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
      nearest scroll container to reveal a focused textarea's caret, which
      undoes the 4-line group scroll as soon as the next key is typed.
      Pinning it to the window keeps it out of that scroll container.
-     Centered at 50%/50% so the virtual keyboard on mobile opens in the
-     correct screen area instead of scrolling the page to the top. */
+     Positioned near top and font-size >= 16px prevents mobile auto-zoom
+     and avoids keyboard scroll jumps. */
   position: fixed;
-  top: 50%;
+  top: 15%;
   left: 50%;
   width: 1px;
   height: 1px;
+  font-size: 16px;
   opacity: 0;
   border: none;
   padding: 0;
@@ -1305,7 +1321,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   margin: 0 -1px;
 }
 .rv-char.rv-missed {
-  color: var(--text-light);
+  color: var(--text-muted);
   text-decoration: underline dotted 1px var(--text-muted);
   text-underline-offset: 3px;
 }
@@ -1903,20 +1919,31 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
 }
 
 @media (max-width: 860px) {
-  :root { --tt-font-size: 1.62rem; }
-  #typing-stage { padding: 1.2rem 0 1rem; }
+  :root { --tt-font-size: 1.45rem; }
+  #typing-stage { padding: 0.8rem 0 0.6rem; }
   .mode-bar { gap: .5rem; }
-  .mode-bar .chip-group { padding: 6px 8px; }
+  .mode-bar .chip-group { padding: 5px 8px; }
   .result-big { grid-template-columns: repeat(2, 1fr); }
   #view-results .result-graph-stage { margin-inline: -.2rem; padding: .85rem .7rem .75rem; }
+}
+
+@media (max-width: 600px) {
+  :root { --tt-font-size: 1.25rem; }
+  .mode-bar { gap: 0.4rem; }
+  .mode-bar .chip-group { padding: 4px 6px; }
+  .mode-bar .chip { padding: 4px 6px; font-size: 0.75rem; }
+  .typing-viewport {
+    height: calc(var(--typing-line-height) * 3);
+    max-height: calc(var(--typing-line-height) * 3);
+  }
 }
 
 @media (max-width: 520px) {
   .typing-page .site-header .site-header__inner { gap: 8px; }
   .tt-header-actions { gap: 6px; }
   .live-stats { padding: 4px; gap: 4px; }
-  .live-stat { padding: 6px 10px; }
-  .live-stat__value { font-size: 1.15rem; }
+  .live-stat { padding: 6px 8px; }
+  .live-stat__value { font-size: 1.1rem; }
 }
 
 /* ---------------------------------------------------------------- polished transitions */
@@ -1979,10 +2006,7 @@ a,
 /* ---------------------------------------------------------------- mobile viewport height fix */
 @media (pointer: coarse) {
   .typing-page {
+    min-height: 100dvh;
     min-height: -webkit-fill-available;
-  }
-  .typing-viewport {
-    /* Prevent overly tall viewports on mobile browsers */
-    max-height: 45vh;
   }
 }
