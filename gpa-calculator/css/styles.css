@@ -93,7 +93,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   box-shadow: 0 0 0 3px var(--accent-muted);
   outline: none;
 }
-/* Custom Dropdowns */
+
 .custom-dropdown {
   position: relative;
   width: 100%;
@@ -406,8 +406,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   opacity: .55;
   filter: grayscale(.15);
 }
-/* The card body is not interactive while excluded, but the "use this
-   instead" control stays clickable so the student can switch. */
+
 .subject-card.is-excluded .subject-fields { pointer-events: none; }
 .subject-card.is-excluded .subject-heading h2::after {
   content: " — excluded";

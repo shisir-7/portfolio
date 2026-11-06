@@ -55,35 +55,29 @@
       } catch (e) {}
     })();
   </script>
-  <style id="gpa-typography-inline">/* ==========================================================================
-   Shisir Acharya Portfolio — Typography System
-   Editorial Swiss Graphic Hierarchy: Plus Jakarta Sans + Newsreader + JetBrains Mono
-   ========================================================================== */
+  <style id="gpa-typography-inline">
 
 :root {
-  /* Font Families */
+  
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Newsreader', 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Monaco, monospace;
 
-  /* Type Scale (Fluid clamp & proportional steps) */
-  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);     /* 11-13px - Metadata, Colophon, Tags */
-  --text-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.9rem);   /* 13-14.5px - Captions, Secondary labels */
-  --text-base: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem); /* 15-17px - Body readability */
-  --text-md: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);    /* 17-20px - Subheadings, Lead body */
-  --text-lg: clamp(1.25rem, 1.15rem + 0.6vw, 1.625rem);   /* 20-26px - Project titles, Section heads */
-  --text-xl: clamp(1.625rem, 1.45rem + 1vw, 2.25rem);     /* 26-36px - Editorial quotes, Major titles */
-  --text-2xl: clamp(2.25rem, 1.95rem + 1.8vw, 3.5rem);    /* 36-56px - Hero sub-statements */
-  --text-display: clamp(3rem, 2.4rem + 3.8vw, 6.25rem);    /* 48-100px - Editorial hero headline */
+--text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);     
+  --text-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.9rem);   
+  --text-base: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem); 
+  --text-md: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);    
+  --text-lg: clamp(1.25rem, 1.15rem + 0.6vw, 1.625rem);   
+  --text-xl: clamp(1.625rem, 1.45rem + 1vw, 2.25rem);     
+  --text-2xl: clamp(2.25rem, 1.95rem + 1.8vw, 3.5rem);    
+  --text-display: clamp(3rem, 2.4rem + 3.8vw, 6.25rem);    
 
-  /* Line Heights */
-  --lh-tight: 1.08;
+--lh-tight: 1.08;
   --lh-snug: 1.22;
   --lh-normal: 1.45;
   --lh-relaxed: 1.68;
 
-  /* Letter Spacing */
-  --ls-display: -0.04em;
+--ls-display: -0.04em;
   --ls-tight: -0.02em;
   --ls-normal: -0.005em;
   --ls-wide: 0.05em;
@@ -91,7 +85,6 @@
   --ls-tag: 0.12em;
 }
 
-/* Base Typographic Resets */
 body {
   font-family: var(--font-sans);
   font-size: var(--text-base);
@@ -103,7 +96,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   color: var(--text-primary);
@@ -134,7 +126,6 @@ h4 {
   font-weight: 600;
 }
 
-/* Editorial Serif Accents */
 .font-serif {
   font-family: var(--font-serif);
 }
@@ -149,7 +140,6 @@ h4 {
   font-weight: 400;
 }
 
-/* Monospace & Technical Labels */
 .font-mono {
   font-family: var(--font-mono);
   letter-spacing: var(--ls-mono);
@@ -175,19 +165,15 @@ h4 {
   background-color: var(--accent);
 }
 
-/* Selection */
 ::selection {
   background-color: var(--accent);
   color: #FFFFFF;
 }
 </style>
-  <style id="gpa-main-inline">/* ==========================================================================
-   Shisir Acharya Portfolio — Main Stylesheet
-   Minimalist, Editorial, Swiss Graphic Design System
-   ========================================================================== */
+  <style id="gpa-main-inline">
 
 :root {
-  /* Editorial Warm Linen / Off-White Theme (Default) */
+  
   --bg-primary: #F7F5F0;
   --bg-secondary: #EFECE4;
   --bg-tertiary: #E5E0D5;
@@ -203,7 +189,7 @@ h4 {
   --border-medium: #DCD6C9;
   --border-dark: #121211;
 
-  --accent: #BD3A1B;           /* Deep vermilion / cinnabar accent */
+  --accent: #BD3A1B;           
   --accent-hover: #9E2F14;
   --accent-muted: rgba(189, 58, 27, 0.12);
   --accent-tint: #FDF3F0;
@@ -212,8 +198,7 @@ h4 {
   --shadow-medium: 0 12px 32px -4px rgba(18, 18, 17, 0.08);
   --shadow-high: 0 24px 48px -8px rgba(18, 18, 17, 0.14);
 
-  /* Spacing Scale */
-  --space-2xs: 0.25rem;
+--space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 0.75rem;
   --space-md: 1.25rem;
@@ -222,17 +207,14 @@ h4 {
   --space-2xl: 5.5rem;
   --space-3xl: 8.5rem;
 
-  /* Layout */
-  --container-max: 1340px;
+--container-max: 1340px;
   --container-padding: clamp(1.25rem, 3.5vw, 3rem);
 
-  /* Transitions */
-  --transition-fast: 160ms cubic-bezier(0.2, 0, 0, 1);
+--transition-fast: 160ms cubic-bezier(0.2, 0, 0, 1);
   --transition-normal: 260ms cubic-bezier(0.2, 0, 0, 1);
   --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Dark Mode Theme (Obsidian & Warm Charcoal) */
 [data-theme="dark"] {
   --bg-primary: #10100F;
   --bg-secondary: #171715;
@@ -259,7 +241,6 @@ h4 {
   --shadow-high: 0 24px 48px -8px rgba(0, 0, 0, 0.7);
 }
 
-/* CSS Reset & Foundation */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -273,8 +254,6 @@ html {
   color-scheme: light;
 }
 
-/* Keep native form controls (language/font selects, color pickers, scrollbars)
-   aligned with the active editorial theme */
 [data-theme="dark"] {
   color-scheme: dark;
 }
@@ -314,7 +293,6 @@ ul, ol {
   list-style: none;
 }
 
-/* Container */
 .container {
   width: 100%;
   max-width: var(--container-max);
@@ -324,7 +302,6 @@ ul, ol {
   padding-right: var(--container-padding);
 }
 
-/* Section Spacing */
 .section {
   padding-top: var(--space-2xl);
   padding-bottom: var(--space-2xl);
@@ -340,7 +317,6 @@ ul, ol {
   justify-content: center;
 }
 
-/* Editorial Separator Line */
 .editorial-rule {
   width: 100%;
   height: 1px;
@@ -353,7 +329,6 @@ ul, ol {
   background-color: var(--border-dark);
 }
 
-/* Section Header Structure */
 .section-header {
   display: flex;
   flex-direction: column;
@@ -398,7 +373,6 @@ ul, ol {
   line-height: var(--lh-normal);
 }
 
-/* Buttons & Links */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -455,7 +429,6 @@ ul, ol {
   color: var(--accent);
 }
 
-/* Text Links with Editorial Underlines */
 .editorial-link {
   position: relative;
   display: inline-flex;
@@ -480,7 +453,6 @@ ul, ol {
   transform: translateX(4px);
 }
 
-/* Custom Minimalist Cursor (Desktop only) */
 .custom-cursor {
   position: fixed;
   top: 0;
@@ -526,13 +498,11 @@ ul, ol {
   border-color: var(--accent);
 }
 
-/* Focus Indicators for Accessibility */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
-/* Reduced Motion Override */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -641,7 +611,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   box-shadow: 0 0 0 3px var(--accent-muted);
   outline: none;
 }
-/* Custom Dropdowns */
+
 .custom-dropdown {
   position: relative;
   width: 100%;
@@ -1148,7 +1118,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 </style>
-  <!-- Fallback external links (http/https hosts; inline above guarantees file:// rendering) -->
+  
   <link rel="stylesheet" href="./styles/typography.css" />
   <link rel="stylesheet" href="./styles/main.css" />
   <link rel="stylesheet" href="./css/styles.css" />
@@ -1156,11 +1126,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   <script nomodule defer src="./js/app.bundle.js"></script>
   <script>
     (function(){
-      // file:// fallback: if ES modules are blocked, load classic bundle
+      
       if (location.protocol !== 'file:') return;
       var m=document.querySelector('script[type="module"][src="./js/ui.js"]');
       if (!m) return;
-      // give module a moment to report a load error
+      
       var loaded=false;
       m.addEventListener('error', function(){
         if(loaded) return;
@@ -1172,7 +1142,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
       });
       setTimeout(function(){
         if(loaded) return;
-        // heuristic: if theme toggle still empty after 800ms, modules likely blocked
+        
         var btn=document.getElementById('theme-toggle');
         if(btn && !btn.innerHTML.trim()){
           loaded=true;

@@ -1,17 +1,7 @@
-/**
- * Typing Test — Lightweight Interactive Charts (Oct 2026 premium rebuild)
- * Dependency-free Canvas 2D: DPR-aware, animated, hover-interactive.
- * A per-canvas registry stores geometry for hit-testing; a shared
- * tooltip + crosshair is drawn on the canvas itself.
- *
- * Each chart reuses this module. No fabricated values are ever drawn —
- * only the arrays passed in by the caller.
- */
-
 window.TypingCharts = (function () {
   'use strict';
 
-  /* ── palette helpers ─────────────────────────────────────────────── */
+  
   function cssVar(name, fallback) {
     const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     return v || fallback;
@@ -43,7 +33,7 @@ window.TypingCharts = (function () {
     fontSize: 9.5
   };
 
-  /* ── shared tooltip (one per page) ───────────────────────────────── */
+  
   let tipEl = null;
 
   function getTip() {
@@ -70,13 +60,13 @@ window.TypingCharts = (function () {
     tipEl.style.display = 'none';
   }
 
-  /* ── canvas setup ─────────────────────────────────────────────────── */
+  
   function setupCanvas(canvas) {
     const rect = canvas.getBoundingClientRect();
     let w = Math.round(rect.width);
     let h = Math.round(rect.height);
-    // Hidden canvases (display:none views) report 0 — fall back to the
-    // parent's layout width so charts render crisp on first paint.
+    
+    
     if (w < 40) {
       const pw = canvas.parentElement ? Math.round(canvas.parentElement.getBoundingClientRect().width) : 0;
       w = pw > 80 ? pw : 960;
@@ -88,7 +78,7 @@ window.TypingCharts = (function () {
     w = Math.max(120, w) || 320;
     h = Math.max(120, h) || 220;
     const dpr = window.devicePixelRatio || 1;
-    // Match the CSS size exactly so the canvas is not stretched.
+    
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
     canvas.width  = Math.round(w * dpr);
@@ -96,7 +86,7 @@ window.TypingCharts = (function () {
     const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    // Crisp text / lines on high-DPI
+    
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     return { ctx, w, h, dpr };
@@ -114,7 +104,7 @@ window.TypingCharts = (function () {
     return nice * pow;
   }
 
-  /* ── curve helper — Catmull-Rom → Bezier for a smoother line ─────── */
+  
   function drawSmoothLine(ctx, pts) {
     if (pts.length < 2) return;
     if (pts.length === 2) {
@@ -136,7 +126,7 @@ window.TypingCharts = (function () {
     }
   }
 
-  /* ── per-canvas registry ──────────────────────────────────────────── */
+  
   const REG = new WeakMap();
 
   function register(canvas, meta) { REG.set(canvas, meta); }
@@ -150,7 +140,7 @@ window.TypingCharts = (function () {
     return best;
   }
 
-  /* ── empty state ──────────────────────────────────────────────────── */
+  
   function drawEmpty(ctx, w, h, opt, msg) {
     ctx.fillStyle = opt.labelColor || DEFAULTS.labelColor;
     ctx.font = DEFAULTS.fontSize + 'px ' + DEFAULTS.fontFamily;
@@ -159,14 +149,7 @@ window.TypingCharts = (function () {
     ctx.fillText(msg || '—', w / 2, h / 2);
   }
 
-  /* ════════════════════════════════════════════════════════════════════
-     Line chart
-     opts:
-       labels: string[]            // x labels
-       series: [{ name, color, data: number[], fill?: boolean, width?, dash? }]
-       fmtY?: (number) => string
-       animate?: boolean           // animated draw-in
-     ════════════════════════════════════════════════════════════════════ */
+  
   function lineChart(canvas, opts) {
     opts = opts || {};
     const seriesRaw = (opts.series || []).filter((s) => s.data && s.data.length);
@@ -176,10 +159,10 @@ window.TypingCharts = (function () {
       return;
     }
 
-    // Copy so we can mask with visibility flags
+    
     const hidden = REG.get(canvas)?.hidden || {};
 
-    // wrap canvas for legend/tooltip positioning
+    
     ensureWrap(canvas);
 
     const seriesFiltered = seriesRaw.map((s, i) => Object.assign({}, s, { _origIndex: i }));
@@ -191,7 +174,7 @@ window.TypingCharts = (function () {
       const opt = Object.assign({}, DEFAULTS, opts);
       const pad = opt.padding;
 
-      // yMax from visible series only
+      
       let yMax = 0;
       seriesRaw.forEach((s, i) => {
         if (hidden[i]) return;
@@ -204,7 +187,7 @@ window.TypingCharts = (function () {
       const xAt = (i) => pad.left + (len === 1 ? plotW / 2 : (i / (len - 1)) * plotW);
       const yAt = (v) => pad.top + plotH - (v / yMax) * plotH;
 
-      // grid + y labels
+      
       ctx.font = opt.fontSize + 'px ' + opt.fontFamily;
       ctx.textBaseline = 'middle';
       for (let g = 0; g <= 4; g++) {
@@ -221,7 +204,7 @@ window.TypingCharts = (function () {
         ctx.fillText(opt.fmtY ? opt.fmtY(val) : String(Math.round(val)), pad.left - 6, y);
       }
 
-      // x labels (sparse)
+      
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       const step = Math.max(1, Math.ceil(len / 8));
@@ -231,7 +214,7 @@ window.TypingCharts = (function () {
         ctx.fillText(String(lbl), xAt(i), h - pad.bottom + 9);
       }
 
-      // build per-series point arrays (clamped by progress 0..1)
+      
       const pointsBySeries = [];
       seriesRaw.forEach((s, si) => {
         if (hidden[si]) { pointsBySeries.push([]); return; }
@@ -241,7 +224,7 @@ window.TypingCharts = (function () {
         pointsBySeries.push(pts);
       });
 
-      // area fills
+      
       seriesRaw.forEach((s, si) => {
         if (hidden[si] || !s.fill) return;
         const pts = pointsBySeries[si];
@@ -260,7 +243,7 @@ window.TypingCharts = (function () {
         ctx.restore();
       });
 
-      // lines
+      
       seriesRaw.forEach((s, si) => {
         if (hidden[si]) return;
         const pts = pointsBySeries[si];
@@ -276,10 +259,10 @@ window.TypingCharts = (function () {
         ctx.setLineDash([]);
       });
 
-      // hover crosshair + dots
+      
       if (hoverIndex != null && hoverIndex >= 0 && hoverIndex < len) {
         const hx = xAt(hoverIndex);
-        // vertical guide
+        
         ctx.strokeStyle = 'rgba(126, 121, 111, .18)';
         ctx.setLineDash([4, 4]);
         ctx.lineWidth = 1;
@@ -289,7 +272,7 @@ window.TypingCharts = (function () {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // dots
+        
         seriesRaw.forEach((s, si) => {
           if (hidden[si]) return;
           if (hoverIndex >= s.data.length) return;
@@ -304,7 +287,7 @@ window.TypingCharts = (function () {
         });
       }
 
-      // store geometry for hit-testing / hover
+      
       const allPoints = [];
       for (let i = 0; i < len; i++) allPoints.push({ x: xAt(i) });
       register(canvas, {
@@ -321,7 +304,7 @@ window.TypingCharts = (function () {
       });
     }
 
-    // ---- initial draw + animation ------------------------------------
+    
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (opts.animate === false || prefersReduced) {
@@ -335,7 +318,7 @@ window.TypingCharts = (function () {
 
     function frame(now) {
       const t = Math.min(1, (now - t0) / dur);
-      // ease: cubic out
+      
       const e = 1 - Math.pow(1 - t, 3);
       drawFrame(e, null);
       if (t < 1) requestAnimationFrame(frame);
@@ -366,7 +349,7 @@ window.TypingCharts = (function () {
       const df = canvas.__lineDrawFrame;
       if (df) df(1, idx);
 
-      // tooltip
+      
       const lbl = (meta._labels && meta._labels[idx] != null) ? meta._labels[idx] : String(idx);
       let html = '<strong style="display:block;margin-bottom:4px">' + lbl + '</strong>';
       meta._seriesRaw.forEach((s, si) => {
@@ -389,9 +372,7 @@ window.TypingCharts = (function () {
     canvas.addEventListener('touchstart', () => {}, passive);
   }
 
-  /* ════════════════════════════════════════════════════════════════════
-     Bar chart — opts.data: [ { label, value, color? } ]
-     ════════════════════════════════════════════════════════════════════ */
+  
   function barChart(canvas, opts) {
     opts = opts || {};
     const raw = (opts.data || []).filter((d) => d != null);
@@ -505,7 +486,7 @@ window.TypingCharts = (function () {
         const d = Math.abs(b.x - x);
         if (d < bestD) { bestD = d; best = i; }
       });
-      // only if reasonably near
+      
       const plotW = rect.width - DEFAULTS.padding.left - DEFAULTS.padding.right;
       const slot = plotW / meta._bars.length;
       if (bestD > slot * 0.55) { hideTip(); const df = canvas.__barDrawFrame; if (df) df(1, null); return; }
@@ -518,9 +499,7 @@ window.TypingCharts = (function () {
     canvas.addEventListener('mouseleave', () => { hideTip(); const df = canvas.__barDrawFrame; if (df) df(1, null); });
   }
 
-  /* ════════════════════════════════════════════════════════════════════
-     Doughnut — opts.segments: [{ label, value, color }]
-     ════════════════════════════════════════════════════════════════════ */
+  
   function doughnutChart(canvas, opts) {
     opts = opts || {};
     const segs = (opts.segments || []).filter((s) => s.value > 0);
@@ -537,7 +516,7 @@ window.TypingCharts = (function () {
       const colors = themeColors();
       const total = segs.reduce((a, s) => a + s.value, 0);
 
-      // donut geometry
+      
       const cx = w / 2;
       const cy = h / 2 - 6;
       const radius = Math.min(w, h) / 2 - 18;
@@ -546,14 +525,14 @@ window.TypingCharts = (function () {
       const full = Math.PI * 2 * segsDrawProgress;
       let angle = -Math.PI / 2;
 
-      // shadow/background ring
+      
       ctx.strokeStyle = 'rgba(126, 121, 111, .08)';
       ctx.lineWidth = radius - inner;
       ctx.beginPath();
       ctx.arc(cx, cy, radius - (radius - inner) / 2, 0, Math.PI * 2);
       ctx.stroke();
 
-      // segments
+      
       const arcs = [];
       segs.forEach((s, i) => {
         const slice = (s.value / total) * full;
@@ -578,7 +557,7 @@ window.TypingCharts = (function () {
         angle += slice;
       });
 
-      // center label
+      
       ctx.fillStyle = cssVar('--text-primary', '#121211');
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -654,7 +633,7 @@ window.TypingCharts = (function () {
     return Math.max(lo, Math.min(hi, v));
   }
 
-  /* ── unified performance graph — WPM + accuracy + consistency ──── */
+  
   function unifiedPerformanceChart(canvas, samples, opts) {
     opts = opts || {};
     if (!samples || samples.length < 2) {
@@ -850,8 +829,8 @@ window.TypingCharts = (function () {
       });
     }
 
-    // Store the latest drawFrame on the canvas so the hover handler always
-    // calls the most recent version, even after re-renders.
+    
+    
     canvas.__unifiedDrawFrame = drawFrame;
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -861,8 +840,8 @@ window.TypingCharts = (function () {
       return;
     }
 
-    // Cancel any in-progress animation from a previous call so we never have
-    // two concurrent loops writing to the same canvas at once.
+    
+    
     if (canvas.__unifiedRafId) {
       cancelAnimationFrame(canvas.__unifiedRafId);
       canvas.__unifiedRafId = null;
@@ -878,7 +857,7 @@ window.TypingCharts = (function () {
         canvas.__unifiedRafId = requestAnimationFrame(frame);
       } else {
         canvas.__unifiedRafId = null;
-        // Ensure the final frame is rendered before attaching hover
+        
         drawFrame(1, null);
         attachUnifiedHover(canvas);
       }
@@ -887,8 +866,8 @@ window.TypingCharts = (function () {
   }
 
   function attachUnifiedHover(canvas) {
-    // Always keep the hover handler — but route through canvas.__unifiedDrawFrame
-    // so it always uses the latest closure even after re-renders.
+    
+    
     if (canvas.__unifiedHoverBound) return;
     canvas.__unifiedHoverBound = true;
     canvas.addEventListener('mousemove', (e) => {
@@ -917,17 +896,17 @@ window.TypingCharts = (function () {
     canvas.addEventListener('mouseleave', () => { hideTip(); const df = canvas.__unifiedDrawFrame; if (df) df(1, null); });
   }
 
-  /* ── wrap helper (needed for tooltip anchor) ───────────────────────── */
+  
   function ensureWrap(canvas) {
     if (canvas.parentElement && canvas.parentElement.classList.contains('chart-wrap'))
       return;
     const p = canvas.parentElement;
     if (!p) return;
-    // Create wrapper if not already present (done in HTML ideally)
-    // Fallback: nothing — canvas still works, tooltip falls back to viewport.
+    
+    
   }
 
-  /* ── shared helpers ─────────────────────────────────────────────────── */
+  
   function drawLegend(ctx, w, series, opt) {
     if (series.length < 2 || opt.hideLegend) return;
     ctx.font = DEFAULTS.fontSize + 'px ' + DEFAULTS.fontFamily;
@@ -968,7 +947,7 @@ window.TypingCharts = (function () {
     ctx.closePath();
   }
 
-  /* ── auto-render + theme-rebind ────────────────────────────────────── */
+  
   const registry = new Map();
   let resizeBound = false;
 
@@ -1004,10 +983,10 @@ window.TypingCharts = (function () {
       if (histView) obs.observe(histView, { attributes: true, attributeFilter: ['class', 'style'] });
     }
 
-    // ResizeObserver: re-render whenever the canvas gains a real layout size.
-    // This covers the common case where the chart is rendered while its parent
-    // view is display:none (reporting 0 × 0) and then becomes visible after a
-    // CSS animation — the observer fires as soon as the element gets real dims.
+    
+    
+    
+    
     if (typeof ResizeObserver !== 'undefined' && !canvas.__roAttached) {
       canvas.__roAttached = true;
       let _lastW = 0;
@@ -1025,13 +1004,13 @@ window.TypingCharts = (function () {
     }
   }
 
-  /* Hide tooltip when panels/modals open so it doesn't float orphaned */
+  
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
 
   return {
     lineChart, barChart, doughnutChart, unifiedPerformanceChart,
     autoRender, themeColors,
-    // exposed for tests / app
+    
     _REG: REG, _hideTip: hideTip
   };
 })();

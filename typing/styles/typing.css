@@ -1,11 +1,3 @@
-/* ==========================================================================
-   Typing Speed Test — Premium Dashboard (Oct 2026)
-   Fully rounded, soft shadows, subtle motion, cohesive editorial palette.
-   Uses the bundled base tokens (--accent, --text-*, --bg-*) so light/dark
-   themes work independently. No external framework required.
-   ========================================================================== */
-
-/* ---------------------------------------------------------------- tokens */
 html, body {
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
@@ -48,7 +40,6 @@ html, body {
   --card-shadow-hover: 0 16px 48px rgba(0, 0, 0, .55), 0 3px 12px rgba(0, 0, 0, .40);
 }
 
-/* ---------------------------------------------------------------- page rhythm — clear of fixed header */
 .typing-page .site-main {
   flex: 1 0 auto;
   padding-top: calc(var(--header-height, 76px) + 1.25rem);
@@ -102,7 +93,6 @@ html, body {
   transition: max-width var(--transition-normal);
 }
 
-/* ---------------------------------------------------------------- header pill */
 .typing-page .site-header {
   border-bottom: 1px solid var(--border-subtle);
   backdrop-filter: blur(14px) saturate(1.15);
@@ -129,7 +119,6 @@ html, body {
 
 .tt-icon-btn.active { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); box-shadow: none; }
 
-/* ---------------------------------------------------------------- views */
 .tt-view { display: none; }
 .tt-view.visible { display: block; animation: tt-view-in .32s cubic-bezier(.16, 1, .3, 1) both; }
 
@@ -138,7 +127,6 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------------------------------------------------------------- mode toolbar — compact: Time/Mode left, Language right */
 .mode-bar {
   display: flex;
   align-items: center;
@@ -264,7 +252,6 @@ html, body {
 .chip-select:hover { border-color: var(--border-medium); color: var(--text-primary); }
 .chip-select:focus-visible { outline: none; box-shadow: var(--accent-glow); border-color: var(--accent); }
 
-/* ---------------------------------------------------------------- daily badge */
 .daily-badge {
   display: none;
   margin-top: .85rem;
@@ -284,7 +271,6 @@ html, body {
 
 [data-theme="dark"] .daily-badge { color: #ff9a7a; background: #231309; border-color: #4a2210; box-shadow: none; }
 
-/* ---------------------------------------------------------------- live HUD — minimalist with hidden details */
 .live-stats {
   display: flex;
   align-items: center;
@@ -403,7 +389,6 @@ html, body {
 .test-actions .tt-icon-btn:hover { background: var(--surface-elevated); color: var(--text-primary); border-color: var(--border-subtle); }
 [data-theme="dark"] .test-actions .tt-icon-btn { color: var(--text-secondary); }
 
-/* ---------------------------------------------------------------- typing stage — free, calm, spacious */
 #typing-stage {
   position: relative;
   background: transparent;
@@ -441,11 +426,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-/* Floating caret — lives INSIDE .typing-text so the line-scroll transform
-   carries it. The outer element moves only vertically, timed exactly like the
-   text's scroll easing, so the caret stays pinned on screen while lines slide.
-   The inner bar glides horizontally between characters (fast, Monkeytype-like)
-   and carries the blink (a ::after layer over a solid parent never blinks). */
 .tt-caret {
   position: absolute;
   top: 0;
@@ -597,12 +577,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 }
 
 .typing-input-hidden {
-  /* Must NOT live inside the scrolling viewport: the browser scrolls the
-     nearest scroll container to reveal a focused textarea's caret, which
-     undoes the 4-line group scroll as soon as the next key is typed.
-     Pinning it to the window keeps it out of that scroll container.
-     Positioned near top and font-size >= 16px prevents mobile auto-zoom
-     and avoids keyboard scroll jumps. */
+  
   position: fixed;
   top: 15%;
   left: 50%;
@@ -661,7 +636,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 @keyframes hint-pop { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: none; } }
 @keyframes hint-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.82); } }
 
-/* ---------------------------------------------------------------- overlays */
 .stage-overlay {
   position: absolute; inset: 0;
   display: none;
@@ -703,10 +677,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 .pause-card h3 { font-size: var(--text-lg); margin-bottom: .35rem; }
 .pause-card p  { color: var(--text-secondary); margin-bottom: 1.15rem; font-size: var(--text-sm); }
 
-/* ---------------------------------------------------------------- scrim behind drawers */
-/* The drawer must stack above the fixed site header (z-index 1000) —
-   otherwise the header covers the drawer's close button and the panel
-   becomes impossible to dismiss. */
 .tt-scrim {
   position: fixed; inset: 0;
   background: rgba(18, 18, 17, .42);
@@ -719,7 +689,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 }
 .tt-scrim.open { opacity: 1; pointer-events: auto; }
 
-/* ---------------------------------------------------------------- side drawers */
 .side-panel {
   position: fixed;
   top: 0; right: 0; bottom: 0;
@@ -867,7 +836,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   #view-results .result-hero--below { padding-top: .4rem; }
 }
 
-/* ---------------------------------------------------------------- results — premium, animated reveal */
 .result-validity {
   display: none;
   margin: 0 auto 1.1rem;
@@ -1167,7 +1135,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   gap: .9rem;
 }
 
-/* chart card: premium rounded card with interactive hover */
 .chart-card {
   position: relative;
   background: var(--surface-card);
@@ -1268,7 +1235,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   flex-shrink: 0;
 }
 
-/* suggestions */
 .suggestion-list {
   margin: 0;
   padding: 0;
@@ -1297,7 +1263,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   opacity: .75;
 }
 
-/* review */
 .review-text {
   font-family: var(--font-mono);
   font-size: 1.02rem;
@@ -1363,7 +1328,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 }
 .freq-count { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
-/* virtual keyboard */
 .virtual-keyboard { margin-top: .2rem; }
 
 .vk-row {
@@ -1414,7 +1378,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 .result-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin: 2rem 0 .5rem; }
 .result-actions .btn { border-radius: var(--r-pill); }
 
-/* ---------------------------------------------------------------- history (stacked cards) */
 .history-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1451,7 +1414,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   gap: .55rem;
 }
 
-/* list row as a standalone rounded card */
 .history-row {
   display: flex;
   align-items: center;
@@ -1541,7 +1503,6 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
 .history-toolbar { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1.15rem 0; }
 .history-toolbar .btn { border-radius: var(--r-pill); }
 
-/* ---------------------------------------------------------------- confirm + help — glass cards */
 .modal-overlay-center {
   position: fixed; inset: 0;
   display: none;
@@ -1549,8 +1510,7 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   background: rgba(18, 18, 17, .38);
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
-  /* Above the fixed site header (z-index 1000) so the dialog is not
-     obscured and its buttons stay clickable. */
+  
   z-index: 1200;
   padding: 1rem;
 }
@@ -1606,10 +1566,8 @@ body.is-fullscreen #typing-stage { max-height: 100vh; }
   white-space: nowrap;
 }
 
-/* ---------------------------------------------------------------- focus mode */
 body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-normal); }
 
-/* ---------------------------------------------------------------- segmented toggle (Easy / Complex) */
 .segmented {
   display: inline-flex;
   padding: 3px;
@@ -1646,7 +1604,6 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
   line-height: 1.45;
 }
 
-/* ---------------------------------------------------------------- personal best + celebration */
 .personal-best {
   margin-top: 1rem;
   padding: 14px 16px;
@@ -1688,8 +1645,7 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
   left: 50%;
   top: 22px;
   transform: translateX(-50%) translateY(-8px);
-  /* Above the fixed site header (z-index 1000) so the celebration toast
-     is not hidden behind it. */
+  
   z-index: 1300;
   display: flex;
   align-items: center;
@@ -1798,7 +1754,6 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
 
 .footer-typing a:hover { color: var(--text-primary); border-color: currentColor; }
 
-/* ---------------------------------------------------------------- homepage card (kept in typing.css as legacy hook) */
 .section--tool-strip { padding: var(--space-lg) 0; }
 
 #view-results {
@@ -1821,7 +1776,6 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
   margin-inline: auto;
 }
 
-/* unified graph — now the large background visual of the results page */
 .result-unified-wrap {
   margin: 0;
   padding: 0;
@@ -1946,7 +1900,6 @@ body.focus-mode .focus-dim { opacity: .22; transition: opacity var(--transition-
   .live-stat__value { font-size: 1.1rem; }
 }
 
-/* ---------------------------------------------------------------- polished transitions */
 button,
 a,
 .chip,
@@ -1993,8 +1946,6 @@ a,
   }
 }
 
-
-/* Hide built-in caret since we use the floating .tt-caret now */
 .typing-viewport .tt-char.is-current::before,
 .typing-viewport .tt-char.is-current::after,
 .tt-char.caret-here::before { display: none !important; }
@@ -2003,7 +1954,6 @@ a,
   50%, 100% { opacity: 0; }
 }
 
-/* ---------------------------------------------------------------- mobile viewport height fix */
 @media (pointer: coarse) {
   .typing-page {
     min-height: 100dvh;

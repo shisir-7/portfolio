@@ -1,12 +1,3 @@
-/**
- * Shisir Acharya — Creative Portfolio Projects Data
- * Multidisciplinary Creative: UI/UX Design · Video Editing · Graphic Design
- * Based in Kapilvastu, Nepal
- *
- * This file contains structured project metadata, case study details, and visual references.
- * Supports optional demoUrl (Live Prototype / Project) and repoUrl (Source Code).
- */
-
 window.PORTFOLIO_PROJECTS = [
   {
     id: "typing-speed-test",
@@ -164,7 +155,7 @@ window.PORTFOLIO_PROJECTS = [
     summary: "A hardcover architectural monograph honoring the architectural void, featuring bespoke column grids, tactile negative space, blind debossing, and quietly confident typography.",
     image: "assets/images/project-6-forma.svg",
     imageAlt: "Forma architectural book cover and page spread preview showing structure and negative space",
-    // Neither demoUrl nor repoUrl provided: verifies that zero empty CTA area or placeholder buttons appear!
+    
     caseStudy: {
       challenge: "Architectural publications often crowd pages with excessive commentary, compromising the spatial serenity of the architectural photography itself.",
       targetAudience: "Architects, spatial designers, collectors, and design book enthusiasts.",

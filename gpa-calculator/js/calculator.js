@@ -170,21 +170,10 @@ export function calculateComponentGradePoint(components) {
   return weightedPoints / totalMarks;
 }
 
-/**
- * Groups of subjects a student may take *instead of* each other.
- *
- * A student picks one of each group, never both. Mathematics and
- * Social Studies & Life Skill Education are the pair this calculator
- * supports: the subject combination is fixed, so taking both would
- * double-count a slot the combination only allows once.
- */
 export const MUTUALLY_EXCLUSIVE_GROUPS = Object.freeze([
   Object.freeze(["mathematics", "social studies"])
 ]);
 
-/**
- * Reduces a subject name to the key used by the exclusive groups.
- */
 export function normalizeExclusiveName(name) {
   const normalized = String(name ?? "").toLowerCase();
   if (normalized.includes("mathematics") || normalized === "math") return "mathematics";
@@ -192,9 +181,6 @@ export function normalizeExclusiveName(name) {
   return normalized.trim();
 }
 
-/**
- * True when a subject carries any entry that could influence a result.
- */
 export function subjectHasEntries(subject) {
   if (!subject) return false;
   const hasValue = value => value !== null && value !== undefined && String(value).trim() !== "";
@@ -205,25 +191,14 @@ export function subjectHasEntries(subject) {
       || hasValue(component.grade?.letter)));
 }
 
-/**
- * Decides which member of an exclusive group counts towards the result.
- *
- * The subject the student filled in is the one that counts; every other
- * member of the group stays in the list but is disabled and contributes
- * nothing. An explicit choice (the "use this instead" control) wins while
- * that subject has entries. When both have data without an explicit choice,
- * the first-listed subject wins. With no entries, both remain selectable.
- *
- * Returns the winning subject, or null when no group applies.
- */
 export function resolveExclusiveWinner(subjects) {
   if (!Array.isArray(subjects) || subjects.length === 0) return null;
   for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
     const members = subjects.filter(subject => group.includes(normalizeExclusiveName(subject.name)));
     if (members.length < 2) continue;
 
-    // An explicit choice wins. If neither has entries and the choice is the
-    // default first-listed member, leave both selectable.
+    
+    
     const chosen = members.filter(subject => subject.exclusiveChoice);
     if (chosen.length === 1) {
       if (subjectHasEntries(chosen[0]) || members.some(subjectHasEntries) || chosen[0] !== members[0]) {
@@ -232,21 +207,17 @@ export function resolveExclusiveWinner(subjects) {
       return null;
     }
 
-    // Exactly one subject has data — that is the one the student chose.
+    
     const filled = members.filter(subject => subjectHasEntries(subject));
     if (filled.length === 1) return filled[0];
 
-    // If both have data, keep the result deterministic. With no data, leave
-    // both available until the student makes a selection.
+    
+    
     if (filled.length > 1) return members[0];
   }
   return null;
 }
 
-/**
- * Returns the subjects that contribute to the calculation: everything except
- * the members of an exclusive group that lost the selection.
- */
 export function subjectsForCalculation(subjects) {
   const winner = resolveExclusiveWinner(subjects);
   if (!winner) return subjects.slice();
@@ -302,17 +273,6 @@ export function calculateAggregateTotals(subjects) {
   });
 }
 
-/**
- * Maps a GPA or continuous grade point to its official NEB letter grade:
- * 3.61 – 4.00: A+
- * 3.21 – 3.60: A
- * 2.81 – 3.20: B+
- * 2.41 – 2.80: B
- * 2.01 – 2.40: C+
- * 1.61 – 2.00: C
- * 1.60: D
- * Below 1.60: NG
- */
 export function overallGradeLetter(gpa) {
   if (!Number.isFinite(gpa)) return "—";
   const rounded = Math.round((gpa + Number.EPSILON) * 100) / 100;

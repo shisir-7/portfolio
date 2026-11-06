@@ -1,103 +1,66 @@
-/* ==========================================================================
-   SpeedPulse — styles.css
-   Design system + layout + components. No frameworks, no build step.
-
-   Table of contents
-   -----------------
-   01. Tokens (theme variables, dark + light)
-   02. Reset & base
-   03. Utilities (container, sr-only, skip link)
-   04. Buttons & controls
-   05. Header / brand / unit toggle
-   06. Hero & stepper
-   07. Test card & gauge
-   08. Graph
-   09. Alert
-   10. Results (verdict, metrics, info card)
-   11. History
-   12. How it works & FAQ
-   13. Footer
-   14. Responsive
-   15. Motion & accessibility
-   ========================================================================== */
-
-/* Self-hosted variable fonts, subset to the characters this site uses.
-   See tools/build_fonts.py. One file per family covers every weight. */
 @font-face {
 font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./fonts/speedpulse-sans.woff2') format('woff2'); }
 @font-face {
 font-family: 'Outfit'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./fonts/speedpulse-display.woff2') format('woff2'); }
 
 :root {
-/* --- Brand ------------------------------------------------------------
-   Change the brand name in index.html (data-brand) and the gradient stops
-   below to re-brand the whole app. */
+
 --brand-gradient: linear-gradient(120deg, var(--c-cyan) 0%, var(--c-blue) 50%, var(--c-violet) 100%);
-/* --- Metric colours (consistent across gauge, graph, labels) ---------- */
+
 --c-cyan: #22d3ee; --c-blue: #3b82f6; --c-violet: #a855f7;
 --c-amber: #fbbf24; --c-green: #34d399; --c-rose: #fb7185;
 --c-download: var(--c-cyan); --c-upload: var(--c-violet);
 --c-ping: var(--c-amber); --c-jitter: var(--c-green);
-/* --- Radii ----------------------------------------------------------- */
+
 --r-xs: 8px; --r-sm: 12px; --r-md: 16px; --r-lg: 22px; --r-xl: 28px; --r-pill: 999px;
-/* --- Spacing --------------------------------------------------------- */
+
 --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
 --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px;
-/* --- Typography ------------------------------------------------------ */
+
 --font-display: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
 --font-ui: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
-/* --- Motion ---------------------------------------------------------- */
+
 --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 --dur-fast: 140ms; --dur-med: 260ms; --dur-slow: 480ms;
-/* --- Layout ---------------------------------------------------------- */
+
 --container: 1120px; --container-narrow: 780px; --header-h: 68px; }
 
-/* ---- Dark theme (default) ---------------------------------------------- */
 [data-theme='dark'] {
-/* --- Surfaces ---------------------------------------------------------- */
+
 --bg: #070b16; --bg-2: #0b1020;
 --surface: rgba(255, 255, 255, 0.04); --surface-solid: #111830; --surface-2: rgba(255, 255, 255, 0.07);
 --surface-hover: rgba(255, 255, 255, 0.10);
 --border: rgba(255, 255, 255, 0.14); --border-strong: rgba(255, 255, 255, 0.16);
-/* --- Text --------------------------------------------------------------
-   --text-3 is the dimmest tone and is only used for genuinely secondary
-   labels. It is tuned to clear WCAG AA (4.5:1) on both themes. */
+
 --text: #f2f5fc; --text-2: #c0cbe0; --text-3: #9ba8c2;
-/* --- Shadows & effects ------------------------------------------------- */
+
 --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
 --shadow-md: 0 16px 40px -20px rgba(0, 0, 0, 0.75);
 --shadow-lg: 0 32px 70px -30px rgba(0, 0, 0, 0.85);
 --shadow-accent: 0 12px 32px -14px rgba(124, 92, 255, 0.75);
 --glass-blur: 20px; --glow: 0 0 70px -14px rgba(124, 92, 255, 0.55);
-/* --- Focus ------------------------------------------------------------- */
+
 --focus: var(--c-cyan); --shadow-1: 0 0 0 3px rgba(34, 211, 238, 0.45); }
 
-/* ---- Light theme -------------------------------------------------------- */
 [data-theme='light'] {
-/* --- Surfaces ---------------------------------------------------------- */
+
 --bg: #f4f6fb; --bg-2: #ffffff;
 --surface: rgba(255, 255, 255, 0.92); --surface-solid: #ffffff; --surface-2: rgba(15, 23, 42, 0.035);
 --surface-hover: rgba(15, 23, 42, 0.055);
 --border: rgba(15, 23, 42, 0.09); --border-strong: rgba(15, 23, 42, 0.16);
-/* --- Text --------------------------------------------------------------
-   --text-3 is the dimmest tone and is only used for genuinely secondary
-   labels. It is tuned to clear WCAG AA (4.5:1) on both themes. */
+
 --text: #0c1322; --text-2: #4a5466; --text-3: #626c80;
-/* --- Shadows & effects ------------------------------------------------- */
+
 --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
 --shadow-md: 0 18px 40px -22px rgba(15, 23, 42, 0.22);
 --shadow-lg: 0 30px 60px -32px rgba(15, 23, 42, 0.28);
 --shadow-accent: 0 12px 30px -14px rgba(99, 102, 241, 0.55);
 --glass-blur: 16px; --glow: 0 0 60px -16px rgba(99, 102, 241, 0.28);
-/* --- Focus ------------------------------------------------------------- */
+
 --focus: #4f46e5; --shadow-1: 0 0 0 3px rgba(79, 70, 229, 0.35);
-/* --- Metric colours, deepened so they stay AA on white ---------------- */
+
 --c-cyan: #0e8fae; --c-blue: #2563eb; --c-violet: #7c3aed;
 --c-amber: #b45309; --c-green: #047857; --c-rose: #be123c; }
-
-/* ==========================================================================
-   02. RESET & BASE
-   ========================================================================== */
 
 *,
 *::before,
@@ -126,16 +89,11 @@ background: color-mix(in srgb, var(--c-violet) 35%, transparent); }
 :focus-visible {
 outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
 
-/* Ambient gradient wash behind the whole page. */
 .bg-gradient {
 position: fixed; inset: 0; z-index: -1; pointer-events: none; background:
 radial-gradient(58rem 38rem at 14% -10%, color-mix(in srgb, var(--c-cyan) 16%, transparent), transparent 62%),
 radial-gradient(50rem 36rem at 86% 2%, color-mix(in srgb, var(--c-violet) 18%, transparent), transparent 64%),
 radial-gradient(46rem 32rem at 50% 106%, color-mix(in srgb, var(--c-blue) 12%, transparent), transparent 62%); }
-
-/* ==========================================================================
-   03. UTILITIES
-   ========================================================================== */
 
 .container {
 width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
@@ -157,10 +115,6 @@ margin-bottom: var(--sp-6); }
 font-size: clamp(1.6rem, 3.4vw, 2.15rem); }
 .section-sub {
 color: var(--text-2); margin-top: var(--sp-2); font-size: 0.975rem; }
-
-/* ==========================================================================
-   04. BUTTONS & CONTROLS
-   ========================================================================== */
 
 .btn {
 --btn-bg: var(--surface-2); --btn-fg: var(--text); --btn-border: var(--border); display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2); min-height: 44px; padding: 0 22px; border: 1px solid var(--btn-border); border-radius: var(--r-pill); background: var(--btn-bg); color: var(--btn-fg); font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; cursor: pointer; text-decoration: none; white-space: nowrap; transition: transform var(--dur-fast) var(--ease-out),
@@ -194,7 +148,6 @@ box-shadow: 0 18px 38px -14px rgba(124, 92, 255, 0.95); }
 .btn-small {
 min-height: 38px; padding: 0 16px; font-size: 0.86rem; }
 
-/* Big GO button */
 .btn-go {
 min-height: 60px; padding: 0 36px; font-size: 1.05rem; gap: var(--sp-3); letter-spacing: -0.02em; }
 .btn-go-icon {
@@ -206,7 +159,6 @@ background: rgba(255, 255, 255, 0.24); }
 .btn-go.is-running {
 pointer-events: none; opacity: 0; transform: scale(0.9); }
 
-/* Icon-only button (theme toggle) */
 .icon-btn {
 display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface); color: var(--text-2); cursor: pointer; transition: color var(--dur-fast) var(--ease-out),
 background-color var(--dur-fast) var(--ease-out),
@@ -223,10 +175,6 @@ display: none; }
 [data-theme='light'] .icon-btn .icon-moon {
 display: block; }
 
-/* ==========================================================================
-   05. HEADER
-   ========================================================================== */
-
 .site-header {
 position: sticky; top: 0; z-index: 40; height: var(--header-h); display: flex; align-items: center; background: color-mix(in srgb, var(--bg) 72%, transparent); border-bottom: 1px solid transparent; backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); transition: border-color var(--dur-med) var(--ease-out), background-color var(--dur-med) var(--ease-out); }
 .site-header.is-scrolled {
@@ -241,14 +189,12 @@ width: 30px; height: 30px; }
 font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.035em; }
 .header-nav {
 display: flex; gap: var(--sp-2); margin-inline-start: auto; font-size: 0.925rem; font-weight: 500; }
-/* The padding gives the links a 44px tap target without changing the
-   visual rhythm of the header. */
+
 .header-nav a {
 display: inline-flex; align-items: center; min-height: 44px; padding-inline: 12px; border-radius: var(--r-sm); color: var(--text-2); text-decoration: none; transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
 .header-nav a:hover {
 color: var(--text); background: var(--surface-2); }
-/* The portfolio link is the way back to the parent site, so it reads as an
-   external destination rather than an in-page section jump. */
+
 .header-portfolio-link {
 color: var(--text) !important; font-weight: 600; }
 .header-portfolio-link::after {
@@ -256,7 +202,6 @@ content: ''; display: inline-block; width: 6px; height: 6px; margin-left: 7px; b
 .header-actions {
 display: flex; align-items: center; gap: var(--sp-3); flex: none; }
 
-/* Unit toggle (segmented control with sliding indicator) */
 .unit-toggle {
 position: relative; display: inline-flex; padding: 3px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface-2); isolation: isolate; }
 .unit-btn {
@@ -267,10 +212,6 @@ color: var(--text); }
 position: absolute; z-index: 1; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: var(--r-pill); background: var(--surface-solid); border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: transform var(--dur-med) var(--ease-out); }
 .unit-toggle.is-mbs .unit-slider {
 transform: translateX(100%); }
-
-/* ==========================================================================
-   06. HERO & STEPPER
-   ========================================================================== */
 
 .hero {
 padding-block: clamp(40px, 6vw, 76px) clamp(24px, 4vw, 44px); text-align: center; }
@@ -287,9 +228,6 @@ content: ''; display: block; height: 3px; width: 72px; margin: var(--sp-5) auto 
 .lede {
 margin-top: var(--sp-4); color: var(--text-2); font-size: clamp(1rem, 2.2vw, 1.1rem); line-height: 1.65; }
 
-/* ---- Phase stepper -----------------------------------------------------
-   A segmented progress bar: each step is a pill that fills as the test
-   advances. The connecting line is drawn with a ::before pseudo-element. */
 .stepper {
 display: flex; justify-content: center; align-items: center; gap: 0; list-style: none; margin: clamp(26px, 4vw, 44px) auto clamp(18px, 3vw, 28px); padding: 0; flex-wrap: wrap; }
 .step {
@@ -318,17 +256,12 @@ background: var(--c-green); }
 box-shadow: 0 0 0 7px color-mix(in srgb, var(--c-cyan) 6%, transparent); }
 }
 
-/* ==========================================================================
-   07. TEST CARD & GAUGE
-   ========================================================================== */
-
 .test-card {
 position: relative; max-width: 880px; margin-inline: auto; padding: clamp(24px, 4vw, 40px); overflow: hidden; }
-/* Gradient hairline along the top edge of the card. */
+
 .test-card::before {
 content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c-cyan) 70%, transparent), color-mix(in srgb, var(--c-violet) 70%, transparent), transparent); }
 
-/* Status line above the gauge */
 .phase-label {
 display: inline-flex; align-items: center; gap: 9px; text-align: center; color: var(--text-2); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.01em; min-height: 1.6em; transition: color var(--dur-med) var(--ease-out); }
 .phase-dot {
@@ -359,16 +292,11 @@ font-family: var(--font-display); font-size: clamp(2.7rem, 12vw, 4rem); font-wei
 .gauge-unit {
 margin-top: 7px; color: var(--text-2); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
 
-/* Scale legend under the ring */
 .gauge-scale {
 position: absolute; inset: auto 0 12%; display: flex; justify-content: space-between; padding-inline: 6%; color: var(--text-3); font-size: 0.72rem; font-weight: 600; font-variant-numeric: tabular-nums; pointer-events: none; }
 
 .controls {
 display: flex; justify-content: center; align-items: center; gap: var(--sp-3); min-height: 64px; flex-wrap: wrap; }
-
-/* ==========================================================================
-   08. GRAPH
-   ========================================================================== */
 
 .graph-wrap {
 margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--border); }
@@ -380,10 +308,6 @@ font-size: 0.92rem; font-weight: 600; color: var(--text-2); }
 padding: 4px 11px; border: 1px solid var(--border); border-radius: var(--r-pill); background: var(--surface-2); color: var(--text-2); font-size: 0.78rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .graph {
 display: block; width: 100%; height: auto; aspect-ratio: 900 / 260; border-radius: var(--r-md); background: var(--surface-2); border: 1px solid var(--border); }
-
-/* ==========================================================================
-   09. ALERT
-   ========================================================================== */
 
 .alert {
 display: flex; align-items: flex-start; gap: var(--sp-3); margin-top: var(--sp-5); padding: var(--sp-4); border: 1px solid color-mix(in srgb, var(--c-rose) 35%, transparent); border-radius: var(--r-md); background: color-mix(in srgb, var(--c-rose) 9%, transparent); }
@@ -397,10 +321,6 @@ flex: 1; min-width: 0; }
 font-weight: 700; font-size: 0.93rem; }
 .alert-text {
 color: var(--text-2); font-size: 0.89rem; margin-top: 2px; }
-
-/* ==========================================================================
-   10. RESULTS
-   ========================================================================== */
 
 .verdict {
 display: flex; align-items: center; gap: var(--sp-5); padding: var(--sp-5) var(--sp-6); margin-bottom: var(--sp-5); border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-md); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); }
@@ -417,8 +337,7 @@ color: var(--text-2); font-size: 0.95rem; margin-top: 3px; }
 
 .metric-grid {
 display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); margin-bottom: var(--sp-5); }
-/* The download card is the headline: it takes a double-width cell and reads
-   larger, so the layout is a 2x2 block on wide screens (dl / ul / pi / ji). */
+
 .metric-hero {
 grid-column: span 2; }
 .metric-hero .metric-value {
@@ -427,10 +346,10 @@ font-size: clamp(2.4rem, 7vw, 3.4rem); }
 position: relative; padding: var(--sp-5); overflow: hidden; transition: transform var(--dur-med) var(--ease-out), border-color var(--dur-med) var(--ease-out); }
 .metric:hover {
 transform: translateY(-2px); border-color: color-mix(in srgb, var(--metric-color, var(--c-cyan)) 40%, transparent); }
-/* Coloured accent line along the bottom edge. */
+
 .metric::after {
 content: ''; position: absolute; inset: auto 0 0 0; height: 2px; background: var(--metric-color, var(--c-cyan)); opacity: 0.85; }
-/* Soft colour wash that grows on hover. */
+
 .metric::before {
 content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--metric-color, var(--c-cyan)) 12%, transparent), transparent 70%); transition: opacity var(--dur-med) var(--ease-out); }
 .metric:hover::before {
@@ -454,7 +373,6 @@ width: 17px; height: 17px; }
 .metric-name {
 display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-ui); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
 
-/* Tooltip trigger */
 .tip {
 display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; background: transparent; color: var(--text-3); cursor: help; border-radius: 50%; transition: color var(--dur-fast) var(--ease-out); }
 .tip:hover, .tip:focus-visible {
@@ -462,7 +380,6 @@ color: var(--c-cyan); }
 .tip svg {
 width: 15px; height: 15px; }
 
-/* Floating tooltip bubble */
 .tooltip {
 position: fixed; z-index: 60; max-width: min(280px, calc(100vw - 24px)); padding: 10px 13px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface-solid); color: var(--text-2); font-size: 0.82rem; line-height: 1.5; box-shadow: var(--shadow-lg); pointer-events: none; animation: tip-in var(--dur-fast) var(--ease-out); }
 .tooltip[hidden] {
@@ -479,7 +396,6 @@ font-family: var(--font-ui); font-size: 0.9rem; font-weight: 600; color: var(--t
 .metric-note {
 margin-top: 8px; color: var(--text-3); font-size: 0.82rem; line-height: 1.45; min-height: 1.2em; }
 
-/* ---- Connection details ------------------------------------------------- */
 .info-card {
 padding: var(--sp-5) var(--sp-6) var(--sp-5); }
 .info-head {
@@ -499,10 +415,6 @@ margin: 0; font-size: 0.94rem; font-weight: 500; word-break: break-word; }
 display: flex; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-5); }
 .share-canvas {
 display: none; }
-
-/* ==========================================================================
-   11. HISTORY
-   ========================================================================== */
 
 .history-card {
 padding: var(--sp-3) var(--sp-6) var(--sp-4); }
@@ -530,10 +442,6 @@ display: block; height: 100%; border-radius: inherit; background: var(--brand-gr
 text-align: center; color: var(--text-3); padding: var(--sp-6) 0; font-size: 0.92rem; }
 .history-foot {
 display: flex; justify-content: flex-end; padding-top: var(--sp-4); border-top: 1px solid var(--border); margin-top: var(--sp-2); }
-
-/* ==========================================================================
-   12. HOW IT WORKS & FAQ
-   ========================================================================== */
 
 .how-grid {
 display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: var(--sp-4); list-style: none; margin: 0; padding: 0; }
@@ -571,10 +479,6 @@ padding: 0 var(--sp-5) var(--sp-5); color: var(--text-2); font-size: 0.92rem; }
 .faq-body p + p {
 margin-top: var(--sp-3); }
 
-/* ==========================================================================
-   13. FOOTER
-   ========================================================================== */
-
 .site-footer {
 border-top: 1px solid var(--border); padding-block: var(--sp-7) var(--sp-6); margin-top: var(--sp-6); }
 .footer-inner {
@@ -596,10 +500,6 @@ color: var(--c-cyan); background: var(--surface-2); }
 .footer-note {
 max-width: var(--container); margin: var(--sp-6) auto 0; padding-inline: clamp(16px, 4vw, 32px); color: var(--text-3); font-size: 0.8rem; text-align: center; }
 
-/* ==========================================================================
-   14. RESPONSIVE
-   ========================================================================== */
-
 @media (max-width: 780px) { .header-nav { display: none; }
 .header-actions {
 margin-inline-start: auto; }
@@ -614,8 +514,7 @@ flex-direction: column; }
 }
 @media (max-width: 900px) { .metric-grid { grid-template-columns: 1fr 1fr; }
 .metric-hero { grid-column: span 2; }
-/* On two-column layouts the last card would sit alone, so let it span the
-   full width and keep the block visually balanced. */
+
 .metric:last-child { grid-column: span 2; }
 }
 @media (max-width: 520px) { .unit-btn { min-height: 32px; padding: 0 10px; font-size: 0.76rem; }
@@ -640,8 +539,7 @@ grid-template-columns: 1fr; }
 .history-bar {
 max-width: none; }
 }
-@media (max-width: 420px) { /* Keep the header on one line at 320px: the brand
-shrinks, the unit toggle tightens and the gaps close up. */
+@media (max-width: 420px) { 
 .header-inner {
 gap: var(--sp-2); }
 .brand {
@@ -673,10 +571,6 @@ margin-left: 12px; }
 .step + .step::before {
 left: -12px; width: 12px; }
 }
-
-/* ==========================================================================
-   15. MOTION & ACCESSIBILITY
-   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }
 *,

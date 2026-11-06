@@ -1,75 +1,41 @@
-/**
- * Typing Test — Core Engine
- * Framework-agnostic typing engine: timer, input processing, metrics, sampling.
- * No DOM access. The UI layer feeds keystrokes in and consumes stats/events out.
- *
- * ---------------------------------------------------------------------------
- * Metric formulas (all documented, no artificial inflation):
- *
- *   elapsedMs  — wall-clock ms from test start to now, minus paused time.
- *                Derived from performance.now() timestamps, never frame counts.
- *
- *   correct    — positions i < min(typed.length, text.length) where
- *                typed[i] === text[i].
- *   incorrect  — positions i < min(typed.length, text.length) where
- *                typed[i] !== text[i].
- *   extra      — max(0, typed.length - text.length)  (chars beyond the target).
- *   missed     — max(0, text.length - typed.length)  (target chars never typed).
- *
- *   keystroke accuracy uses insert events only (backspace is not a keystroke):
- *   correctKeystrokes / totalKeystrokes * 100.
- *
- *   net WPM  = (correct / 5) / minutesElapsed        (five-char word convention)
- *   raw WPM  = ((correct + incorrect + extra) / 5) / minutesElapsed
- *   errorRate= incorrectKeystrokes / totalKeystrokes * 100
- *
- *   consistency = max(0, (1 - stddev(rawWpmPerSecond) / mean(rawWpmPerSecond))) * 100
- *                (coefficient of variation of per-second raw speed samples)
- *
- *   corrected errors   = incorrect insert keystrokes whose position was later
- *                        fixed or deleted.
- *   uncorrected errors = incorrect chars remaining at finish + extra chars.
- * ---------------------------------------------------------------------------
- */
-
 window.TypingEngine = (function () {
   'use strict';
 
-  const CHAR_LIMIT = 20000;        // hard cap on target text length
-  const EXTRA_CHAR_CAP = 50;       // max extra chars beyond target before input is ignored
-  const KEYLOG_CAP = 5000;         // cap on raw keystroke log entries
+  const CHAR_LIMIT = 20000;        
+  const EXTRA_CHAR_CAP = 50;       
+  const KEYLOG_CAP = 5000;         
 
   const DEFAULT_CONFIG = {
-    mode: 'time',          // 'time' | 'words'
-    limit: 30,             // seconds for time mode, words for words mode
+    mode: 'time',          
+    limit: 30,             
     text: '',
-    stopOnError: false,    // reserved: hard-lock on first error (not enabled by default)
-    meta: {}               // { content, language, difficulty, practice, daily, ... }
+    stopOnError: false,    
+    meta: {}               
   };
 
   function createEngine(userConfig) {
     const config = Object.assign({}, DEFAULT_CONFIG, userConfig || {});
 
-    /* ---------------- state ---------------- */
-    let text = '';                 // target text
-    let typed = '';                // what the user has typed
-    let state = 'idle';            // idle | running | paused | finished
-    let startAt = 0;               // performance.now() at start
+    
+    let text = '';                 
+    let typed = '';                
+    let state = 'idle';            
+    let startAt = 0;               
     let endAt = 0;
-    let pausedAt = 0;              // when the current pause began
+    let pausedAt = 0;              
     let totalPausedMs = 0;
 
-    let totalKeystrokes = 0;       // insert keystrokes
+    let totalKeystrokes = 0;       
     let correctKeystrokes = 0;
     let incorrectKeystrokes = 0;
     let backspaces = 0;
-    let deletedErrors = 0;         // backspaces that removed an incorrect char
+    let deletedErrors = 0;         
     let skippedWords = 0;
-    let lastKeystrokeAt = 0;       // performance.now()-relative via elapsedMs at last insert
-    let afkGaps = [];              // large idle gaps [gapMs]
+    let lastKeystrokeAt = 0;       
+    let afkGaps = [];              
 
-    let keystrokeLog = [];         // { t, kind, expected, actual, correct }
-    let perSecondSamples = [];     // { t, wpm, rawWpm, correct, incorrect, errors, totalErrors, keystrokes, accuracy }
+    let keystrokeLog = [];         
+    let perSecondSamples = [];     
     let lastSampleSecond = -1;
     let errorsThisSecond = 0;
     let keystrokesThisSecond = 0;
@@ -77,7 +43,7 @@ window.TypingEngine = (function () {
 
     let listeners = { update: [], finish: [], state: [] };
 
-    /* ---------------- helpers ---------------- */
+    
 
     function now() { return performance.now(); }
 
@@ -180,13 +146,13 @@ window.TypingEngine = (function () {
 
     function sampleSecondIfDue() {
       const sec = Math.floor(elapsedMs() / 1000);
-      // Fill any missed seconds with the latest values so graphs stay aligned
+      
       while (lastSampleSecond < sec) {
         lastSampleSecond++;
         const snap = snapshotForCharts();
         snap.t = lastSampleSecond;
         perSecondSamples.push(snap);
-        // counters reset per sampled second
+        
         errorsThisSecond = 0;
         keystrokesThisSecond = 0;
         correctKeystrokesThisSecond = 0;
@@ -195,7 +161,7 @@ window.TypingEngine = (function () {
 
     function emit(name, payload) {
       (listeners[name] || []).forEach((fn) => {
-        try { fn(payload); } catch (e) { /* listener errors must not break the engine */ }
+        try { fn(payload); } catch (e) {  }
       });
     }
 
@@ -233,7 +199,7 @@ window.TypingEngine = (function () {
       };
     }
 
-    /* ---------------- public control ---------------- */
+    
 
     function start() {
       if (state !== 'idle') return false;
@@ -267,31 +233,31 @@ window.TypingEngine = (function () {
     function finish(reason) {
       if (state === 'finished' || state === 'idle') return null;
       if (state === 'paused') {
-        // A paused test that ends (e.g. word mode complete is impossible while paused,
-        // but be safe) — fold the pending pause into totals first.
+        
+        
         totalPausedMs += now() - pausedAt;
       }
       state = 'finished';
       endAt = now();
-      // Final sample flush so graphs include the last partial second
+      
       sampleSecondIfDue();
 
       const s = charStats();
-      // Guard: tests ending in under half a second of active typing (e.g.
-      // programmatic or accidental input) would otherwise inflate WPM.
+      
+      
       const activeSeconds = elapsedMs() / 1000;
       const reliable = activeSeconds >= 0.5 && totalKeystrokes >= 3;
       const minutes = elapsedMs() / 60000;
       const net = (reliable && minutes > 0) ? (s.correct / 5) / minutes : 0;
       const raw = (reliable && minutes > 0) ? ((s.correct + s.incorrect + s.extra) / 5) / minutes : 0;
       const acc = computeAccuracy();
-      // corrected = recomputed from the keystroke log on every backspace
+      
       const corrected = Math.max(0, Math.min(incorrectKeystrokes, deletedErrors));
       const uncorrected = s.incorrect + s.extra;
 
       const validation = computeValidation(s, acc, activeSeconds, reliable);
 
-      // Most-frequently missed expected characters (uncorrected wrong positions)
+      
       const missedCharMap = {};
       const comparable = Math.min(typed.length, text.length);
       for (let i = 0; i < comparable; i++) {
@@ -333,7 +299,7 @@ window.TypingEngine = (function () {
         frequentErrors,
         samples: perSecondSamples.slice(),
         validation,
-        // For review: store target + typed so the dashboard can colour-code the passage
+        
         text,
         typed
       };
@@ -361,19 +327,16 @@ window.TypingEngine = (function () {
       emit('update', liveStats());
     }
 
-    /* ---------------- input processing ---------------- */
+    
 
-    /**
-     * Process one inserted character.
-     * Returns true if the char was accepted.
-     */
+    
     function typeChar(ch) {
       if (state === 'idle') {
         if (!start()) return false;
       }
       if (state !== 'running') return false;
       if (isTimeUp()) { finish('time'); return false; }
-      // Ignore exotic control chars other than newline (code mode)
+      
       if (ch !== '\n' && (ch.charCodeAt(0) < 32 || ch === '\u007f')) return false;
       if (typed.length - text.length >= EXTRA_CHAR_CAP) return false;
 
@@ -414,11 +377,7 @@ window.TypingEngine = (function () {
       return true;
     }
 
-    /**
-     * Remove up to `count` characters from the end of the typed string.
-     * Returns number actually removed. Backspacing an incorrect character
-     * registers it as corrected.
-     */
+    
     function backspace(count) {
       if (state !== 'running') return 0;
       if (typed.length === 0) return 0;
@@ -433,8 +392,8 @@ window.TypingEngine = (function () {
         }
       }
       if (removed > 0) {
-        // Recompute corrected errors from the keystroke log: an incorrect
-        // insert is "corrected" if its position is no longer mistyped.
+        
+        
         recomputeCorrections();
         sampleSecondIfDue();
         emit('update', liveStats());
@@ -442,20 +401,7 @@ window.TypingEngine = (function () {
       return removed;
     }
 
-    /**
-     * Walk the insert portion of the keystroke log and count how many
-     * incorrect insertions no longer show as mistyped at their position.
-     * This survives multi-char input diffs (mobile IME, autocorrect).
-     *
-     * Implementation: for each incorrect insert, compare the character that
-     * was typed (entry.actual) against the character currently sitting at
-     * that replayed position. If the current character differs from the old
-     * wrong one, the error has been corrected (backspaced and retyped —
-     * whether correctly or with a *different* wrong character). This keeps
-     * `corrected + final uncorrected positions` consistent per position:
-     * each replayed position contributes at most one net corrected error
-     * once its char no longer matches the old wrong attempt.
-     */
+    
     function recomputeCorrections() {
       let pos = 0;
       let corrected = 0;
@@ -463,9 +409,9 @@ window.TypingEngine = (function () {
         if (entry.kind === 'delete') { pos = Math.max(0, pos - 1); return; }
         if (!entry.correct) {
           if (pos >= typed.length) {
-            corrected++; // char was deleted and never retyped
+            corrected++; 
           } else if (typed[pos] !== entry.actual) {
-            corrected++; // position no longer holds that wrong character
+            corrected++; 
           }
         }
         pos++;
@@ -473,12 +419,7 @@ window.TypingEngine = (function () {
       deletedErrors = corrected;
     }
 
-    /**
-     * Jump past the rest of the current word, padding missed characters
-     * with spaces so the engine lands exactly at the next word boundary.
-     * Used by spacebar word-skip on incorrect words.
-     * Returns true if a skip occurred.
-     */
+    
     function skipWord() {
       if (state !== 'running') return false;
       const cursor = typed.length;
@@ -532,33 +473,27 @@ window.TypingEngine = (function () {
       return false;
     }
 
-    /**
-     * Sync from a full input value (used by the hidden-textarea UI layer).
-     * Handles multi-char additions (mobile IME / autocorrect) and deletions.
-     */
+    
     function syncFromValue(value) {
       if (state === 'finished') return;
-      // Find the divergence point between old typed and new value
+      
       let prefix = 0;
       const minLen = Math.min(typed.length, value.length);
       while (prefix < minLen && typed[prefix] === value[prefix]) prefix++;
-      // If nothing diverged and lengths match, nothing changed
+      
       if (prefix === typed.length && prefix === value.length) return;
-      // Delete from the divergence point onward (if any were typed past it)
+      
       if (typed.length > prefix) {
         backspace(typed.length - prefix);
       }
-      // Type the new suffix (if any)
+      
       const newSuffix = value.slice(prefix);
       for (let i = 0; i < newSuffix.length; i++) {
         if (!typeChar(newSuffix[i])) break;
       }
     }
 
-    /**
-     * Append more text to the target (time-mode streaming top-up).
-     * Only extends; never rewrites what the user is typing against.
-     */
+    
     function extendText(more) {
       if (!more) return false;
       if (text.length >= CHAR_LIMIT) return false;
@@ -593,7 +528,7 @@ window.TypingEngine = (function () {
       };
     }
 
-    /* ---------------- subscriptions ---------------- */
+    
 
     function on(event, fn) {
       if (!listeners[event]) listeners[event] = [];
@@ -607,18 +542,18 @@ window.TypingEngine = (function () {
       listeners = { update: [], finish: [], state: [] };
     }
 
-    /* ---------------- init ---------------- */
+    
 
     reset();
 
     return {
-      // control
+      
       start, pause, resume, finish, reset, destroy,
-      // input
+      
       typeChar, backspace, syncFromValue, extendText, skipWord,
-      // helpers
+      
       currentWordHasError,
-      // queries
+      
       on,
       getState: () => state,
       getConfig: () => Object.assign({}, config),
@@ -626,7 +561,7 @@ window.TypingEngine = (function () {
       getTyped: () => typed,
       getElapsedMs: () => elapsedMs(),
       liveStats,
-      // testing / introspection
+      
       _internals: () => ({
         keystrokeLog: keystrokeLog.slice(),
         samples: perSecondSamples.slice(),

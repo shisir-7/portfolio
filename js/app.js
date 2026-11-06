@@ -1,8 +1,3 @@
-/**
- * Shisir Acharya — Personal Portfolio Application Engine
- * Pure Vanilla JavaScript (Zero External Dependencies)
- */
-
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initLiveClock();
@@ -16,14 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initCookieConsent();
 });
 
-/* --------------------------------------------------------------------------
-   1. Theme Management (Editorial Warm Linen vs Obsidian Dark)
-   -------------------------------------------------------------------------- */
 function initTheme() {
   const themeToggleBtn = document.getElementById('theme-toggle');
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   
-  // Check stored preference or system preference
+  
   const savedTheme = localStorage.getItem('sa-theme');
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
@@ -53,9 +45,6 @@ function initTheme() {
   }
 }
 
-/* --------------------------------------------------------------------------
-   2. Live Kapilvastu Local Time (Asia/Kathmandu: UTC+5:45)
-   -------------------------------------------------------------------------- */
 function initLiveClock() {
   const clockEl = document.getElementById('live-time');
   const footerClockEl = document.getElementById('footer-live-time');
@@ -84,9 +73,6 @@ function initLiveClock() {
   setInterval(updateTime, 1000);
 }
 
-/* --------------------------------------------------------------------------
-   3. Responsive Navigation & Mobile Drawer
-   -------------------------------------------------------------------------- */
 function initNavigation() {
   const mobileToggle = document.getElementById('mobile-nav-toggle');
   const mobileDrawer = document.getElementById('mobile-nav-drawer');
@@ -139,9 +125,6 @@ function initNavigation() {
   }
 }
 
-/* --------------------------------------------------------------------------
-   4. Selected Work Gallery & Filtering
-   -------------------------------------------------------------------------- */
 function initProjects() {
   const grid = document.getElementById('projects-grid');
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -169,11 +152,7 @@ function initProjects() {
       || (words.includes('speed') && words.includes('test'));
   }
 
-  /**
-   * Detects a search aimed at the internet speed test.
-   * Keeps it separate from isTypingSearch so a bare "speed test" can be
-   * routed to the right tool instead of always favouring the typing test.
-   */
+  
   function isSpeedTestSearch(query) {
     const normalized = normalizeSearchText(query);
     const words = normalized.split(/\s+/).filter(Boolean);
@@ -189,7 +168,7 @@ function initProjects() {
     const normalizedQuery = normalizeSearchText(query);
     if (!normalizedQuery) return true;
     if (project.id === 'typing-speed-test') {
-      // The typing test only answers typing intent, never a network-speed query.
+      
       if (isSpeedTestSearch(normalizedQuery) && !mentionsTypingIntent(normalizedQuery)) return false;
       return isTypingSearch(normalizedQuery);
     }
@@ -207,7 +186,7 @@ function initProjects() {
       || normalizedQuery.split(' ').every(term => searchableText.includes(term));
   }
 
-  /** True when the query explicitly names the typing tool. */
+  
   function mentionsTypingIntent(normalizedQuery) {
     const words = normalizeSearchText(normalizedQuery).split(/\s+/).filter(Boolean);
     return words.some(word => ['typing', 'type', 'wpm', 'monkeytype', 'keystroke', 'accuracy'].includes(word));
@@ -221,8 +200,8 @@ function initProjects() {
     const speedIntent = isSpeedTestSearch(normalizedQuery);
     const mentionsTyping = mentionsTypingIntent(normalizedQuery);
 
-    // A bare "speed test" is ambiguous. When the query mentions typing, the
-    // typing test is the closer match; otherwise the internet speed test is.
+    
+    
     const typingWins = typingIntent && (!speedIntent || mentionsTyping);
 
     const priority = project => {
@@ -274,8 +253,8 @@ function initProjects() {
   }
 
   function renderProjects(category = activeCategory, query = searchQuery) {
-    // A tool-focused search overrides the discipline filter, otherwise the
-    // result would be hidden by an unrelated active tab.
+    
+    
     const toolIntent = isTypingSearch(query) || isSpeedTestSearch(query);
     const categoryMatches = category === 'all' || toolIntent
       ? window.PORTFOLIO_PROJECTS 
@@ -322,7 +301,7 @@ function initProjects() {
       counterEl.textContent = `SHOWING ${filtered.length} OF ${window.PORTFOLIO_PROJECTS.length} WORKS`;
     }
 
-    // Attach click and enter key handlers to cards
+    
     const cards = grid.querySelectorAll('.project-card');
     cards.forEach(card => {
       if (card.tagName === 'A') return;
@@ -386,7 +365,7 @@ function initProjects() {
     });
   }
 
-  // Filter tab events
+  
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
@@ -396,13 +375,10 @@ function initProjects() {
     });
   });
 
-  // Initial render
+  
   renderProjects('all');
 }
 
-/* --------------------------------------------------------------------------
-   5. Case Study Modal Engine & Dynamic CTAs
-   -------------------------------------------------------------------------- */
 function initCaseStudyModal() {
   const modalOverlay = document.getElementById('case-study-modal');
   const modalDrawer = document.getElementById('modal-drawer');
@@ -457,13 +433,13 @@ function initCaseStudyModal() {
     }
   });
 
-  // Global trigger function
+  
   window.openCaseStudy = function(projectId) {
     const project = window.PORTFOLIO_PROJECTS.find(p => p.id === projectId);
     if (!project) return;
     previouslyFocusedElement = document.activeElement;
 
-    // Fill Modal Content
+    
     document.getElementById('modal-num').textContent = `[ PROJECT ${project.number} ]`;
     document.getElementById('modal-title').textContent = project.title;
     document.getElementById('modal-headline').textContent = project.headline;
@@ -477,7 +453,7 @@ function initCaseStudyModal() {
     modalImg.src = project.image;
     modalImg.alt = project.imageAlt;
 
-    // Dynamic Project Links CTAs (View Live Prototype & Source Code)
+    
     const linksContainer = document.getElementById('modal-project-links');
     if (linksContainer) {
       let buttonsHtml = '';
@@ -500,7 +476,7 @@ function initCaseStudyModal() {
         `;
       }
 
-      // Only display the container if at least one URL is provided
+      
       if (buttonsHtml.trim() !== '') {
         linksContainer.innerHTML = buttonsHtml;
         linksContainer.style.display = 'flex';
@@ -529,7 +505,7 @@ function initCaseStudyModal() {
       .map(tool => `<span class="tool-tag">${tool}</span>`)
       .join('');
 
-    // Open modal
+    
     modalOverlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     modalDrawer.scrollTop = 0;
@@ -547,9 +523,6 @@ function initCaseStudyModal() {
   };
 }
 
-/* --------------------------------------------------------------------------
-   6. Inquiry Form Submission & 3-Second Feedback
-   -------------------------------------------------------------------------- */
 function initInquiryForm() {
   const form = document.getElementById('inquiry-form');
   if (!form) return;
@@ -581,7 +554,7 @@ function initInquiryForm() {
       return;
     }
 
-    // Feedback state: Disable button and update text for 3 seconds
+    
     if (submitBtn) {
       const originalContent = submitBtn.innerHTML;
       submitBtn.disabled = true;
@@ -601,14 +574,11 @@ function initInquiryForm() {
     const bodyContent = `Hello Shisir,\n\nName: ${name}\nEmail: ${email}\nDiscipline / Interest: ${service}\n\nProject Details:\n${message}\n\n[Consent Confirmed: 16+ or Guardian Approval | Direct Inquiry]\n[Communication Preference: Reply 'UNSUBSCRIBE' or 'CEASE' at any time to delete correspondence and stop replies]\nSent from your portfolio website inquiry system.`;
     const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${encodeURIComponent(bodyContent)}`;
 
-    // Open visitor's default email client
+    
     window.location.href = mailtoUrl;
   });
 }
 
-/* --------------------------------------------------------------------------
-   7. Email Address Copy to Clipboard
-   -------------------------------------------------------------------------- */
 function initClipboard() {
   const copyBtn = document.getElementById('copy-email-btn');
   const emailText = 'acharyashiru939@gmail.com';
@@ -626,17 +596,14 @@ function initClipboard() {
         copyBtn.innerHTML = originalHtml;
       }, 2500);
     }).catch(() => {
-      // Fallback
+      
       alert(`Email: ${emailText}`);
     });
   });
 }
 
-/* --------------------------------------------------------------------------
-   8. Subtle Custom Cursor (Desktop Mouse Only)
-   -------------------------------------------------------------------------- */
 function initCustomCursor() {
-  // If reduced motion is preferred or device is touch only, exit
+  
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(pointer: coarse)').matches) {
     return;
   }
@@ -672,7 +639,7 @@ function initCustomCursor() {
 
   requestAnimationFrame(animateFollower);
 
-  // Expand cursor over interactive elements
+  
   const hoverElements = document.querySelectorAll('a, button, .project-card, input, select, textarea');
   hoverElements.forEach(el => {
     el.addEventListener('mouseenter', () => follower.classList.add('cursor-hover'));
@@ -680,9 +647,6 @@ function initCustomCursor() {
   });
 }
 
-/* --------------------------------------------------------------------------
-   9. Active Navigation Spy & Back to Top
-   -------------------------------------------------------------------------- */
 function initScrollSpy() {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.site-nav__link');
@@ -716,9 +680,6 @@ function initScrollSpy() {
   }
 }
 
-/* --------------------------------------------------------------------------
-   10. Cookie & Local Preference Consent Banner
-   -------------------------------------------------------------------------- */
 function initCookieConsent() {
   const banner = document.getElementById('cookie-banner');
   const acceptBtn = document.getElementById('cookie-accept-btn');
@@ -728,7 +689,7 @@ function initCookieConsent() {
 
   const consentGiven = localStorage.getItem('sa-cookie-consent');
   if (!consentGiven) {
-    // Show banner after brief delay
+    
     setTimeout(() => {
       banner.removeAttribute('hidden');
       banner.classList.add('visible');
@@ -750,4 +711,3 @@ function initCookieConsent() {
     declineBtn.addEventListener('click', () => hideBanner('declined_non_essential'));
   }
 }
-

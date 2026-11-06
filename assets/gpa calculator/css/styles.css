@@ -93,7 +93,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   box-shadow: 0 0 0 3px var(--accent-muted);
   outline: none;
 }
-/* Custom Dropdowns */
+
 .custom-dropdown {
   position: relative;
   width: 100%;

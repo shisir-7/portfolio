@@ -1,12 +1,3 @@
-/**
- * Typing Test — History & Personal Progress
- * Local-only persistence via localStorage (no account, no backend, no sync).
- * All reads are defensive: corrupted or foreign data never breaks the app.
- *
- * Result records are stored in a single JSON array under STORAGE_KEY,
- * capped at MAX_ENTRIES (oldest evicted first).
- */
-
 window.TypingHistory = (function () {
   'use strict';
 
@@ -91,7 +82,7 @@ window.TypingHistory = (function () {
       parsed = raw ? JSON.parse(raw) : [];
     } catch (e) {
       parsed = [];
-      try { localStorage.setItem(STORAGE_KEY + '.corrupt', String(Date.now())); } catch (e2) { /* ignore */ }
+      try { localStorage.setItem(STORAGE_KEY + '.corrupt', String(Date.now())); } catch (e2) {  }
     }
     if (!Array.isArray(parsed)) parsed = [];
     cache = parsed.map(sanitizeResult).filter(Boolean);
@@ -145,7 +136,7 @@ window.TypingHistory = (function () {
   function clear() {
     cache = [];
     if (storageOk) {
-      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {  }
     }
   }
 

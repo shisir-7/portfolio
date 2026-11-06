@@ -44,8 +44,7 @@
     }
   </script>
 
-  <!-- Fonts and styles are self-contained in this folder. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
@@ -54,14 +53,13 @@
   <link rel="stylesheet" href="/typing/styles/components.css" />
   <link rel="stylesheet" href="/typing/styles/typing.css" />
 
-  <!-- Pre-theme: avoid a flash of the wrong theme -->
-  <script>
+<script>
     (function () {
       try {
         var t = localStorage.getItem('typing-theme');
         if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
         document.documentElement.setAttribute('data-theme', t || 'light');
-      } catch (e) { /* ignore */ }
+      } catch (e) {  }
     })();
   </script>
 </head>
@@ -69,8 +67,7 @@
 
   <div class="tt-scrim" id="tt-scrim" aria-hidden="true"></div>
 
-  <!-- ============ Header ============ -->
-  <header class="site-header focus-dim" role="banner">
+<header class="site-header focus-dim" role="banner">
     <div class="container site-header__inner">
       <div class="site-brand">
         <svg class="site-brand__logo" width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -108,8 +105,7 @@
     </div>
   </header>
 
-  <!-- ============ Main ============ -->
-  <main class="site-main">
+<main class="site-main">
     <div class="container">
 
       <header class="section-header focus-dim">
@@ -120,8 +116,7 @@
         <h1 class="sr-only">Free Online Typing Speed Test</h1>
       </header>
 
-      <!-- ======= TEST VIEW ======= -->
-      <div class="tt-view visible" id="view-test" aria-label="Typing test">
+<div class="tt-view visible" id="view-test" aria-label="Typing test">
         <div class="typing-shell">
 
           <div class="mode-bar focus-dim" id="mode-bar" aria-label="Test settings"></div>
@@ -164,8 +159,6 @@
                 rows="1"></textarea>
             </div>
 
-
-
             <div class="stage-overlay" id="countdown-overlay" aria-live="assertive">
               <div class="countdown-number" id="countdown-label">3</div>
             </div>
@@ -179,18 +172,15 @@
             </div>
           </div>
 
-
         </div>
       </div>
 
-      <!-- ======= RESULTS VIEW ======= -->
-      <div class="tt-view" id="view-results" aria-label="Test results">
+<div class="tt-view" id="view-results" aria-label="Test results">
         <div class="typing-shell typing-shell--results">
           <div id="result-validity" class="result-validity" role="status" aria-live="polite"></div>
           <div class="result-mode-line" id="result-mode">—</div>
 
-          <!-- Large unified background graph — the main visual -->
-          <div class="result-graph-stage" id="result-graph-stage" aria-label="Performance graph">
+<div class="result-graph-stage" id="result-graph-stage" aria-label="Performance graph">
             <div class="result-unified-wrap" id="result-unified-wrap">
               <div class="result-unified-header">
                 <span class="result-unified-title">Performance</span>
@@ -207,8 +197,7 @@
             </div>
           </div>
 
-          <!-- Key statistics — now below the graph, larger & well-aligned -->
-          <div class="result-hero result-hero--premium result-hero--below" id="result-hero">
+<div class="result-hero result-hero--premium result-hero--below" id="result-hero">
             <div class="result-big result-big--large result-big--animated">
               <div class="result-big__item" style="--i:0"><div class="result-big__value result-big__value--accent" id="result-wpm">0</div><div class="result-big__label">WPM</div><div class="result-big__sub" id="result-wpm-sub"></div></div>
               <div class="result-big__item" style="--i:1"><div class="result-big__value" id="result-acc">0%</div><div class="result-big__label">Accuracy</div><div class="result-big__sub" id="result-acc-sub"></div></div>
@@ -228,8 +217,7 @@
             <button class="btn btn--outline" id="results-view-history">History</button>
           </div>
 
-          <!-- Personal best -->
-          <div class="personal-best" id="personal-best" hidden>
+<div class="personal-best" id="personal-best" hidden>
             <div class="personal-best__header">
               <span class="personal-best__title">Personal best</span>
               <span class="personal-best__meta" id="personal-best-meta"></span>
@@ -240,8 +228,7 @@
             </div>
           </div>
 
-          <!-- Detailed breakdown — open, borderless -->
-          <div class="stat-grid stat-grid--open">
+<div class="stat-grid stat-grid--open">
             <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-correct">0</div><div class="stat-card__label">correct chars</div></div>
             <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-incorrect">0</div><div class="stat-card__label">incorrect chars</div></div>
             <div class="stat-card stat-card--open"><div class="stat-card__value" id="result-extra">0</div><div class="stat-card__label">extra chars</div></div>
@@ -297,8 +284,7 @@
     </div>
   </main>
 
-  <!-- ============ Settings panel ============ -->
-  <aside class="side-panel" id="settings-panel" aria-label="Typing test settings" aria-hidden="true">
+<aside class="side-panel" id="settings-panel" aria-label="Typing test settings" aria-hidden="true">
     <div class="side-panel__header">
       <h2>Settings</h2>
       <button class="tt-icon-btn" id="settings-close" aria-label="Close settings">
@@ -408,8 +394,7 @@
     </div>
   </aside>
 
-  <!-- ============ History panel ============ -->
-  <aside class="side-panel" id="history-panel" style="width: min(560px, 96vw);" aria-label="Test history" aria-hidden="true">
+<aside class="side-panel" id="history-panel" style="width: min(560px, 96vw);" aria-label="Test history" aria-hidden="true">
     <div class="side-panel__header">
       <h2>Test History</h2>
       <button class="tt-icon-btn" id="history-close" aria-label="Close history">
@@ -481,8 +466,7 @@
     </div>
   </aside>
 
-  <!-- Personal best celebration -->
-  <div class="record-toast" id="record-toast" role="status" aria-live="polite" hidden>
+<div class="record-toast" id="record-toast" role="status" aria-live="polite" hidden>
     <div class="record-toast__confetti" id="record-confetti" aria-hidden="true"></div>
     <div class="record-toast__body">
       <div class="record-toast__badge">New personal best</div>
@@ -492,8 +476,7 @@
     <button class="record-toast__close" id="record-close" type="button" aria-label="Dismiss">✕</button>
   </div>
 
-      <!-- ============ Restart confirmation ============ -->
-  <div class="modal-overlay-center" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+<div class="modal-overlay-center" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
     <div class="confirm-card">
       <h3 id="confirm-title">Restart test?</h3>
       <p>The current run is still active and will be discarded.</p>
@@ -504,8 +487,7 @@
     </div>
   </div>
 
-  <!-- ============ Help ============ -->
-  <div class="modal-overlay-center" id="help-overlay" role="dialog" aria-modal="true" aria-labelledby="help-title">
+<div class="modal-overlay-center" id="help-overlay" role="dialog" aria-modal="true" aria-labelledby="help-title">
     <div class="help-card">
       <h2 id="help-title">Typing Speed Test</h2>
       <p class="font-serif italic help-sub">Fast, accurate, and private — every number is computed from your actual keystrokes.</p>

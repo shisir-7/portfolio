@@ -1,9 +1,3 @@
-/**
- * Shisir Acharya — Typing Speed Test Application
- * Vanilla JS, zero dependencies. Wires the engine, charts, history,
- * settings, keyboard input, and the results/history dashboards together.
- */
-
 document.addEventListener('DOMContentLoaded', () => {
   TypingApp.init();
 });
@@ -11,62 +5,58 @@ document.addEventListener('DOMContentLoaded', () => {
 window.TypingApp = (function () {
   'use strict';
 
-  /* ======================================================================
-     Constants & defaults
-     ====================================================================== */
+  
 
   const TIME_PRESETS = [15, 30, 60, 120];
   const WORD_PRESETS = [10, 25, 50, 100];
 
   const DEFAULT_SETTINGS = {
-    mode: 'time',           // 'time' | 'words'
+    mode: 'time',           
     timeLimit: 30,
     wordLimit: 25,
-    customTime: 45,         // remembered custom values
+    customTime: 45,         
     customWords: 75,
-    content: 'common',      // common|random|sentences|punctuation|numbers|mixed|custom|code
+    content: 'common',      
     language: 'en',
     difficulty: 'beginner',
-    complexity: 'easy',     // 'easy' | 'complex' — easy = familiar words & short sentences; complex = challenging vocab
+    complexity: 'easy',     
     uppercase: false,
     punctuation: false,
     customText: '',
-    countdown: false,       // brief countdown before start
+    countdown: false,       
     stopOnError: false
   };
 
   const DEFAULT_PREFS = {
     sound: true,
-    caret: 'block',         // block | line | underline
-    fontSize: 2.0,          // rem for typing text
-    width: 900,             // px max width of typing area
+    caret: 'block',         
+    fontSize: 2.0,          
+    width: 900,             
     focusMode: false,
-    targetWpm: 0,           // 0 = no target
+    targetWpm: 0,           
     showLiveStats: false,
     helpSeen: false,
     reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
   };
 
-  /* ======================================================================
-     Module state
-     ====================================================================== */
+  
 
   let settings = {};
   let prefs = {};
   let engine = null;
-  let currentView = 'test';        // test | results | history
-  let result = null;               // latest finished result (full detail)
+  let currentView = 'test';        
+  let result = null;               
   let historyFilter = { mode: 'all', limit: 'all', content: 'all', period: 'day' };
-  let inputLocked = false;         // during countdown / finished
+  let inputLocked = false;         
   let audioCtx = null;
   let countdownTimer = null;
   let timeTickTimer = null;
   let confirmActive = false;
   let pendingRestart = null;
-  let charSpans = [];              // per-char <span> cache for the typing text
-  let charWordIndex = [];          // word index per char (for word-level review)
-  let wordSpans = [];              // cache of .tt-word elements
-  let lineTops = [];               // cache of line vertical offsets
+  let charSpans = [];              
+  let charWordIndex = [];          
+  let wordSpans = [];              
+  let lineTops = [];               
   let currentWordIdx = -1;
   let lastTypedLen = 0;
   let lastSecondShown = -1;
@@ -78,9 +68,7 @@ window.TypingApp = (function () {
   const $ = (id) => document.getElementById(id);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
-  /* ======================================================================
-     Init
-     ====================================================================== */
+  
 
   function init() {
     settings = TypingHistory.loadSettings(DEFAULT_SETTINGS);
@@ -112,9 +100,7 @@ window.TypingApp = (function () {
     if (engine) engine.destroy();
   }
 
-  /* ======================================================================
-     Theme
-     ====================================================================== */
+  
 
   function initTheme() {
     const btn = $('theme-toggle');
@@ -128,8 +114,8 @@ window.TypingApp = (function () {
         const cur = document.documentElement.getAttribute('data-theme') || 'light';
         const next = cur === 'light' ? 'dark' : 'light';
         setTheme(next);
-        try { localStorage.setItem('typing-theme', next); } catch (e) { /* ignore */ }
-        // re-render charts with new palette
+        try { localStorage.setItem('typing-theme', next); } catch (e) {  }
+        
         if (currentView === 'results' && result) renderResultCharts();
         if (currentView === 'history') renderHistory();
       });
@@ -146,9 +132,7 @@ window.TypingApp = (function () {
     }
   }
 
-  /* ======================================================================
-     Engine
-     ====================================================================== */
+  
 
   function initEngine() {
     engine = TypingEngine.createEngine({ mode: settings.mode, limit: limitValue(), text: '' });
@@ -190,7 +174,7 @@ window.TypingApp = (function () {
         const remaining = engine.getText().length - engine.getTyped().length;
         if (remaining < 60) topUpText();
         else if (remaining < 120) {
-          // Schedule a non-blocking top-up for smoother pacing.
+          
           if (!topUpText._scheduled) {
             topUpText._scheduled = true;
             requestAnimationFrame(() => { topUpText._scheduled = false; if (engine.getState() === 'running') topUpText(); });
@@ -220,7 +204,7 @@ window.TypingApp = (function () {
     playSound('finish');
     renderResults(res);
     showView('results');
-    // Keep focus on Restart so Space/Enter never re-triggers typing.
+    
     const ti = document.getElementById('typing-input');
     if (ti) ti.blur();
   }
@@ -269,7 +253,7 @@ window.TypingApp = (function () {
       words.forEach((word, wi) => {
         const wordSpan = document.createElement('span');
         wordSpan.className = 'tt-word';
-        // Register the new word so word-level highlighting keeps working.
+        
         wordSpans.push(wordSpan);
         const wIdx = wordSpans.length - 1;
         for (let c = 0; c < word.length; c++) {
@@ -293,15 +277,13 @@ window.TypingApp = (function () {
     });
     $('typing-text').appendChild(frag);
     lastTypedLen = typedLen;
-    // The appended text can add new line rows — re-measure so the
-    // scroll/caret logic keeps using accurate line offsets.
+    
+    
     lineTops = [];
     updateTypedClasses();
   }
 
-  /* ======================================================================
-     Test lifecycle
-     ====================================================================== */
+  
 
   function newTest(opts) {
     opts = opts || {};
@@ -360,7 +342,7 @@ window.TypingApp = (function () {
     clearResultPanels();
     focusInput(true);
     onEngineUpdate(engine.liveStats());
-    // Timer starts only on first keystroke now.
+    
     if (!opts.silent) playSound('soft');
   }
 
@@ -427,9 +409,7 @@ window.TypingApp = (function () {
     document.addEventListener('keydown', onKey, true);
   }
 
-  /* ======================================================================
-     Countdown (for the explicit countdown toggle)
-     ====================================================================== */
+  
 
   function startCountdown(seconds, done) {
     stopCountdown();
@@ -457,9 +437,7 @@ window.TypingApp = (function () {
     inputLocked = engine && engine.getState() === 'finished';
   }
 
-  /* ======================================================================
-     Input handling (hidden textarea keeps mobile + desktop consistent)
-     ====================================================================== */
+  
 
   function focusInput() {
     const input = document.getElementById('typing-input');
@@ -507,7 +485,7 @@ window.TypingApp = (function () {
       focusInput(true);
     });
 
-    // Mobile: touch on viewport/textWrap focuses the hidden input without blocking page scroll
+    
     viewport.addEventListener('touchend', (e) => {
       if (!isTypingContext()) return;
       focusInput();
@@ -550,7 +528,7 @@ window.TypingApp = (function () {
     input.addEventListener('blur', (event) => {
       if (event.relatedTarget && event.relatedTarget.id === 'btn-pause') return;
       if (engine.getState() !== 'running') return;
-      // On touch devices, blur fires when keyboard opens/adjusts — don't pause aggressively
+      
       const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
       if (isTouchDevice) {
         _blurTimeout = setTimeout(() => {
@@ -581,7 +559,7 @@ window.TypingApp = (function () {
     });
 
     input.addEventListener('paste', (e) => {
-      e.preventDefault(); // pasting is not typing
+      e.preventDefault(); 
     });
 
     input.addEventListener('beforeinput', (e) => {
@@ -633,9 +611,9 @@ window.TypingApp = (function () {
         startTimeTick();
       }
       hideIdleHint();
-      // Fallback skip for compositions / programmatic value sets where
-      // beforeinput was not fired: if a single space was appended on an
-      // incorrect current word, treat it as a skip.
+      
+      
+      
       const curBefore = engine.getTyped();
       const nextVal = input.value;
       if (engine.getState() === 'running' && engine.currentWordHasError() &&
@@ -656,7 +634,7 @@ window.TypingApp = (function () {
       maybePlayKeySounds(input.value);
     });
 
-    // Some browsers drop composition; force a resync on composition end
+    
     input.addEventListener('compositionend', () => {
       if (engine.getState() === 'finished') return;
       engine.syncFromValue(input.value);
@@ -675,9 +653,7 @@ window.TypingApp = (function () {
     prevInputValue = val;
   }
 
-  /* ======================================================================
-     Keyboard shortcuts
-     ====================================================================== */
+  
 
   function bindSettingsReset() {
     const btn = document.getElementById('settings-reset-defaults');
@@ -733,16 +709,16 @@ window.TypingApp = (function () {
     let tabPressed = false;
 
     document.addEventListener('keydown', (e) => {
-      // Spacebar must never restart — not single, not double. On the
-      // results page Space is blocked (prevent scroll/button-activation)
-      // and left strictly for normal typing/word-skip during a test.
+      
+      
+      
       const isSpace = e.key === ' ' || e.code === 'Space' || e.key === 'Spacebar';
       if (isSpace && currentView === 'results' && !isFormTarget(e)) {
         e.preventDefault();
         return;
       }
-      // Single Enter to restart from the results page — ignored during typing
-      // and when any modal/panel is open so Space stays untouched.
+      
+      
       if (currentView === 'results' && e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey && !isFormTarget(e)) {
         const toastActive = document.getElementById('record-toast') &&
           document.getElementById('record-toast').contains(document.activeElement);
@@ -757,7 +733,7 @@ window.TypingApp = (function () {
           return;
         }
       }
-      // Tab → Enter restarts (Monkeytype-style), but only when tabbed from body
+      
       if (e.key === 'Tab') { tabPressed = true; return; }
 
       if (e.key === 'Enter' && tabPressed && !isFormTarget(e)) {
@@ -770,26 +746,26 @@ window.TypingApp = (function () {
 
       if (isFormTarget(e)) return;
 
-      // Esc toggles pause during a run
+      
       if (e.key === 'Escape' && engine.getState() === 'running') {
         engine.pause();
         $('pause-overlay').classList.add('open');
         $('typing-input').blur();
         return;
       }
-      // Ctrl/Cmd + R restart (prevent browser reload during a run)
+      
       if ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R') && engine.getState() === 'running') {
         e.preventDefault();
         requestRestart();
         return;
       }
-      // F2 restarts
+      
       if (e.key === 'F2') {
         e.preventDefault();
         requestRestart();
         return;
       }
-      // Any printable key while paused resumes and refocuses
+      
       if (engine.getState() === 'paused' && e.key.length === 1) {
         $('pause-overlay').classList.remove('open');
         engine.resume();
@@ -808,22 +784,20 @@ window.TypingApp = (function () {
     if (tag === 'textarea' && t.id !== 'typing-input') return true;
     if (tag === 'select') return true;
     if (t.isContentEditable) return true;
-    // Settings / history panels open
+    
     if ($('settings-panel').classList.contains('open')) return true;
     if ($('history-panel').classList.contains('open')) return true;
     if ($('help-overlay').classList.contains('open')) return true;
     return false;
   }
 
-  /* ======================================================================
-     Typing area rendering
-     ====================================================================== */
+  
 
   function ensureCaret() {
     const wrap = $('typing-text');
     let c = $('caret');
-    // Keep the caret inside .typing-text: that element carries the
-    // translateY line-scroll, so the caret travels with the text.
+    
+    
     if (!c || !wrap || c.parentNode !== wrap) {
       if (c && c.parentNode) c.parentNode.removeChild(c);
       c = document.createElement('div');
@@ -854,9 +828,9 @@ window.TypingApp = (function () {
     const h = activeChar.offsetHeight || 28;
 
     caret.style.height = Math.max(14, h - 4) + 'px';
-    // Outer element: vertical only (timed with the text's line scroll).
+    
     caret.style.transform = `translate3d(0, ${y + 2}px, 0)`;
-    // Inner bar: horizontal only (fast glide between characters).
+    
     const bar = caret.querySelector('.tt-caret__bar');
     if (bar) bar.style.transform = `translate3d(${x - 1}px, 0, 0)`;
   }
@@ -868,12 +842,12 @@ window.TypingApp = (function () {
     if (viewport) viewport.scrollTop = 0;
     wrap.style.transform = 'translateY(0)';
 
-    // Clear the old passage but keep the floating caret node alive.
+    
     Array.prototype.slice.call(wrap.childNodes).forEach((n) => {
       if (!n.classList || !n.classList.contains('tt-caret')) wrap.removeChild(n);
     });
     const caret = ensureCaret();
-    // Teleport both axes instantly on reset (no glide across the old text).
+    
     caret.style.transition = 'none';
     const bar = caret.querySelector('.tt-caret__bar');
     if (bar) bar.style.transition = 'none';
@@ -937,7 +911,7 @@ window.TypingApp = (function () {
 
     wrap.appendChild(frag);
     
-    // Measure line offsets once, then render state
+    
     requestAnimationFrame(() => {
       const tops = new Set();
       wordSpans.forEach(w => tops.add(w.offsetTop));
@@ -946,13 +920,13 @@ window.TypingApp = (function () {
         updateTypedClasses();
         syncCaret();
         scrollToActiveWord();
-        // Re-enable axis transitions only after snap position is applied.
+        
         requestAnimationFrame(() => {
           caret.style.transition = '';
           if (bar) bar.style.transition = '';
         });
       };
-      // If lineTops is degenerate (no layout — hidden viewport or zero width), keep as-is and retry on next frame
+      
       if (lineTops.length <= 1 && wordSpans.length > 1) {
         requestAnimationFrame(finish);
       } else {
@@ -969,10 +943,10 @@ window.TypingApp = (function () {
     const prevLen = lastTypedLen;
     const n = Math.max(typed.length + 1, prevLen);
 
-    // A skipped word is filled with spaces by the engine, so every character
-    // of that word mismatches. Those characters must read as "missed"
-    // (dimmed) rather than "incorrect" (red) — otherwise a deliberate skip
-    // looks like a burst of typing errors.
+    
+    
+    
+    
     const skippedWordIdx = (() => {
       const set = {};
       const len = Math.min(typed.length, text.length);
@@ -989,7 +963,7 @@ window.TypingApp = (function () {
     if (state !== 'finished') {
       activeWordIdx = charWordIndex[typed.length];
       if (activeWordIdx === -1) {
-        // Find next word if on space/newline
+        
         for (let i = typed.length; i < charWordIndex.length; i++) {
           if (charWordIndex[i] !== -1) { activeWordIdx = charWordIndex[i]; break; }
         }
@@ -1009,8 +983,8 @@ window.TypingApp = (function () {
         if (ok) span.className = base + 'is-correct';
         else {
           const wIdx = charWordIndex[i];
-          // Skipped word → dimmed "missed". A wrong char in a normal word
-          // → red "incorrect".
+          
+          
           const isSkipped = wIdx !== -1 && skippedWordIdx[wIdx];
           if (isSkipped) span.className = base + 'is-missed';
           else span.className = base + 'is-incorrect';
@@ -1047,7 +1021,7 @@ window.TypingApp = (function () {
         let wordClean = true;
         const wsIdx = charWordIndex[prevLen - 1];
         if (wsIdx !== -1) {
-          // Check if word was clean
+          
           for (let i = 0; i < text.length; i++) {
             if (charWordIndex[i] === wsIdx && typed[i] !== text[i]) { wordClean = false; break; }
           }
@@ -1069,7 +1043,7 @@ window.TypingApp = (function () {
     tray.textContent = extra;
   }
 
-  // Smooth line-by-line scrolling: maintains the active line at a steady position.
+  
   const ACTIVE_ROW_INDEX = 1;
   let lastScrolledRow = 0;
   let _scrollRaf = 0;
@@ -1144,9 +1118,7 @@ window.TypingApp = (function () {
     if (el) el.classList.remove('visible');
   }
 
-  /* ======================================================================
-     Live stats bar
-     ====================================================================== */
+  
 
   function renderLiveStats(stats) {
     const timerEl = $('stat-timer');
@@ -1163,11 +1135,11 @@ window.TypingApp = (function () {
     $('stat-raw').textContent = Math.round(stats.rawWpm);
     $('stat-acc').textContent = Math.round(stats.accuracy) + '%';
 
-    // Hidden by default: secondary stats only appear when user opts in
+    
     const liveStats = $('live-stats');
     if (liveStats) liveStats.classList.toggle('live-stats--expanded', liveStatsVisible);
 
-    // Target comparison
+    
     const targetEl = $('target-compare');
     if (prefs.targetWpm > 0) {
       targetEl.classList.add('visible');
@@ -1179,7 +1151,7 @@ window.TypingApp = (function () {
       targetEl.classList.remove('visible');
     }
 
-    // Idle hint (optional — element was removed in minimal UI; guard for headless)
+    
     const idleEl = document.getElementById('idle-hint');
     if (idleEl && stats.state === 'idle' && stats.typedLength === 0) {
       idleEl.classList.add('visible');
@@ -1195,9 +1167,7 @@ window.TypingApp = (function () {
     return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
   }
 
-  /* ======================================================================
-     Mode chips & settings UI
-     ====================================================================== */
+  
 
   function renderModeChips() {
     const bar = $('mode-bar');
@@ -1284,7 +1254,7 @@ window.TypingApp = (function () {
   function setMode(mode) {
     if (settings.mode === mode) return;
     settings.mode = mode;
-    // carry over sensible defaults
+    
     if (mode === 'time' && TIME_PRESETS.indexOf(settings.timeLimit) === -1) settings.timeLimit = 30;
     if (mode === 'words' && WORD_PRESETS.indexOf(settings.wordLimit) === -1) settings.wordLimit = 25;
     persistSettings();
@@ -1318,14 +1288,14 @@ window.TypingApp = (function () {
     settings.content = v;
     persistSettings();
     if (v === 'custom' && !settings.customText.trim()) {
-      // No custom text yet — keep the panel open and point the user at the
-      // textarea. The caller closes the panel itself, so we must not
-      // re-open it here (that would make the panel impossible to dismiss).
+      
+      
+      
       const area = $('settings-content');
       if (area) area.scrollIntoView({ block: 'center' });
       const ta = $('set-custom-text');
       if (ta) {
-        try { ta.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+        try { ta.focus({ preventScroll: true }); } catch (e) {  }
       }
       return;
     }
@@ -1343,7 +1313,7 @@ window.TypingApp = (function () {
   }
 
   function startDailyChallenge() {
-    // Deterministic seed from the date → same passage for everyone that day
+    
     const d = new Date();
     const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
     const seed = TypingData.hashString('sa-daily-' + key);
@@ -1388,9 +1358,7 @@ window.TypingApp = (function () {
     TypingHistory.savePrefs(prefs);
   }
 
-  /* ======================================================================
-     Chrome: buttons, panels, views
-     ====================================================================== */
+  
 
   function bindChrome() {
     $('btn-settings').addEventListener('click', () => togglePanel('settings-panel'));
@@ -1409,8 +1377,8 @@ window.TypingApp = (function () {
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
       if (TypingCharts._hideTip) TypingCharts._hideTip();
-      // Escape closes an open drawer. The pause shortcut lives in
-      // bindShortcuts() and only fires while a test is actually running.
+      
+      
       const settingsOpen = $('settings-panel').classList.contains('open');
       const historyOpen = $('history-panel').classList.contains('open');
       if (settingsOpen || historyOpen) {
@@ -1421,7 +1389,7 @@ window.TypingApp = (function () {
       }
     });
 
-    // Focus mode
+    
     $('btn-focus').addEventListener('click', () => {
       prefs.focusMode = !prefs.focusMode;
       persistPrefs();
@@ -1459,7 +1427,7 @@ window.TypingApp = (function () {
       el.classList.remove('open');
       el.setAttribute('aria-hidden', 'true');
     }
-    // If both panels are now closed, hide the scrim
+    
     if (!document.getElementById('settings-panel').classList.contains('open') &&
         !document.getElementById('history-panel').classList.contains('open')) {
       if (scrim) scrim.classList.remove('open');
@@ -1542,7 +1510,7 @@ window.TypingApp = (function () {
       engine.resume();
       focusInput(true);
     });
-    // Clicking the typing area resumes
+    
     $('typing-viewport').addEventListener('click', () => {
       if (engine.getState() === 'paused') {
         $('pause-overlay').classList.remove('open');
@@ -1552,15 +1520,13 @@ window.TypingApp = (function () {
     });
   }
 
-  /* ======================================================================
-     Settings panel
-     ====================================================================== */
+  
 
   function buildSettingsUI() {
-    // Guard: only bind event listeners once to avoid duplicates on rebuild
+    
     const alreadyBound = $('set-sound').dataset.bound === '1';
 
-    // Sound toggle
+    
     $('set-sound').checked = !!prefs.sound;
     if (!alreadyBound) {
       $('set-sound').dataset.bound = '1';
@@ -1570,7 +1536,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Countdown
+    
     $('set-countdown').checked = !!settings.countdown;
     if (!alreadyBound) {
       $('set-countdown').addEventListener('change', (e) => {
@@ -1579,7 +1545,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Caret style
+    
     const caretSel = $('set-caret');
     caretSel.value = prefs.caret;
     if (!alreadyBound) {
@@ -1590,7 +1556,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Font size
+    
     const fontRange = $('set-fontsize');
     fontRange.value = prefs.fontSize;
     if (!alreadyBound) {
@@ -1601,7 +1567,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Width
+    
     const widthRange = $('set-width');
     widthRange.value = prefs.width;
     if (!alreadyBound) {
@@ -1612,7 +1578,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Target WPM
+    
     const targetInput = $('set-target');
     targetInput.value = prefs.targetWpm || '';
     if (!alreadyBound) {
@@ -1623,7 +1589,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Custom text
+    
     const customArea = $('set-custom-text');
     customArea.value = settings.customText || '';
     if (!alreadyBound) {
@@ -1671,8 +1637,8 @@ window.TypingApp = (function () {
           if (!setContentSel.value) return;
           const wasCustomEmpty = setContentSel.value === 'custom' && !settings.customText.trim();
           setContent(setContentSel.value);
-          // Selecting "custom" with no text yet keeps the panel open so the
-          // user can type some — closing it here would hide the textarea.
+          
+          
           if (!wasCustomEmpty) closePanel('settings-panel');
           setContentSel.value = settings.content;
           if (setDiffSel) setDiffSel.value = settings.difficulty;
@@ -1786,9 +1752,7 @@ window.TypingApp = (function () {
     if (dot) dot.classList.toggle('is-active', liveStatsVisible);
   }
 
-  /* ======================================================================
-     Help
-     ====================================================================== */
+  
 
   function showHelp() {
     $('help-overlay').classList.add('open');
@@ -1801,9 +1765,7 @@ window.TypingApp = (function () {
     focusInput(true);
   }
 
-  /* ======================================================================
-     Sounds (WebAudio, no assets)
-     ====================================================================== */
+  
 
   function ensureAudio() {
     if (!audioCtx) {
@@ -1843,9 +1805,7 @@ window.TypingApp = (function () {
     }
   }
 
-  /* ======================================================================
-     Results dashboard
-     ====================================================================== */
+  
 
   function clearResultPanels() {
     $('daily-badge').classList.remove('visible');
@@ -1902,19 +1862,19 @@ window.TypingApp = (function () {
     const meta = res.meta || {};
     const validation = res.validation || null;
 
-    // Capture stats BEFORE this result was added so we can detect new personal bests.
-    // Note: onEngineFinish already called TypingHistory.add(res), so we need to
-    // compute what stats looked like excluding the just-added result.
+    
+    
+    
     const allRecords = TypingHistory.all();
     const recordsBeforeThis = allRecords.filter((r) => r.id !== res.id && r.finishedAt !== res.finishedAt);
     const statsBefore = TypingHistory.stats(recordsBeforeThis);
 
-    // Mode badge line
+    
     const modeTxt = res.mode === 'time' ? res.limit + ' seconds' : res.limit + ' words';
     const contentTxt = (meta.content || 'common') + ' · ' + (meta.language ? meta.language.toUpperCase() : 'EN') + ' · ' + (meta.difficulty || 'intermediate');
     $('result-mode').innerHTML = modeTxt + ' · ' + contentTxt + (meta.practice ? ' · practice' : '') + (meta.daily ? ' · daily challenge' : '') + ' ' + validationBadge(validation);
 
-    // Validity note (honest: never show misleading numbers as if they were normal)
+    
     const validityEl = $('result-validity');
     if (validityEl) {
       if (validation && validation.isAfk) {
@@ -1929,7 +1889,7 @@ window.TypingApp = (function () {
       }
     }
 
-    // Big numbers — animated count-up reveal
+    
     const animateCount = (id, target, suffix) => {
       const el = $(id);
       if (!el) return;
@@ -1957,14 +1917,14 @@ window.TypingApp = (function () {
     $('result-consistency').textContent = '';
     animateCount('result-consistency', String(Math.round(res.consistency)), '%');
 
-    // Consistency gets a soft invalidation when AFK/invalid
+    
     const wpmEl = $('result-wpm');
     const accEl = $('result-acc');
     const consEl = $('result-consistency');
     const invalid = !!(validation && validation.isInvalid);
     [wpmEl, accEl, consEl].forEach((el) => { if (el) el.classList.toggle('is-invalid', invalid); });
 
-    // Secondary stats
+    
     $('result-correct').textContent = res.correct;
     $('result-incorrect').textContent = res.incorrect;
     $('result-extra').textContent = res.extra;
@@ -2004,14 +1964,14 @@ window.TypingApp = (function () {
     if (rawSub) rawSub.textContent = 'incl. errors & extras';
     if (consSub) consSub.textContent = res.consistency < 30 ? 'unsteady' : (res.consistency < 70 ? 'moderate' : 'steady');
 
-    // Personal comparison (history excludes invalid)
+    
     const stats = TypingHistory.stats();
     renderComparison(res, stats, validation);
 
-    // Suggestions
+    
     renderSuggestions(res);
 
-    // Passage review + frequent errors + virtual keyboard
+    
     renderPassageReview(res);
     renderFrequentErrors(res);
     renderVirtualKeyboard(res);
@@ -2020,11 +1980,11 @@ window.TypingApp = (function () {
     focusResultsRestartButton();
     updatePersonalBestUI();
     if (statsBefore.count > 0) maybeCelebrateRecord(res, statsBefore);
-    // Defer chart paint until the results view is laid out — prevents
-    // the classic "display:none reports width 0 → blurry canvas" bug.
-    // Two rAF frames give the browser one layout pass after making the view
-    // visible; a follow-up at ~380 ms catches the end of the .32 s CSS
-    // animation where getBoundingClientRect() finally returns stable values.
+    
+    
+    
+    
+    
     requestAnimationFrame(() => requestAnimationFrame(() => {
       renderResultCharts();
       setTimeout(() => { if (currentView === 'results' && result) renderResultCharts(); }, 380);
@@ -2113,7 +2073,7 @@ window.TypingApp = (function () {
       }
       frag.appendChild(span);
     }
-    // Extra chars beyond target
+    
     if (typed.length > text.length) {
       const extra = document.createElement('span');
       extra.className = 'rv-char rv-extra';
@@ -2143,7 +2103,7 @@ window.TypingApp = (function () {
     const wrap = $('virtual-keyboard');
     const errors = {};
     (res.frequentErrors || []).forEach((e) => { errors[e.char] = e.count; });
-    // Build error map from full uncorrected set
+    
     const text = res.text || '';
     const typed = res.typed || '';
     const comparable = Math.min(typed.length, text.length);
@@ -2193,7 +2153,7 @@ window.TypingApp = (function () {
       });
     }
 
-    // Tiny inline stats row beneath the unified graph
+    
     const inlineEl = $('result-stats-inline');
     if (inlineEl) {
       inlineEl.innerHTML =
@@ -2220,9 +2180,7 @@ window.TypingApp = (function () {
     }
   }
 
-  /* ======================================================================
-     History dashboard
-     ====================================================================== */
+  
 
   function bindHistoryUI() {
     $('hist-mode').addEventListener('change', (e) => { historyFilter.mode = e.target.value; renderHistory(); });
@@ -2251,9 +2209,9 @@ window.TypingApp = (function () {
     $('results-new-test').addEventListener('click', () => newTest());
     $('results-retry').addEventListener('click', () => newTest());
     $('results-view-history').addEventListener('click', () => {
-      // Always open the history drawer from the results screen. A plain
-      // toggle() would close it when it is already open, which reads as a
-      // dead button.
+      
+      
+      
       closePanel('settings-panel');
       const panel = $('history-panel');
       const scrim = $('tt-scrim');
@@ -2282,7 +2240,7 @@ window.TypingApp = (function () {
       : '—';
     updatePersonalBestUI();
 
-    // Progress chart over time (chronological)
+    
     const chrono = records.slice().sort((a, b) => a.finishedAt - b.finishedAt);
     const colors = TypingCharts.themeColors();
     TypingCharts.autoRender($('chart-progress'), () => {
@@ -2296,7 +2254,7 @@ window.TypingApp = (function () {
       });
     });
 
-    // Period averages
+    
     const grouped = TypingHistory.groupByPeriod(records, historyFilter.period);
     TypingCharts.autoRender($('chart-period'), () => {
       TypingCharts.barChart($('chart-period'), {
@@ -2304,7 +2262,7 @@ window.TypingApp = (function () {
       });
     });
 
-    // List
+    
     const list = $('history-list');
     if (!records.length) {
       list.innerHTML = '<div class="history-empty">No tests recorded yet. Complete a test to start your history — it is stored only in this browser.</div>';
@@ -2383,9 +2341,7 @@ window.TypingApp = (function () {
     }
   }
 
-  /* ======================================================================
-     Small utilities
-     ====================================================================== */
+  
 
   function shortDate(ts) {
     const d = new Date(ts);
@@ -2404,11 +2360,10 @@ window.TypingApp = (function () {
     return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  /* Public hook for debugging / tests */
+  
   return { init, syncCaret, _state: () => ({ settings, prefs, engine, result }) };
 })();
 
-/* ---- Yellow blinking caret (independent of the typing engine) ---- */
 (function () {
   function placeCaret() {
     if (window.TypingApp && window.TypingApp.syncCaret) window.TypingApp.syncCaret();

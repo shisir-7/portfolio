@@ -1,5 +1,3 @@
-// gpa-calculator file:// bundle — concatenated from calculator.js + subject-catalog.js + ui.js (no ES modules)
-// Generated build; do not edit directly — edit sources and rebuild.
 const GRADE_BANDS = Object.freeze([
   { min: 90, letter: "A+", gradePoint: 4.0 },
   { min: 80, letter: "A", gradePoint: 3.6 },
@@ -172,21 +170,10 @@ function calculateComponentGradePoint(components) {
   return weightedPoints / totalMarks;
 }
 
-/**
- * Groups of subjects a student may take *instead of* each other.
- *
- * A student picks one of each group, never both. Mathematics and
- * Social Studies & Life Skill Education are the pair this calculator
- * supports: the subject combination is fixed, so taking both would
- * double-count a slot the combination only allows once.
- */
 const MUTUALLY_EXCLUSIVE_GROUPS = Object.freeze([
   Object.freeze(["mathematics", "social studies"])
 ]);
 
-/**
- * Reduces a subject name to the key used by the exclusive groups.
- */
 function normalizeExclusiveName(name) {
   const normalized = String(name ?? "").toLowerCase();
   if (normalized.includes("mathematics") || normalized === "math") return "mathematics";
@@ -194,9 +181,6 @@ function normalizeExclusiveName(name) {
   return normalized.trim();
 }
 
-/**
- * True when a subject carries any entry that could influence a result.
- */
 function subjectHasEntries(subject) {
   if (!subject) return false;
   const hasValue = value => value !== null && value !== undefined && String(value).trim() !== "";
@@ -207,25 +191,14 @@ function subjectHasEntries(subject) {
       || hasValue(component.grade?.letter)));
 }
 
-/**
- * Decides which member of an exclusive group counts towards the result.
- *
- * The subject the student filled in is the one that counts; every other
- * member of the group stays in the list but is disabled and contributes
- * nothing. An explicit choice (the "use this instead" control) wins while
- * that subject has entries. When both have data without an explicit choice,
- * the first-listed subject wins. With no entries, both remain selectable.
- *
- * Returns the winning subject, or null when no group applies.
- */
 function resolveExclusiveWinner(subjects) {
   if (!Array.isArray(subjects) || subjects.length === 0) return null;
   for (const group of MUTUALLY_EXCLUSIVE_GROUPS) {
     const members = subjects.filter(subject => group.includes(normalizeExclusiveName(subject.name)));
     if (members.length < 2) continue;
 
-    // An explicit choice wins. If neither has entries and the choice is the
-    // default first-listed member, leave both selectable.
+    
+    
     const chosen = members.filter(subject => subject.exclusiveChoice);
     if (chosen.length === 1) {
       if (subjectHasEntries(chosen[0]) || members.some(subjectHasEntries) || chosen[0] !== members[0]) {
@@ -234,21 +207,17 @@ function resolveExclusiveWinner(subjects) {
       return null;
     }
 
-    // Exactly one subject has data — that is the one the student chose.
+    
     const filled = members.filter(subject => subjectHasEntries(subject));
     if (filled.length === 1) return filled[0];
 
-    // If both have data, keep the result deterministic. With no data, leave
-    // both available until the student makes a selection.
+    
+    
     if (filled.length > 1) return members[0];
   }
   return null;
 }
 
-/**
- * Returns the subjects that contribute to the calculation: everything except
- * the members of an exclusive group that lost the selection.
- */
 function subjectsForCalculation(subjects) {
   const winner = resolveExclusiveWinner(subjects);
   if (!winner) return subjects.slice();
@@ -735,7 +704,6 @@ const CATALOGUE_CAVEATS = Object.freeze({
   ]
 });
 
-
 const CUSTOM_STORAGE_KEY = "neb-gpa-custom-subjects-v1";
 const grades = [
   { letter: "A+", gradePoint: 4.0 }, { letter: "A", gradePoint: 3.6 },
@@ -1039,8 +1007,8 @@ function createSubject(record) {
     theoryGrade: "",
     practicalGrade: "",
     letterGrade: "",
-    // Set when the student explicitly picks this subject out of an
-    // exclusive group (Mathematics / Social Studies & Life Skill).
+    
+    
     exclusiveChoice: false,
     custom: record.verification === "custom"
   };
@@ -1141,17 +1109,6 @@ function updateElectivePicker() {
   electiveSection.hidden = false;
 }
 
-/**
- * Groups of subjects a student may take *instead of* each other.
- *
- * A student picks one of each group, never both. Mathematics and
- * Social Studies & Life Skill Education are the pair this calculator
- * supports: the subject combination is fixed, so taking both would
- * double-count a slot the combination only allows once.
- *
- * The group definition and the resolution rules live in calculator.js so
- * they can be unit-tested without a DOM.
- */
 const EXCLUSIVE_GROUPS = MUTUALLY_EXCLUSIVE_GROUPS;
 
 function isMutuallyExclusiveExcluded(subject) {
@@ -1163,17 +1120,13 @@ function isMutuallyExclusiveExcluded(subject) {
   if (level !== "12") return false;
   const winner = resolveExclusiveWinner(selectedSubjects);
   if (!winner || winner === subject) return false;
-  // Only the subjects of the winning group are excluded; everything else
-  // in the list stays active.
+  
+  
   const winnerGroup = EXCLUSIVE_GROUPS.find(group => group.includes(normalizeExclusiveName(winner.name)));
   if (!winnerGroup) return false;
   return winnerGroup.includes(normalizeExclusiveName(subject.name));
 }
 
-/**
- * Clears every entry on a subject so it cannot contribute to the result.
- * Used when a subject is disabled by the mutual-exclusivity rule.
- */
 function clearSubjectEntries(subject) {
   subject.theoryObtained = "";
   subject.practicalObtained = "";
@@ -1193,16 +1146,16 @@ function applyMutualExclusivityUI() {
     const card = document.querySelector(`.subject-card[data-key="${CSS.escape(subject.key)}"]`);
     if (!card) return;
     const excluded = isMutuallyExclusiveExcluded(subject);
-    // A disabled subject must not keep values that would silently affect the
-    // calculation, so drop its entries when it becomes disabled.
+    
+    
     if (excluded && subjectHasEntries(subject)) {
       clearSubjectEntries(subject);
       changed = true;
     }
     card.classList.toggle("is-excluded", excluded);
     card.querySelectorAll("input, button.dropdown-trigger").forEach(el => { el.disabled = excluded; });
-    // The disabled card keeps a "use this instead" control so the student
-    // can switch to it; the card itself is not pointer-interactive.
+    
+    
     const switchBtn = card.querySelector(".subject-card__switch");
     if (switchBtn) {
       switchBtn.hidden = !excluded;
@@ -1210,8 +1163,8 @@ function applyMutualExclusivityUI() {
     }
   });
   if (changed) {
-    // Re-sync the cleared fields in the DOM so the inputs do not keep
-    // showing the values that were just discarded.
+    
+    
     renderSubjects();
   }
 }
@@ -1241,21 +1194,8 @@ function componentField(subject, kind, label) {
   </label>`;
 }
 
-/**
- * Maps a grade point back to its letter grade.
- *
- * Derived from the `grades` table so it can never drift out of sync with
- * the letters offered in the dropdown. The table is ordered highest grade
- * point first, so the first entry at or above the given point wins.
- */
 function gradeLetterFromPoint(gp) { return overallGradeLetter(gp); }
 
-/**
- * Maps an overall GPA to its indicative letter grade.
- *
- * Uses the same band table as the subject grade points so the overall
- * letter always agrees with the letters shown on the subject cards.
- */
 function overallGradeLetter(gpa) {
   if (!Number.isFinite(gpa)) return "—";
   const rounded = Math.round((gpa + Number.EPSILON) * 100) / 100;
@@ -1269,12 +1209,6 @@ function overallGradeLetter(gpa) {
   return "NG";
 }
 
-/**
- * Maps a percentage to its grade point.
- *
- * Mirrors GRADE_BANDS in calculator.js (A+ at 90, A at 80, B+ at 70 …) but
- * is derived from the `grades` table so the two can never drift apart.
- */
 function gradePointFromPercent(pct) {
   if (!Number.isFinite(pct) || pct < 35) return 0;
   if (pct >= 90) return 4.0;
@@ -1342,9 +1276,6 @@ function renderSubject(subject) {
   </article>`;
 }
 
-/**
- * Finds the other subject of an exclusive group, if the student has both.
- */
 function exclusiveSibling(subject) {
   for (const group of EXCLUSIVE_GROUPS) {
     const canon = normalizeExclusiveName(subject.name);
@@ -1354,25 +1285,20 @@ function exclusiveSibling(subject) {
   return null;
 }
 
-/**
- * Switches the selection from one member of an exclusive group to the other.
- * The previously selected subject is cleared and disabled, the new one is
- * enabled and ready for input.
- */
 function switchExclusiveSubject(subject) {
   const sibling = exclusiveSibling(subject);
   if (!sibling) return;
-  // Record the explicit choice so it survives until the student types.
+  
   selectedSubjects.forEach(item => { item.exclusiveChoice = false; });
   subject.exclusiveChoice = true;
   clearSubjectEntries(sibling);
   clearSubjectEntries(subject);
   renderSubjects();
-  // Focus the first input of the newly selected subject so the student can
-  // type straight away.
+  
+  
   const card = document.querySelector(`.subject-card[data-key="${CSS.escape(subject.key)}"]`);
   const input = card?.querySelector(".mark-input:not([disabled]), button.dropdown-trigger:not([disabled])");
-  if (input) { try { input.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+  if (input) { try { input.focus({ preventScroll: true }); } catch (e) {  } }
 }
 
 function gradeField(subject, kind, label) {
@@ -1412,7 +1338,7 @@ function renderSubjects() {
         if (kind === "theory") subject.theoryGrade = val;
         else if (kind === "practical") subject.practicalGrade = val;
         else subject.letterGrade = val;
-        // Choosing a grade in one member of an exclusive pair selects it.
+        
         if (subjectHasEntries(subject)) {
           selectedSubjects.forEach(item => { item.exclusiveChoice = item === subject; });
         }
@@ -1588,8 +1514,8 @@ function updateResult() {
   if (summaryContainer) {
     summaryContainer.innerHTML = "";
     if (result.state === "ready" || result.state === "incomplete") {
-      // Only the subjects that actually count towards the result are listed,
-      // so a disabled subject never shows up in the summary.
+      
+      
       selectedSubjects.forEach(subject => {
         if (isMutuallyExclusiveExcluded(subject)) return;
         const grade = subjectGrade(subject);
@@ -1699,7 +1625,7 @@ subjectList.addEventListener("input", event => {
   const subject = selectedSubjects.find(item => item.key === card.dataset.key);
   if (subject) {
     syncSubject(subject, card);
-    // Entering a value in one member of an exclusive pair selects it.
+    
     if (subjectHasEntries(subject)) {
       selectedSubjects.forEach(item => { item.exclusiveChoice = item === subject; });
     } else {
@@ -1713,7 +1639,6 @@ subjectList.addEventListener("input", event => {
   applyMutualExclusivityUI();
 });
 
-// "Use this instead" on a disabled subject switches the exclusive pair.
 subjectList.addEventListener("click", event => {
   const button = event.target.closest(".subject-card__switch");
   if (!button) return;
@@ -1826,7 +1751,7 @@ document.getElementById("reset-calculator").addEventListener("click", () => {
     subject.theoryGrade = "";
     subject.practicalGrade = "";
     subject.letterGrade = "";
-    // Drop the explicit choice so the default selection is restored.
+    
     subject.exclusiveChoice = false;
   });
   renderSubjects();

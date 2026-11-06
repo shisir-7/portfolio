@@ -11,7 +11,6 @@
 <meta name="color-scheme" content="dark light">
 <meta name="author" content="Shisir Acharya">
 
-<!-- Open Graph / social sharing -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SpeedPulse by Shisir Acharya">
 <meta property="og:title" content="SpeedPulse — Fast, Accurate Internet Speed Test">
@@ -29,16 +28,11 @@
 <link rel="apple-touch-icon" href="./favicon.svg">
 <link rel="canonical" href="https://shisiracharya7.com.np/speed-test/">
 
-<!-- Fonts: Outfit (display) + Inter (UI), self-hosted and subset to the
-     characters this site uses. See tools/build_fonts.py. `font-display: swap`
-     plus the system fallbacks in styles.css keep the page readable if the
-     fonts are slow to arrive. -->
 <link rel="preload" href="./fonts/speedpulse-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="./fonts/speedpulse-display.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="stylesheet" href="./styles.css">
 
-<!-- Inline bootstrap: apply the stored theme before first paint to avoid a flash of wrong theme. -->
 <script>
   (function () {
     try {
@@ -46,7 +40,7 @@
       var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
       var theme = stored || (prefersLight ? 'light' : 'dark');
       document.documentElement.dataset.theme = theme;
-    } catch (e) { /* private mode / storage disabled -> keep the default dark theme */ }
+    } catch (e) {  }
   })();
 </script>
 </head>
@@ -54,14 +48,8 @@
 <body>
 <a class="skip-link" href="#test">Skip to the speed test</a>
 
-<!-- Ambient gradient background (pure CSS, no images) -->
 <div class="bg-gradient" aria-hidden="true"></div>
 
-<!--
-  Icon sprite. Every icon in the page is defined once here and referenced with
-  <use href="#icon-name">, which keeps the markup small and the icons cacheable.
-  `aria-hidden` on the sprite keeps it out of the accessibility tree.
--->
 <svg class="svg-sprite" aria-hidden="true" focusable="false" width="0" height="0">
   <defs>
     <linearGradient id="brandGrad" x1="0" y1="1" x2="1" y2="0">
@@ -154,7 +142,7 @@
     </nav>
 
     <div class="header-actions">
-      <!-- Unit toggle: Mbps <-> MB/s -->
+      
       <div class="unit-toggle" role="group" aria-label="Speed unit">
         <button type="button" class="unit-btn is-active" data-unit="mbps" aria-pressed="true">Mbps</button>
         <button type="button" class="unit-btn" data-unit="mbs" aria-pressed="false">MB/s</button>
@@ -171,10 +159,7 @@
 
 <main id="top">
 
-  <!-- ============================================================
-       HERO + TEST AREA
-       ============================================================ -->
-  <section class="hero" id="test" aria-labelledby="test-heading">
+<section class="hero" id="test" aria-labelledby="test-heading">
     <div class="container">
 
       <div class="hero-intro">
@@ -183,8 +168,7 @@
         <p class="lede">A fast, honest measurement of your connection using a real global test network. Takes about 30&nbsp;seconds.</p>
       </div>
 
-      <!-- Phase stepper -->
-      <ol class="stepper" id="stepper" aria-label="Test progress">
+<ol class="stepper" id="stepper" aria-label="Test progress">
         <li class="step" data-step="ping">
           <span class="step-dot" aria-hidden="true"></span>
           <span class="step-label">Ping</span>
@@ -203,17 +187,15 @@
         </li>
       </ol>
 
-      <!-- Main test card -->
-      <div class="card test-card" id="test-card">
+<div class="card test-card" id="test-card">
 
-        <!-- Status line (screen-reader + visual phase label) -->
-        <p class="phase-label" id="phase-label" aria-live="polite">
+<p class="phase-label" id="phase-label" aria-live="polite">
           <span class="phase-dot" aria-hidden="true"></span>
           <span id="phase-text">Ready when you are</span>
         </p>
 
         <div class="gauge-wrap">
-          <!-- SVG gauge: built in JS so it stays in sync with the theme tokens -->
+          
           <div class="gauge" id="gauge">
             <svg viewBox="0 0 320 320" class="gauge-svg" role="img" aria-labelledby="gauge-title">
               <title id="gauge-title">Live speedometer</title>
@@ -229,30 +211,26 @@
                 </filter>
               </defs>
 
-              <!-- Soft track ring -->
-              <path class="gauge-track" id="gauge-track" d="" />
-              <!-- Value arc (stroke-dasharray animated by JS) -->
+<path class="gauge-track" id="gauge-track" d="" />
+              
               <path class="gauge-value" id="gauge-value" d="" />
-              <!-- Glowing cap that rides the end of the value arc -->
+              
               <circle class="gauge-cap" id="gauge-cap" cx="160" cy="160" r="7" />
             </svg>
 
-            <!-- Hero readout -->
-            <div class="gauge-center">
+<div class="gauge-center">
               <p class="gauge-value-text" id="gauge-value-text">0</p>
               <p class="gauge-unit" id="gauge-unit">Mbps</p>
             </div>
 
-            <!-- Scale legend -->
-            <div class="gauge-scale" aria-hidden="true">
+<div class="gauge-scale" aria-hidden="true">
               <span class="gauge-scale-end" id="gauge-scale-max">100</span>
               <span class="gauge-scale-end" id="gauge-scale-min">0</span>
             </div>
           </div>
         </div>
 
-        <!-- Controls -->
-        <div class="controls">
+<div class="controls">
           <button type="button" class="btn btn-primary btn-go" id="start-btn">
             <span class="btn-go-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-play"/></svg>
@@ -272,8 +250,7 @@
           </button>
         </div>
 
-        <!-- Live graph -->
-        <div class="graph-wrap" id="graph-wrap">
+<div class="graph-wrap" id="graph-wrap">
           <div class="graph-head">
             <h2 class="graph-title" id="graph-title">Live speed</h2>
             <span class="graph-peak" id="graph-peak">Peak 0 Mbps</span>
@@ -282,8 +259,7 @@
                   role="img" aria-label="Live speed graph over time"></canvas>
         </div>
 
-        <!-- Error banner -->
-        <div class="alert" id="alert" role="alert" hidden>
+<div class="alert" id="alert" role="alert" hidden>
           <svg class="alert-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg>
           <div class="alert-body">
             <p class="alert-title" id="alert-title">Something went wrong</p>
@@ -296,18 +272,14 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       RESULTS
-       ============================================================ -->
-  <section class="section" id="results" aria-labelledby="results-heading" hidden>
+<section class="section" id="results" aria-labelledby="results-heading" hidden>
     <div class="container">
       <div class="section-head">
         <h2 id="results-heading">Your results</h2>
         <p class="section-sub">Measured <span id="result-time">just now</span> against a nearby Cloudflare edge.</p>
       </div>
 
-      <!-- Verdict -->
-      <div class="verdict" id="verdict">
+<div class="verdict" id="verdict">
         <span class="verdict-icon" id="verdict-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><use href="#i-star"/></svg>
         </span>
@@ -317,8 +289,7 @@
         </div>
       </div>
 
-      <!-- Metric cards: download leads as the hero, the rest support it -->
-      <div class="metric-grid">
+<div class="metric-grid">
         <article class="card metric metric-hero" data-metric="download">
           <header class="metric-head">
             <span class="metric-icon" aria-hidden="true">
@@ -384,8 +355,7 @@
         </article>
       </div>
 
-      <!-- Connection details -->
-      <div class="card info-card">
+<div class="card info-card">
         <div class="info-head">
           <h3>Connection details</h3>
           <button type="button" class="btn btn-small btn-outline" id="copy-summary-btn">Copy summary</button>
@@ -415,15 +385,11 @@
         </button>
       </div>
 
-      <!-- Hidden canvas used to render the shareable result image -->
-      <canvas id="share-canvas" class="share-canvas" width="1200" height="630" aria-hidden="true"></canvas>
+<canvas id="share-canvas" class="share-canvas" width="1200" height="630" aria-hidden="true"></canvas>
     </div>
   </section>
 
-  <!-- ============================================================
-       HISTORY
-       ============================================================ -->
-  <section class="section" id="history" aria-labelledby="history-heading" hidden>
+<section class="section" id="history" aria-labelledby="history-heading" hidden>
     <div class="container">
       <div class="section-head">
         <h2 id="history-heading">Test history</h2>
@@ -440,10 +406,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       HOW IT WORKS
-       ============================================================ -->
-  <section class="section" id="how" aria-labelledby="how-heading">
+<section class="section" id="how" aria-labelledby="how-heading">
     <div class="container">
       <div class="section-head">
         <h2 id="how-heading">How it works</h2>
@@ -473,10 +436,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       FAQ
-       ============================================================ -->
-  <section class="section" id="faq" aria-labelledby="faq-heading">
+<section class="section" id="faq" aria-labelledby="faq-heading">
     <div class="container container-narrow">
       <div class="section-head">
         <h2 id="faq-heading">Frequently asked questions</h2>
@@ -556,7 +516,6 @@
   <p class="footer-note">Your results never leave your device. History is stored locally in your browser.</p>
 </footer>
 
-<!-- Screen-reader announcements for phase changes and final results -->
 <div class="sr-only" id="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script type="module" src="./app.js"></script>
