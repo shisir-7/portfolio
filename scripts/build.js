@@ -181,12 +181,12 @@ function copyDirectory(srcDir, destDir) {
     const destPath = path.join(destDir, entry.name);
 
     if (entry.isDirectory()) {
-      if (entry.name === 'tests' || entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.kilo') {
+      if (entry.name === 'tests' || entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.kilo' || entry.name === 'backups' || entry.name === 'tools') {
         continue;
       }
       copyDirectory(srcPath, destPath);
     } else if (entry.isFile()) {
-      if (entry.name.endsWith('.test.mjs') || entry.name.endsWith('.test.js')) {
+      if (entry.name.endsWith('.test.mjs') || entry.name.endsWith('.test.js') || entry.name.endsWith('.bak') || entry.name === 'AUDIT.md') {
         continue;
       }
       processFile(srcPath, destPath);
@@ -199,7 +199,7 @@ if (fs.existsSync(distDir)) {
 }
 fs.mkdirSync(distDir, { recursive: true });
 
-const rootFiles = ['index.html', 'typing.html', '404.html', 'robots.txt', 'sitemap.xml', 'CNAME'];
+const rootFiles = ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'CNAME'];
 for (const file of rootFiles) {
   const src = path.join(rootDir, file);
   if (fs.existsSync(src)) {

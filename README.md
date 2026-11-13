@@ -39,8 +39,7 @@ shisir-acharya-portfolio/
 │   ├── index.html
 │   ├── styles/                # Typing styles plus bundled base styles
 │   ├── js/                    # Typing app modules
-│   ├── assets/                # Typing app favicon
-│   └── backups/               # Archived typing-file backups
+│   └── assets/                # Typing app favicon
 ├── speed-test/                # Standalone internet speed test (SpeedPulse)
 │   ├── index.html
 │   ├── styles.css
@@ -68,7 +67,7 @@ shisir-acharya-portfolio/
 
 ## ✦ Typing Speed Test Project
 
-The typing speed test appears in the **Selected Work** project gallery and is served at [`/typing/`](https://shisiracharya7.com.np/typing/). The legacy `/typing.html` URL forwards visitors to this canonical page. Its assets remain in `typing/`; settings, theme, and test history are stored locally in the browser.
+The typing speed test appears in the **Selected Work** project gallery and is served at [`/typing/`](https://shisiracharya7.com.np/typing/). The old duplicate `/typing.html` copy and the `typing/backups/` archives were removed in the November 2026 cleanup — the canonical page is `/typing/`.
 
 ## ✦ NEB GPA Calculator
 

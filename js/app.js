@@ -262,14 +262,11 @@ function initProjects() {
     const filtered = categoryMatches.filter(project => matchesProject(project, query));
 
     grid.innerHTML = filtered.map(project => {
-      const cardElement = project.projectUrl ? 'a' : 'article';
-      const cardAttributes = project.projectUrl
-        ? `href="${project.projectUrl}" aria-label="Open ${project.title}"`
-        : `data-project-id="${project.id}" tabindex="0" role="button" aria-label="View case study for ${project.title}"`;
-      const actionLabel = project.projectUrl ? 'Open Project' : 'Case Study';
+      const cardAttributes = `data-project-id="${project.id}" tabindex="0" role="button" aria-label="View case study for ${project.title}"`;
+      const actionLabel = 'Case Study';
 
       return `
-      <${cardElement} class="project-card" ${cardAttributes}>
+      <article class="project-card" ${cardAttributes}>
         <div class="project-card__media">
           <img class="project-card__image" src="${project.image}" alt="${project.imageAlt}" loading="lazy" />
           <span class="project-card__badge">${project.discipline}</span>
@@ -289,7 +286,7 @@ function initProjects() {
             </span>
           </div>
         </div>
-      </${cardElement}>
+      </article>
     `;
     }).join('');
 
@@ -304,8 +301,6 @@ function initProjects() {
     
     const cards = grid.querySelectorAll('.project-card');
     cards.forEach(card => {
-      if (card.tagName === 'A') return;
-
       const openModal = () => {
         const id = card.getAttribute('data-project-id');
         window.openCaseStudy(id);
@@ -457,7 +452,16 @@ function initCaseStudyModal() {
     const linksContainer = document.getElementById('modal-project-links');
     if (linksContainer) {
       let buttonsHtml = '';
-      
+
+      if (project.projectUrl) {
+        buttonsHtml += `
+          <a href="${project.projectUrl}" class="btn btn--demo">
+            Open Live Tool
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+        `;
+      }
+
       if (project.demoUrl) {
         buttonsHtml += `
           <a href="${project.demoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--demo">
@@ -486,24 +490,30 @@ function initCaseStudyModal() {
       }
     }
 
-    document.getElementById('modal-challenge').textContent = project.caseStudy.challenge;
-    document.getElementById('modal-audience').textContent = project.caseStudy.targetAudience;
-    document.getElementById('modal-approach').textContent = project.caseStudy.approach;
+    const narrative = document.querySelector('.modal-narrative');
+    if (project.caseStudy) {
+      if (narrative) narrative.style.display = '';
+      document.getElementById('modal-challenge').textContent = project.caseStudy.challenge;
+      document.getElementById('modal-audience').textContent = project.caseStudy.targetAudience;
+      document.getElementById('modal-approach').textContent = project.caseStudy.approach;
 
-    const interfaceList = document.getElementById('modal-interface-decisions');
-    interfaceList.innerHTML = project.caseStudy.interfaceDecisions
-      .map(item => `<li>${item}</li>`)
-      .join('');
+      const interfaceList = document.getElementById('modal-interface-decisions');
+      interfaceList.innerHTML = project.caseStudy.interfaceDecisions
+        .map(item => `<li>${item}</li>`)
+        .join('');
 
-    const deliverablesList = document.getElementById('modal-deliverables');
-    deliverablesList.innerHTML = project.caseStudy.deliverables
-      .map(item => `<li>${item}</li>`)
-      .join('');
+      const deliverablesList = document.getElementById('modal-deliverables');
+      deliverablesList.innerHTML = project.caseStudy.deliverables
+        .map(item => `<li>${item}</li>`)
+        .join('');
 
-    const toolsCloud = document.getElementById('modal-tools');
-    toolsCloud.innerHTML = project.caseStudy.tools
-      .map(tool => `<span class="tool-tag">${tool}</span>`)
-      .join('');
+      const toolsCloud = document.getElementById('modal-tools');
+      toolsCloud.innerHTML = project.caseStudy.tools
+        .map(tool => `<span class="tool-tag">${tool}</span>`)
+        .join('');
+    } else if (narrative) {
+      narrative.style.display = 'none';
+    }
 
     
     modalOverlay.classList.add('open');
@@ -528,6 +538,17 @@ function initInquiryForm() {
   if (!form) return;
 
   const submitBtn = form.querySelector('button[type="submit"]');
+  const statusEl = document.getElementById('form-status');
+
+  function showFormStatus(message, isError) {
+    if (!statusEl) {
+      alert(message);
+      return;
+    }
+    statusEl.textContent = message;
+    statusEl.hidden = false;
+    statusEl.style.color = isError ? 'var(--accent)' : 'var(--text-primary)';
+  }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -539,12 +560,12 @@ function initInquiryForm() {
     const consentInput = document.getElementById('form-consent');
 
     if (!name || !email || !message) {
-      alert('Please fill in your name, email, and project message.');
+      showFormStatus('Please fill in your name, email, and project message.', true);
       return;
     }
 
     if (consentInput && !consentInput.checked) {
-      alert('Please confirm that you are at least 16 years of age (or have guardian consent) and agree to our privacy policy.');
+      showFormStatus('Please confirm that you are at least 16 years of age (or have guardian consent) and agree to our privacy policy.', true);
       consentInput.focus();
       return;
     }
@@ -574,7 +595,7 @@ function initInquiryForm() {
     const bodyContent = `Hello Shisir,\n\nName: ${name}\nEmail: ${email}\nDiscipline / Interest: ${service}\n\nProject Details:\n${message}\n\n[Consent Confirmed: 16+ or Guardian Approval | Direct Inquiry]\n[Communication Preference: Reply 'UNSUBSCRIBE' or 'CEASE' at any time to delete correspondence and stop replies]\nSent from your portfolio website inquiry system.`;
     const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${encodeURIComponent(bodyContent)}`;
 
-    
+    showFormStatus('Opening your mail app with the inquiry ready to send. Nothing is sent from this page — press Send in your mail app. If nothing opens, email acharyashiru939@gmail.com directly.', false);
     window.location.href = mailtoUrl;
   });
 }
