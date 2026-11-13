@@ -24,6 +24,22 @@ window.PORTFOLIO_PROJECTS = [
       "typing practice",
       "typing accuracy test"
     ],
+    caseStudy: {
+      challenge: "Typing practice tools often bury the numbers that matter — speed, accuracy and error patterns — behind accounts, ads and clutter.",
+      targetAudience: "Students, job seekers and anyone practising English typing who wants a private, focused test.",
+      approach: "Kept everything in the browser: timed and word-count modes, live WPM and accuracy, result graphs, error analysis and a local history — no account, no upload.",
+      interfaceDecisions: [
+        "Live WPM and accuracy readings update as you type.",
+        "Result graphs and error analysis make progress visible after every test.",
+        "Test history stays in the browser, so results are private by default."
+      ],
+      deliverables: [
+        "Timed and word-count typing test",
+        "Live WPM, accuracy and error analysis",
+        "Result graphs and local test history"
+      ],
+      tools: ["JavaScript", "Canvas Charts", "Local Storage"]
+    },
     projectUrl: "/typing/"
   },
   {
@@ -50,6 +66,22 @@ window.PORTFOLIO_PROJECTS = [
       "letter grading NEP",
       "NEB grade calculator",
     ],
+    caseStudy: {
+      challenge: "Nepal's NEB grading — SEE and +2, theory and practical splits, credit-hour weighting — is hard to estimate by hand, and most calculators online are not built for it.",
+      targetAudience: "SEE and +2 students in Nepal estimating their GPA from subject marks or letter grades.",
+      approach: "Built a bilingual calculator around the NEB subject catalogue, with theory and practical splits and credit-hour weighting. Results are clearly labelled as indicative estimates, not official results.",
+      interfaceDecisions: [
+        "Subject marks or letter-grade entry, with theory and practical splits.",
+        "Bilingual entry for Nepali students.",
+        "Credit-hour weighting for +2, with sources and known limitations documented."
+      ],
+      deliverables: [
+        "SEE and +2 GPA estimator",
+        "Bilingual subject entry with theory and practical splits",
+        "Documented source list and limitations (AUDIT.md)"
+      ],
+      tools: ["JavaScript", "NEB Grade Catalogue", "Bilingual UI"]
+    },
     projectUrl: "/gpa-calculator/"
   },
   {
@@ -78,6 +110,22 @@ window.PORTFOLIO_PROJECTS = [
       "jitter test",
       "connection test"
     ],
+    caseStudy: {
+      challenge: "Speed tests often report a single number with no context — no ping, jitter or history, and no way to share the result.",
+      targetAudience: "Anyone checking whether their connection is actually performing, before a call, a class or a deadline.",
+      approach: "Measured download, upload, ping and jitter against a nearby Cloudflare edge, with a live gauge and graph, local history and a shareable result image — all in the browser.",
+      interfaceDecisions: [
+        "Live gauge and graph show speed as it is measured, not just at the end.",
+        "Ping and jitter reported alongside download and upload.",
+        "Results can be shared as an image, with history kept locally."
+      ],
+      deliverables: [
+        "Download, upload, ping and jitter measurement",
+        "Live gauge, graph and local history",
+        "Shareable result image"
+      ],
+      tools: ["JavaScript", "Web Worker", "Cloudflare Edge", "Canvas Gauges"]
+    },
     projectUrl: "/speed-test/"
   },
   {
@@ -88,7 +136,7 @@ window.PORTFOLIO_PROJECTS = [
     category: "ui-ux",
     role: "UI/UX Designer",
     year: "2025",
-    badge: "Web Application",
+    badge: "Concept — Case Study",
     headline: "Transforming dense multi-currency asset portfolios into intuitive visual hierarchies.",
     summary: "A clean, high-accessibility web dashboard for quantitative portfolio oversight, resolving data density through smooth trend surfaces, clean tables, and instant latency feedback.",
     image: "assets/images/project-4-lumina.svg",
@@ -119,7 +167,7 @@ window.PORTFOLIO_PROJECTS = [
     category: "video",
     role: "Motion Editor & Sound Designer",
     year: "2025",
-    badge: "Brand Film",
+    badge: "Concept — Case Study",
     headline: "Kinetic brand anthem combining high-tempo speed ramps and transient-locked typography.",
     summary: "A dynamic 60-second editorial motion reel for modern brand storytelling, combining kinetic typographic impacts, organic motion blur transitions, and a synchronized transient rhythm.",
     image: "assets/images/project-5-chronicle.svg",
@@ -150,7 +198,7 @@ window.PORTFOLIO_PROJECTS = [
     category: "graphic",
     role: "Publication Designer & Art Director",
     year: "2024",
-    badge: "Publication Design",
+    badge: "Concept — Case Study",
     headline: "Minimalist publication design system featuring custom grid structures and tactile materials.",
     summary: "A hardcover architectural monograph honoring the architectural void, featuring bespoke column grids, tactile negative space, blind debossing, and quietly confident typography.",
     image: "assets/images/project-6-forma.svg",
